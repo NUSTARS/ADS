@@ -1,10 +1,47 @@
 import matplotlib.pyplot as plt
+import csv
+import numpy as np
+import re
+
+# Define a function to strip non-integer values from a string
+def strip_non_integer(s):
+    return re.sub(r'[^\d.-]', '', s)
+
+def load_data(filename):
+    # Vectorize the function to apply it element-wise to the NumPy array
+    strip_non_integer_vectorized = np.vectorize(strip_non_integer)
+
+    # Initialize an empty list to store the CSV data
+    raw_data = []
+
+    # Open the CSV file
+    with open(filename, 'r') as csvfile:
+        # Create a CSV reader object
+        csvReader = csv.reader(csvfile)
+        next(csvReader)
+
+        # Loop through each row in the CSV file
+        for row in csvReader:
+            # Append the row to the list
+            raw_data.append(row)
+
+    array = np.array(raw_data)
+    time = strip_non_integer_vectorized(array[:, 4]).astype(float)
+    height = strip_non_integer_vectorized(array[:, 10]).astype(float)
+    speed = strip_non_integer_vectorized(array[:, 11]).astype(float)
+    accel = strip_non_integer_vectorized(array[:, 7]).astype(float)
+
+    i = np.where(array[:, 6] == '   coast')[0][0] # start of coast
+    j = np.where(height == np.max(height))[0][0] # apogee
+
+    return time[i:j] - time[i], 3.28*height[i:j], 3.28*speed[i:j], 3.28*accel[i:j]
+
 
 def compute_apogee(height_in, velocity_in, acceleration_in, mass, area, dt):
     # Constants
     g = 32.174  # acceleration due to gravity in ft/s^2
     rho_air = 0.002378  # density of air in slugs/ft^3
-    Cd = 0.4  # drag coefficient
+    Cd = 0.3 # drag coefficient
     
     time_step = dt  # time step for Euler integration
     
@@ -36,9 +73,12 @@ def compute_apogee(height_in, velocity_in, acceleration_in, mass, area, dt):
     # return current_height
 
 
-# Example usage
-current_height = 0  # Initial height in feet
-velocity = 550  # Initial velocity in ft/s
+#----------------Loading Input Data-------------------------------------------------
+
+time, height, speed, accel = load_data('FT5_primary.csv')
+
+#----------------Running Euler----------------------------------------------
+
 acceleration = -32.17  # Constant acceleration (assuming downwards as negative) in ft/s^2
 mass = 37.15/32.17  # Mass of the rocket in slugs (1 slug = 32.174 lbs·s^2/ft)
 area = 0.25  # Cross-sectional area of the rocket in ft^2
@@ -46,16 +86,28 @@ area = 0.25  # Cross-sectional area of the rocket in ft^2
 # apogee = compute_apogee(current_height, velocity, acceleration, mass, area, 0.01)
 # print("Apogee reached:", apogee, "feet")
 
-dt_values = [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]  # List of different time steps
+dt = 0.01
 
-# Plot trajectories for each variation
-for dt in dt_values:
-    times, heights, velocities = compute_apogee(current_height, velocity, acceleration, mass, area, dt)
-    plt.plot(times, heights, label=f"dt={dt}")
-    
-plt.xlabel("Time (seconds)")
-plt.ylabel("Height (feet)")
-plt.title("Rocket Trajectories with Different Time Steps")
-plt.legend()
-plt.grid(True)
+guesses = []
+
+current_height = height[0]  # Initial height in feet
+velocity = speed[0]  # Initial velocity in ft/s
+acceleration = accel[0]
+initialTime, initialHeight, initialSpeed = compute_apogee(current_height, velocity, acceleration, mass, area, dt)
+
+for i in range(0,len(time)):
+    current_height = height[i]  # Initial height in feet
+    velocity = speed[i]  # Initial velocity in ft/s
+    acceleration = accel[i]
+    eulerTime, eulerHeight, eulerSpeed = compute_apogee(current_height, velocity, acceleration, mass, area, dt)
+    if eulerHeight:
+        maxHeight = np.max(eulerHeight)
+        guesses.append(maxHeight)
+
+plt.plot(initialTime, initialHeight, time, height)
+#plt.plot(time[0:len(guesses)], guesses - max(height))
+plt.legend(["Initial Euler Prediction", "Real"])
+plt.xlabel("time (s)")
+plt.ylabel("height (ft)")
+plt.title("Error of predicted apogee over time")
 plt.show()
