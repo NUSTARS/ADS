@@ -30,17 +30,36 @@ def density(h):
         rho = -1
     return rho
 
+def kinematic_viscosity(height_ft):
+    # Constants for Sutherland's formula
+    nu_0 = 1.568e-5  # kinematic viscosity at sea level (ft^2/s)
+    T0 = 518.67  # reference temperature at sea level (R)
+    S = 110.4  # Sutherland's constant (R)
+    # Calculate temperature at the given height (assuming standard lapse rate)
+    T = 518.67 - 0.003566 * height_ft  # standard lapse rate: 0.003566 R/ft
+    # Calculate kinematic viscosity using Sutherland's formula
+    nu = nu_0 * (T / T0)**(3/2) * (T0 + S) / (T + S)
+    return nu
+
+def cd_vehicle(density,velocity, height):
+    nu = kinematic_viscosity(height)
+    l = 5.15/144
+    Re = density*velocity*l/nu
+    cd = 0.582 + (0.638 - 0.582) / (3.308e6 - 2.08e6) * (Re - 2.08e6)
+    return cd 
+
 def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_ads, dt):
-    # Constants
-    g = 32.174  # acceleration due to gravity in ft/s^2
-    rho_air = density(height_in)  # density of air in slugs/ft^3
-    Cd_vehicle = 0.6  # Drag coefficient of the vehicle
-    time_step = dt  # time step for Euler integration
-    
     # Initialize variables
     current_velocity = velocity_in
     current_height = height_in
     current_time = time_in
+    
+    # Constants
+    g = 32.174  # acceleration due to gravity in ft/s^2
+    rho_air = density(height_in)  # density of air in slugs/ft^3
+    Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
+    time_step = dt  # time step for Euler integration
+    
     
     times = []
     heights = []
