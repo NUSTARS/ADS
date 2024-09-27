@@ -7,9 +7,9 @@ A_ads = [0, 0.021, 0.0278, 0.035, 0.0417, 0.167] # ADS areas
 Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
 # Initial conditions
-h0 = 1982.47  #Initial height at burnout (ft)
-v0 = 541.46  # Initial velocity at burnout (ft/s)
-a0 = -21.243 #Initial acceleration (ft/s^2)
+h0 = 738.2  #Initial height at burnout (ft)
+v0 = 653.2  # Initial velocity at burnout (ft/s)
+a0 = 181.4 #Initial acceleration (ft/s^2)
 mass = 0.90  # Mass of the rocket
 
 # Function to calculate drag force for ADS
