@@ -9,8 +9,8 @@ Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat pla
 # Initial conditions
 h0 = 738.2  #Initial height at burnout (ft)
 v0 = 653.2  # Initial velocity at burnout (ft/s)
-a0 = 181.4 #Initial acceleration (ft/s^2)
 mass = 0.90  # Mass of the rocket
+dt = 0.1
 
 # Function to calculate drag force for ADS
 def drag_force_ADS(rho, v, A, Cd):
@@ -30,7 +30,7 @@ def density(h):
         rho = -1
     return rho
 
-def compute_apogee(time_in, height_in, velocity_in, acceleration_in, mass, A_vehicle, A_ads, Cd_ads, dt=0.01):
+def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_ads, dt):
     # Constants
     g = 32.174  # acceleration due to gravity in ft/s^2
     rho_air = density(height_in)  # density of air in slugs/ft^3
@@ -66,15 +66,14 @@ def compute_apogee(time_in, height_in, velocity_in, acceleration_in, mass, A_veh
 plt.figure(figsize=(10, 8))
 
 for n in range(0,len(A_ads)):
-    times, heights, velocities = compute_apogee(0, h0, v0, a0, mass, A_vehicle, A_ads[n], Cd_ads[n])
+    times, heights, velocities = compute_apogee(0, h0, v0, mass, A_vehicle, A_ads[n], Cd_ads[n], dt)
     plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
-    #plt.scatter(times[-1],heights[-1], label=f'{heights[-1]}')
     plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
 
 
 
 # Plot settings
-plt.title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {h0}ft, v0: {v0}ft/s, a0: {a0}ft/s²")
+plt.title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {h0}ft, v0: {v0}ft/s")
 plt.xlabel("Time (s)")
 plt.ylabel("Altitude (ft)")
 plt.legend()
