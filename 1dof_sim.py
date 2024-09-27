@@ -16,11 +16,24 @@ mass = 0.90  # Mass of the rocket
 def drag_force_ADS(rho, v, A, Cd):
     return 0.5 * rho * v**2 * Cd * A
 
+def density(h):
+    """Air density based on altitude (ft)."""
+    if h < 36152:
+        T = 59 - 0.00356 * h  # Temperature in Fahrenheit
+        p = 2116 * ((T + 459.7) / 518.6)**5.256  # Pressure in lbf/ft^2
+        rho = p / (1718 * (T + 459.7))  # Density in slugs/ft^3
+    elif h < 82345:
+        T = -70
+        p = 473.1 * np.exp(1.73 - 0.000048 * h)
+        rho = p / (1718 * (T + 459.7))  # Density in slugs/ft^3
+    else:
+        rho = -1
+    return rho
 
 def compute_apogee(time_in, height_in, velocity_in, acceleration_in, mass, A_vehicle, A_ads, Cd_ads, dt=0.01):
     # Constants
     g = 32.174  # acceleration due to gravity in ft/s^2
-    rho_air = 0.002378  # density of air in slugs/ft^3
+    rho_air = density(height_in)  # density of air in slugs/ft^3
     Cd_vehicle = 0.6  # Drag coefficient of the vehicle
     time_step = dt  # time step for Euler integration
     
@@ -54,7 +67,7 @@ plt.figure(figsize=(10, 8))
 
 for n in range(0,len(A_ads)):
     times, heights, velocities = compute_apogee(0, h0, v0, a0, mass, A_vehicle, A_ads[n], Cd_ads[n])
-    plt.plot(times, heights, label=f'ADS Area = {A_ads[n]} ft²')
+    plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
     #plt.scatter(times[-1],heights[-1], label=f'{heights[-1]}')
     plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
 
