@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
-A_vehicle = 0.137  # Reference area of the vehicle 
-A_ads = [0, 0.021, 0.0278, 0.035, 0.0417, 0.167] # ADS areas
+A_vehicle = 24.581150/144  # Reference area of the vehicle 
+A_ads = [0, 1/144, 1/144, 3/144, 4/144, 24/144] # ADS areas
 Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
 # Initial conditions
