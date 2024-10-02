@@ -6,6 +6,8 @@ A_vehicle = 24.581150/144  # Reference area of the vehicle
 A_ads = [0, 3/144, 4/144, 5/144, 6/144, 24/144] # ADS areas
 Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
+A_ads_mach = 6.68/144
+
 # Initial conditions
 h0 = 1000  #Initial height at burnout (ft)
 v0 = 656.6  # Initial velocity at burnout (ft/s)
@@ -15,6 +17,24 @@ dt = 0.1
 # Function to calculate drag force for ADS
 def drag_force_ADS(rho, v, A, Cd):
     return 0.5 * rho * v**2 * Cd * A
+
+
+def mach_helper (height_ft, velocity):
+    #assumptions: same temp as in kinematic_viscosity, air adiabatic index constant, air chemistry constant
+    Tk = (518.67 - 0.003566 * height_ft) * 5/9 #temp in Kelvins
+    
+    speed_of_sound = ((1.4*8.314*Tk/0.02896)**0.5)
+    # print(speed_of_sound)
+    mach = (velocity/3.281)/speed_of_sound
+    # print('mach')
+    # print(mach)
+    return mach
+
+
+def cd_ADS(mach):
+    # print(6.95556*mach**2 - 0.618889 * mach + 0.3)
+    return 6.95556*mach**2 - 0.618889 * mach + 0.3
+    # return 1
 
 def density(h):
     """Air density based on altitude (ft)."""
@@ -47,6 +67,50 @@ def cd_vehicle(density,velocity, height):
     Re = density*velocity*l/nu
     cd = 0.582 + (0.638 - 0.582) / (3.308e6 - 2.08e6) * (Re - 2.08e6)
     return cd 
+
+def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, dt):
+    # Initialize variables
+    current_velocity = velocity_in
+    current_height = height_in
+    current_time = time_in
+    
+    # Constants
+    g = 32.174  # acceleration due to gravity in ft/s^2
+    rho_air = density(height_in)  # density of air in slugs/ft^3
+    Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
+    time_step = dt  # time step for Euler integration
+    
+    
+    times = []
+    heights = []
+    velocities = []
+    
+    
+    while current_velocity > 0:
+        times.append(current_time)
+        F_drag = 0.5 * rho_air * current_velocity**2 * Cd_vehicle * A_vehicle + drag_force_ADS(rho_air, current_velocity, A_ads_mach, cd_ADS(mach_helper(current_height, current_velocity)))
+        F_gravity = mass * g
+        F_net = -1 * F_drag - F_gravity
+        acceleration_net = F_net / mass
+        current_velocity = current_velocity + acceleration_net * time_step
+        current_height = current_height + current_velocity * time_step
+        current_time += time_step
+        # print(mach_helper(current_height, current_velocity))
+        
+        # Save current height and velocity
+        heights.append(current_height)
+        velocities.append(current_velocity)
+
+    return times, heights, velocities
+
+# Simulate for different ADS areas and plot
+plt.figure(figsize=(10, 8))
+
+
+times, heights, velocities = compute_apogee_mach_func(0, h0, v0, mass, A_vehicle, A_ads, dt)
+plt.plot(times, heights, label=f'ADS Area = {(A_ads_mach)*144} in²')
+plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=10, ha='left', va='center')
+
 
 def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_ads, dt):
     # Initialize variables
@@ -82,15 +146,13 @@ def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_a
     return times, heights, velocities
 
 # Simulate for different ADS areas and plot
-plt.figure(figsize=(10, 8))
 
 for n in range(0,len(A_ads)):
     times, heights, velocities = compute_apogee(0, h0, v0, mass, A_vehicle, A_ads[n], Cd_ads[n], dt)
     plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
     plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
 
-
-
+# plt.plot(times, mach_nums)
 # Plot settings
 plt.title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {h0}ft, v0: {v0}ft/s")
 plt.xlabel("Time (s)")
@@ -98,3 +160,5 @@ plt.ylabel("Altitude (ft)")
 plt.legend()
 plt.grid(True)
 plt.show()
+
+
