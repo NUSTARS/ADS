@@ -10,7 +10,6 @@ Cd_ads = 1.0
 # Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 # A_ads = [ 6.4/144, 6.5/144, 6.6/144] # ADS areas
 # Cd_ads = [1.28, 1.28, 1.28]
-
 A_ads_mach = 9.18/144
 
 # Initial conditions
@@ -18,7 +17,6 @@ A_ads_mach = 9.18/144
 # v0 = 656.6  # Initial velocity at burnout (ft/s)
 mass = 0.932429 + 0.1086755  # Mass of the rocket
 dt = 0.01
-
 
 def mach_helper (height_ft, velocity):
     #assumptions: same temp as in kinematic_viscosity, air adiabatic index constant, air chemistry constant
@@ -148,67 +146,9 @@ def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, d
 # plt.figure(figsize=(10, 8))
 plt.figure()
 
-
-#reads csb
-file_name = "rocket_realreal.csv"
+#reads cs
+file_name = "data/openrocket_v3.csv"
 df = pd.read_csv(file_name, on_bad_lines='skip')
-
-
-#loops through all the ads variations and plot
-# for n in range(0,len(Cd_ads)):
-
-#     #this list is for all the trajectories from one ads variation
-#     predicted_trajectories = []
-
-#     #loops through every line of the csv and uses it as ics
-#     for index, row in df.iterrows():
-#         ic_time = row['time']
-#         ic_height = row['altitude']  # Initial height in feet
-#         ic_velocity = row['speed']  # Initial velocity in ft/s
-#         # ic_acceleration = row['acceleration']  # Acceleration in ft/s^2
-
-#         # # Compute trajectory for this time step as long as the rocket is 1. no longer in boost (a < 0) and 2. not falling (v > 0)
-#         if ic_time > 2.129 and ic_time < 17.379:
-#             # print(ic_time)
-#             times, heights, velocities = compute_apogee(ic_time, ic_height, ic_velocity, mass, A_vehicle, A_ads[n], Cd_ads[n], dt)
-#             label_time = ic_time
-#         # print(ic_height)
-#         # Append predicted trajectory data to the list
-#         # predicted_trajectories.append((times, heights, f"Predicted Apogee: {max(heights):.2f} feet"))
-#             predicted_trajectories.append((times, heights, label_time))
-#         # if(len(heights) > 0):
-#         #     predicted_trajectories.append((times, max(heights), label_time))
-#     # print((predicted_trajectories[0][2]))
-#     # print(len(predicted_trajectories[1][1]))
-#     #print(predicted_trajectories[2])
-#     ic_times = []
-#     apogees = []
-#     for trajectories in predicted_trajectories:
-#         # print(count)
-#         # count+=1
-#         # print(max(trajectories[1]))
-#         # print(trajectories[2])
-#         ic_times.append(trajectories[2])
-#         apogees.append(max(trajectories[1]))
-#     # print(ic_times)
-#     # Plot all trajectories on the same figure
-#     # plt.subplot(2,2,n)
-#     # plt.plot
-
-#     # print(ic_times)
-#     # print(apogees)
-    
-# # plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
-#     plt.plot(ic_times, apogees, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
-    
-
-    # plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
-    # plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
-
-
-
-#plots the mach ads variation
-
 
 predicted_trajectories_mach = []
     #loops through every line of the csv and uses it as ics
@@ -260,7 +200,6 @@ for index, row in df.iterrows():
     
 # plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
 # plt.plot(ic_times_zero, apogees_zero, linewidth = 1, label=f'ADS Area = {round(A_ads_mach*144, 2)} in²')
-
 
 apogees_delta = np.subtract(apogees_zero, apogees_mach)
 print(apogees_delta)
