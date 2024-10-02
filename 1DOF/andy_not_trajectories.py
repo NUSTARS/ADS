@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
+from pathlib import Path
 
 # SOMETHING IS VERY BROKEN IN MY CODE
 # I WILL WORK ON IT
@@ -123,9 +125,11 @@ def load_and_simulate(file_name, N):
     return ic_times_mach, apogees_mach, max_apogee
 
 # File and number of initial conditions
-file_name = "data/openrocket_v3.csv"
+project_root = Path(__file__).parent  # Gets the current directory where the script is located
+file_path = project_root / "data/openrocket_v3.csv"
+
 N = 100  # Specify how many evenly spaced initial conditions to use
-ic_times_mach, apogees_mach, max_apogee = load_and_simulate(file_name, N)
+ic_times_mach, apogees_mach, max_apogee = load_and_simulate(file_path, N)
 
 # Plot results
 plt.figure()

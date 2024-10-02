@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
+from pathlib import Path
 
 # Constants
 A_vehicle = 24.581150/144  # Reference area of the vehicle 
@@ -147,8 +149,9 @@ def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, d
 plt.figure()
 
 #reads cs
-file_name = "data/openrocket_v3.csv"
-df = pd.read_csv(file_name, on_bad_lines='skip')
+project_root = Path(__file__).parent  # Gets the current directory where the script is located
+file_path = project_root / "data/openrocket_v3.csv"
+df = pd.read_csv(file_path, on_bad_lines='skip')
 
 predicted_trajectories_mach = []
     #loops through every line of the csv and uses it as ics
