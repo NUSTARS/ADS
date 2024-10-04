@@ -1,16 +1,7 @@
 import pandas as pd
-import plotly.graph_objs as go
 import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.animation import FuncAnimation
-from scipy.signal import savgol_filter
-import math
-from PIL import Image
-import matplotlib.ticker as ticker
-
-import os
 from pathlib import Path
-
+import os
 import seaborn as sns
 
 sns.set_style("whitegrid")
@@ -30,20 +21,6 @@ def clean_openrocket_data(df, alpha):
     df["smoothed_acceleration"] = df['Vertical acceleration (ft/s²)'].ewm(alpha=alpha, min_periods=1).mean()
 
     return df
-
-# def density(h):
-#     """Calculate air density based on altitude (ft) for a DataFrame."""
-#     if h < 36152:
-#         T = 59 - 0.00356 * h  # Temperature in Fahrenheit
-#         p = 2116 * ((T + 459.7) / 518.6)**5.256  # Pressure in lbf/ft^2
-#         rho = p / (1718 * (T + 459.7))  # Density in slugs/ft^3
-#     elif h < 82345:
-#         T = -70
-#         p = 473.1 * np.exp(1.73 - 0.000048 * h)
-#         rho = p / (1718 * (T + 459.7))  # Density in slugs/ft^3
-#     else:
-#         rho = -1  # Out of atmospheric range
-#     return rho
 
 # def values_for_ahmand(df):
 #     try:
@@ -112,7 +89,6 @@ def clean_openrocket_data(df, alpha):
 
 #     plt.tight_layout()
 
-
 # def main(properties):
 #     # DATA PREPPING
 #     path_start = "/Users/andrewwehmeyer/Library/Mobile Documents/com~apple~CloudDocs/NUSTARS/Coding/Monte/data/"
@@ -157,7 +133,6 @@ for current_csv in csv_list:
     # plt.plot(df_cleaned['time'][0:400], df_cleaned['smoothed_altitude'][0:400], label=current_csv)
     # plot only the range where velocity > 0
     plt.plot(df_cleaned['time'][df_cleaned['smoothed_velocity'] > 0], df_cleaned['smoothed_altitude'][df_cleaned['smoothed_velocity'] > 0], label=current_csv)
-
 
 plt.legend()
 plt.xlabel('Time [s]')
