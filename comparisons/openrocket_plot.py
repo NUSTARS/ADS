@@ -122,19 +122,23 @@ def clean_openrocket_data(df, alpha):
 
 project_root = Path(__file__).parent  # Gets the current directory where the script is located
 file_path = project_root / "data/"
-csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
 
-plt.figure(figsize=(10, 6))
+def comparison_plot():
+    csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
 
-for current_csv in csv_list:
-    print(file_path / current_csv)
-    df = pd.read_csv(file_path / current_csv, skiprows=5)
-    df_cleaned = clean_openrocket_data(df, 1)
-    # plt.plot(df_cleaned['time'][0:400], df_cleaned['smoothed_altitude'][0:400], label=current_csv)
-    # plot only the range where velocity > 0
-    plt.plot(df_cleaned['time'][df_cleaned['smoothed_velocity'] > 0], df_cleaned['smoothed_altitude'][df_cleaned['smoothed_velocity'] > 0], label=current_csv)
+    plt.figure(figsize=(10, 6))
+    for current_csv in csv_list:
+        print(file_path / current_csv)
+        df = pd.read_csv(file_path / current_csv, skiprows=5)
+        df_cleaned = clean_openrocket_data(df, 1)
+        # plt.plot(df_cleaned['time'][0:400], df_cleaned['smoothed_altitude'][0:400], label=current_csv)
+        # plot only the range where velocity > 0
+        max_height = max(df_cleaned['smoothed_altitude'])
+        current_label = f'{current_csv} - {max_height:.1f} ft'
+        plt.plot(df_cleaned['time'][df_cleaned['smoothed_velocity'] > 0], df_cleaned['smoothed_altitude'][df_cleaned['smoothed_velocity'] > 0], label=current_label)
+    plt.legend()
+    plt.xlabel('Time [s]')
+    plt.ylabel('Altitude [ft]')
+    plt.show()
 
-plt.legend()
-plt.xlabel('Time [s]')
-plt.ylabel('Altitude [ft]')
-plt.show()
+comparison_plot()
