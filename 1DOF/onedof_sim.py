@@ -45,6 +45,35 @@ def interpolate_cd_vehicle(Re):
     interp_Cd = np.interp(Re, known_Re, known_Cd)
     return interp_Cd
 
+def interpolate_cd_general(v, h):
+    """Interpolate drag coefficient and force based on velocity and altitude."""
+
+    # Assume reference area and length dependent ONLY on vehicle outer diameter
+
+    # Calculate Reynolds number and Mach number
+    T, p, rho, a, nu = fluid_properties(h)
+    Re_local = reynolds_number(v, 5.15/144, nu, rho)
+    M_local = v / a
+
+    # Read generic data
+    file_path = project_root / "../cfd_data/generic.csv"
+    df = pd.read_csv(file_path)
+
+    # Interpolate Cd based on Re or M for incompressible vs compressible flow
+    if M_local < 0.3: # Incompressible flow
+        Re_column = df['Re']
+        Cd_column = df['Cd']
+        Cd = np.interp(Re_local, Re_column, Cd_column)
+    else: # Compressible flow
+        M_column = df['M']
+        Cd_column = df['Cd']
+        Cd = np.interp(M_local, M_column, Cd_column)
+
+    # Compute drag force
+    F_drag = 0.5 * rho * v**2 * Cd * 5.15/144
+
+    return Cd, F_drag
+
 def ode_solver(ics, properties, dt=0.01):
     """Solve the 1DOF equations of motion using Euler integration."""
 
@@ -139,6 +168,7 @@ def not_trajectories():
     df = pd.read_csv(file_path, skiprows=5)
     df_clean = clean_openrocket_data(df, 1)
 
+    # Get rid of this magic number
     df_clean = df_clean[df_clean['time'] > 2.88]
 
     total_rows = len(df)
