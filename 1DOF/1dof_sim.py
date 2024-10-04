@@ -2,16 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### VEHICLE PROPERTIES
-A_vehicle = 25/144
-A_ads = 6/144
+A_vehicle = 25/144 # Area of the vehicle [ft^2]
+A_ads = 6/144 # Area of the ADS [ft^2]
 mass = 0.90  # Mass of the rocket [slugs]
-l = 5.15/144
+l = 5.15/144 # Reference length of the rocket [ft]
 # A_ads_mach = 6.68/144
 
 # Initial conditions
 h0 = 1000  #Initial height at burnout [ft]
 v0 = 656.6  # Initial velocity at burnout [ft/s]
-dt = 0.1
+dt = 0.01 # Time step for Euler integration [s]
 
 ### GLOBAL CONSTANTS IN IMPERIAL UNITS
 g = 32.174  # acceleration due to gravity in ft/s^2
@@ -71,7 +71,7 @@ def ode_solver(t_0, h_0, v_0, dt):
     # Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
     # time_step = dt  # time step for Euler integration
     
-    states = [[None]] * 5
+    states = [ [], [], [], [], [] ]
     # time, height, velocity, mach, drag force
     # times = []
     # heights = []
