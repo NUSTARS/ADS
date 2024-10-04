@@ -2,11 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### VEHICLE PROPERTIES
-A_vehicle = 25/144 # Area of the vehicle [ft^2]
+A_vehicle = 24.581150/144 # Area of the vehicle [ft^2]
 A_ads = 6/144 # Area of the ADS [ft^2]
 mass = 0.90  # Mass of the rocket [slugs]
 l = 5.15/144 # Reference length of the rocket [ft]
 # A_ads_mach = 6.68/144
+# Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
 # Initial conditions
 h0 = 1000  #Initial height at burnout [ft]
@@ -41,15 +42,21 @@ def reynolds_number(velocity, length, nu, rho):
     return Re
 
 def interpolate_cd_ads(Re):
-    return 0.7
+    known_Re = [0, 3.308e6]
+    known_Cd = [1.0, 0.97]
+    interp_Cd = np.interp(Re, known_Re, known_Cd)
+    return interp_Cd
+
+def interpolate_cd_vehicle(Re):
+    known_Re = [0, 3.308e6]
+    known_Cd = [0.582, 0.638]
+    interp_Cd = np.interp(Re, known_Re, known_Cd)
+    return interp_Cd
 
 # def cd_ADS(mach):
 #     # print(6.95556*mach**2 - 0.618889 * mach + 0.3)
 #     return 6.95556*mach**2 - 0.618889 * mach + 0.3
 #     # return 1
-
-def interpolate_cd_vehicle(Re):
-    return 0.7
 
 # def cd_vehicle(density,velocity, height):
 #     nu = kinematic_viscosity(height)
@@ -65,18 +72,9 @@ def ode_solver(t_0, h_0, v_0, dt):
     current_time = t_0
     current_height = h_0
     current_velocity = v_0
-    
-    # Constants
-    # rho_air = density(height_in)  # density of air in slugs/ft^3
-    # Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
-    # time_step = dt  # time step for Euler integration
-    
+        
     states = [ [], [], [], [], [] ]
-    # time, height, velocity, mach, drag force
-    # times = []
-    # heights = []
-    # velocities = []
-    
+
     while current_velocity > 0:
         states[0].append(current_time)
         states[1].append(current_height)
@@ -113,9 +111,6 @@ plt.grid(True)
 plt.show()
 
 # Constants
-# A_vehicle = 24.581150/144  # Reference area of the vehicle [ft^2]
-# A_ads = [0, 3/144, 4/144, 5/144, 6/144, 24/144] # ADS areas [ft^2]
-# Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
 
 # Simulate for different ADS areas and plot
@@ -124,19 +119,6 @@ plt.show()
 #     times, heights, velocities = compute_apogee(0, h0, v0, mass, A_vehicle, A_ads[n], Cd_ads[n], dt)
 #     plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
 #     plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
-
-
-# def mach_helper (height_ft, velocity):
-#     #assumptions: same temp as in kinematic_viscosity, air adiabatic index constant, air chemistry constant
-#     Tk = (518.67 - 0.003566 * height_ft) * 5/9 #temp in Kelvins
-    
-#     speed_of_sound = ((1.4*8.314*Tk/0.02896)**0.5)
-#     # print(speed_of_sound)
-#     mach = (velocity/3.281)/speed_of_sound
-#     # print('mach')
-#     # print(mach)
-#     return mach
-
 
 # def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, dt):
 #     # Initialize variables
