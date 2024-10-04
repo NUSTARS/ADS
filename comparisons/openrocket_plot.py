@@ -122,10 +122,9 @@ def clean_openrocket_data(df, alpha):
 
 project_root = Path(__file__).parent  # Gets the current directory where the script is located
 file_path = project_root / "data/"
+csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
 
 def comparison_plot():
-    csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
-
     plt.figure(figsize=(10, 6))
     for current_csv in csv_list:
         print(file_path / current_csv)
