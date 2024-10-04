@@ -2,22 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Constants
-A_vehicle = 24.581150/144  # Reference area of the vehicle 
-A_ads = [0, 3/144, 4/144, 5/144, 6/144, 24/144] # ADS areas
+A_vehicle = 24.581150/144  # Reference area of the vehicle [ft^2]
+A_ads = [0, 3/144, 4/144, 5/144, 6/144, 24/144] # ADS areas [ft^2]
 Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
 
 A_ads_mach = 6.68/144
 
 # Initial conditions
-h0 = 1000  #Initial height at burnout (ft)
-v0 = 656.6  # Initial velocity at burnout (ft/s)
-mass = 0.90  # Mass of the rocket
+h0 = 1000  #Initial height at burnout [ft]
+v0 = 656.6  # Initial velocity at burnout [ft/s]
+mass = 0.90  # Mass of the rocket [slugs]
 dt = 0.1
-
-# Function to calculate drag force for ADS
-def drag_force_ADS(rho, v, A, Cd):
-    return 0.5 * rho * v**2 * Cd * A
-
 
 def mach_helper (height_ft, velocity):
     #assumptions: same temp as in kinematic_viscosity, air adiabatic index constant, air chemistry constant
@@ -66,7 +61,7 @@ def cd_vehicle(density,velocity, height):
     l = 5.15/144
     Re = density*velocity*l/nu
     cd = 0.582 + (0.638 - 0.582) / (3.308e6 - 2.08e6) * (Re - 2.08e6)
-    return cd 
+    return cd
 
 def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, dt):
     # Initialize variables
@@ -80,17 +75,17 @@ def compute_apogee_mach_func(time_in, height_in, velocity_in, mass, A_vehicle, A
     Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
     time_step = dt  # time step for Euler integration
     
-    
     times = []
     heights = []
     velocities = []
     
-    
     while current_velocity > 0:
         times.append(current_time)
-        F_drag = 0.5 * rho_air * current_velocity**2 * Cd_vehicle * A_vehicle + drag_force_ADS(rho_air, current_velocity, A_ads_mach, cd_ADS(mach_helper(current_height, current_velocity)))
+        F_drag_vehicle = 0.5 * rho_air * current_velocity**2 * Cd_vehicle * A_vehicle
+        Cd_ADS = cd_ADS(mach_helper(current_height, current_velocity))
+        F_drag_ADS = 0.5 * rho_air * current_velocity**2 * Cd_ADS * A_ads_mach
         F_gravity = mass * g
-        F_net = -1 * F_drag - F_gravity
+        F_net = -1 * F_drag_ADS - F_drag_vehicle - F_gravity
         acceleration_net = F_net / mass
         current_velocity = current_velocity + acceleration_net * time_step
         current_height = current_height + current_velocity * time_step
@@ -124,16 +119,17 @@ def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_a
     Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
     time_step = dt  # time step for Euler integration
     
-    
     times = []
     heights = []
     velocities = []
     
     while current_velocity > 0:
         times.append(current_time)
-        F_drag = 0.5 * rho_air * current_velocity**2 * Cd_vehicle * A_vehicle + drag_force_ADS(rho_air, current_velocity, A_ads, Cd_ads)
+        F_drag_vehicle = 0.5 * rho_air * current_velocity**2 * Cd_vehicle * A_vehicle
+        Cd_ADS = cd_ADS(mach_helper(current_height, current_velocity))
+        F_drag_ADS = 0.5 * rho_air * current_velocity**2 * Cd_ADS * A_ads_mach
         F_gravity = mass * g
-        F_net = -1 * F_drag - F_gravity
+        F_net = -1 * F_drag_ADS - F_drag_vehicle - F_gravity
         acceleration_net = F_net / mass
         current_velocity = current_velocity + acceleration_net * time_step
         current_height = current_height + current_velocity * time_step
@@ -160,5 +156,3 @@ plt.ylabel("Altitude (ft)")
 plt.legend()
 plt.grid(True)
 plt.show()
-
-
