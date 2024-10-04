@@ -4,19 +4,6 @@ import pandas as pd
 from pathlib import Path
 import os
 
-### VEHICLE PROPERTIES
-# A_vehicle = 24.581150/144 # Area of the vehicle [ft^2]
-# A_ads = 6/144 # Area of the ADS [ft^2]
-# mass = 0.90  # Mass of the rocket [slugs]
-# l = 5.15/144 # Reference length of the rocket [ft]
-# A_ads_mach = 6.68/144
-# Cd_ads = [1.0, 0.55, 0.55, 0.55, 0.7, 0.97]  # Drag coefficient of ADS (flat plate)
-
-# Initial conditions
-h0 = 1000  #Initial height at burnout [ft]
-v0 = 656.6  # Initial velocity at burnout [ft/s]
-dt = 0.01 # Time step for Euler integration [s]
-
 ### GLOBAL CONSTANTS IN IMPERIAL UNITS
 g = 32.174  # acceleration due to gravity in ft/s^2
 
@@ -57,11 +44,6 @@ def interpolate_cd_vehicle(Re):
     known_Cd = [0.582, 0.638]
     interp_Cd = np.interp(Re, known_Re, known_Cd)
     return interp_Cd
-
-# def cd_ADS(mach):
-#     # print(6.95556*mach**2 - 0.618889 * mach + 0.3)
-#     return 6.95556*mach**2 - 0.618889 * mach + 0.3
-#     # return 1
 
 def ode_solver(ics, properties, dt=0.01):
     """Solve the 1DOF equations of motion using Euler integration."""
@@ -130,7 +112,7 @@ def ads_area_comparison_run():
         properties = type(' properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': ads_area/144})
         states = ode_solver(ics, properties)
         ax1.plot(states[0], states[1], label=f'ADS Area = {ads_area} in²')
-    ax1.set_title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {h0} ft, v0: {v0} ft/s")
+    ax1.set_title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {ics.h_0} ft, v0: {ics.v_0} ft/s")
     ax1.set_xlabel("Time [s]")
     ax1.set_ylabel("Altitude [ft]")
     ax1.legend()
@@ -152,45 +134,61 @@ def clean_openrocket_data(df, alpha):
 
     return df
 
-def not_trajectories():
-    properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
-    
-    file_path = project_root / "../openrocket_data/Disturbance_Sims_Pressure.csv"
+def not_trajectories():    
+    file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
     df = pd.read_csv(file_path, skiprows=5)
     df_clean = clean_openrocket_data(df, 1)
+
+    df_clean = df_clean[df_clean['time'] > 2.88]
+
     total_rows = len(df)
     N = 100
     
     step_size = max(total_rows // N, 1)
+    start_time = []
+    all_trajectories_active = []
+    all_trajectories_inactive = []
+    properties_active = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 6.68/144})
+    properties_inactive = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
     
-    all_tracjectories = []
-
-    properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 6/144})
-    
-    # Iterate through evenly spaced rows
     for index in range(0, total_rows, step_size):
-        if index > total_rows:
-            return
-        row = df_clean.iloc[index]
-        ic = type('ics', (object,), {'t_0': row['time'], 'v_0': row['smoothed_velocity'], 'h_0': row['smoothed_altitude']})
-        states = ode_solver(ic, properties, dt=0.01)
-        all_tracjectories.append(states)
-        
-    return all_tracjectories
+        try:
+            row = df_clean.iloc[index]
 
-#     # Plot results
-#     plt.figure()
-#     # plot the maximum apogees
-#     # plt.plot(ic_times_mach, apogees_mach, label=f'ADS Area = {round(A_ads_mach * 144, 2)} in²')
-#     plt.title("Apogee vs Actuation Time")
-#     plt.xlabel("T+X ADS Starts Actuating [s]")
-#     plt.ylabel("Apogee [ft]")
-#     plt.grid(True)
-#     plt.legend()
-#     plt.show()
+            start_time.append(row['time'])
+            
+            ic = type('ics', (object,), {'t_0': row['time'], 'v_0': row['smoothed_velocity'], 'h_0': row['smoothed_altitude']})
+            states_active = ode_solver(ic, properties_active, dt=0.01)
+            all_trajectories_active.append(states_active)
+            
+            states_inactive = ode_solver(ic, properties_inactive, dt=0.01)
+            all_trajectories_inactive.append(states_inactive)
+        except Exception as e:
+            print(f"Error processing row {index}: {e}")
+    
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+    
+    for index in range(len(all_trajectories_active)):
+        try:
+            active_apogee = max(all_trajectories_active[index][1])
+            print(active_apogee)
+            inactive_apogee = max(all_trajectories_inactive[index][1])
+            print(inactive_apogee)
+            delta = max(all_trajectories_inactive[index][1]) - max(all_trajectories_active[index][1])
+            ax1.plot(start_time[index], delta, 'ro')
 
-# generic_run()
-# ads_area_comparison_run()
+        except Exception as e:
+            print(f"Error processing row {index}: {e}")
+
+    # Set plot titles and labels
+    ax1.set_title("Various Trajectories where ADS is Started at T+X")
+    ax1.set_xlabel("Time [s]")
+    ax1.set_ylabel("Delta [ft]")
+    ax1.legend() # Display a legend
+    ax1.grid(True)
+
+generic_run()
+ads_area_comparison_run()
 not_trajectories()
 
-# plt.show()
+plt.show()

@@ -86,7 +86,6 @@ def compute_apogee(time_in, height_in, velocity_in, mass, A_vehicle, A_ads, Cd_a
     Cd_vehicle = cd_vehicle(rho_air,current_velocity, current_height)  # Drag coefficient of the vehicle
     time_step = dt  # time step for Euler integration
     
-    
     times = []
     heights = []
     velocities = []
