@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
+from pathlib import Path
+import os
 
 ### VEHICLE PROPERTIES
 # A_vehicle = 24.581150/144 # Area of the vehicle [ft^2]
@@ -16,6 +19,8 @@ dt = 0.01 # Time step for Euler integration [s]
 
 ### GLOBAL CONSTANTS IN IMPERIAL UNITS
 g = 32.174  # acceleration due to gravity in ft/s^2
+
+project_root = Path(__file__).parent  # Gets the current directory where the script is located
 
 def fluid_properties(altitude):
     """Air density based on altitude (ft)."""
@@ -48,7 +53,7 @@ def interpolate_cd_ads(Re):
     return interp_Cd
 
 def interpolate_cd_vehicle(Re):
-    known_Re = [0, 3.308e6]
+    known_Re = [2.08e6, 3.308e6]
     known_Cd = [0.582, 0.638]
     interp_Cd = np.interp(Re, known_Re, known_Cd)
     return interp_Cd
@@ -58,42 +63,40 @@ def interpolate_cd_vehicle(Re):
 #     return 6.95556*mach**2 - 0.618889 * mach + 0.3
 #     # return 1
 
-# def cd_vehicle(density,velocity, height):
-#     nu = kinematic_viscosity(height)
-#     l = 5.15/144
-#     Re = density*velocity*l/nu
-#     cd = 0.582 + (0.638 - 0.582) / (3.308e6 - 2.08e6) * (Re - 2.08e6)
-#     return cd
-
-### FIX WEIRD LINEAER THING
-
 def ode_solver(ics, properties, dt=0.01):
+    """Solve the 1DOF equations of motion using Euler integration."""
+
     # Initialize variables
     current_time = ics.t_0
     current_velocity = ics.v_0
-    current_height = ics.h_0
-        
+    current_height = ics.h_0        
     states = [ [], [], [], [], [] ]
 
+    # Only simulate while the rocket is moving upwards
     while current_velocity > 0:
+        # Get current states
         states[0].append(current_time)
         states[1].append(current_height)
         states[2].append(current_velocity)
 
+        # Compute altitude-dependent fluid properties
         T, p, rho, a, nu = fluid_properties(current_height)
         Re = reynolds_number(current_velocity, 5.15/144, nu, rho)
         
+        # Lookup drag coefficients
         Cd_vehicle = interpolate_cd_vehicle(Re)
         Cd_ads = interpolate_cd_ads(Re)
 
+        # Compute forces
         F_drag_vehicle = 0.5 * rho * current_velocity**2 * Cd_vehicle * properties.A_vehicle
         F_drag_ADS = 0.5 * rho * current_velocity**2 * Cd_ads * properties.A_ads
         F_gravity = properties.mass * g
 
+        # Apply F = ma
         F_net = 0 - F_drag_ADS - F_drag_vehicle - F_gravity
-
         acceleration_net = F_net / properties.mass
 
+        # Update states
         current_velocity = current_velocity + acceleration_net * dt
         current_height = current_height + current_velocity * dt
         current_time = current_time + dt
@@ -101,6 +104,7 @@ def ode_solver(ics, properties, dt=0.01):
     return states
 
 def generic_run():
+    """Simulate the rocket for a generic without ADS."""
     ics = type('ics', (object,), {'t_0': 2.8, 'v_0': 656.6, 'h_0': 1000})
     properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
     states = ode_solver(ics, properties)
@@ -118,6 +122,7 @@ def generic_run():
     ax1.grid(True)
 
 def ads_area_comparison_run():
+    """Simulate the rocket for different ADS areas and plot the results."""
     ads_areas = [0.5, 1, 2, 3, 4, 5, 6]
     ics = type('ics', (object,), {'t_0': 2.8, 'v_0': 656.6, 'h_0': 1000})
     fig, ax1 = plt.subplots(figsize=(10, 6))
@@ -131,12 +136,61 @@ def ads_area_comparison_run():
     ax1.legend()
     ax1.grid(True)
 
-generic_run()
-ads_area_comparison_run()
-plt.show()
+def clean_openrocket_data(df, alpha):
+    assert 0 <= alpha <= 1, 'Alpha must be between 0 and 1'
 
-# Simulate for different ADS areas and plot
-# for n in range(0,len(A_ads)):
-#     times, heights, velocities = compute_apogee(0, h0, v0, mass, A_vehicle, A_ads[n], Cd_ads[n], dt)
-#     plt.plot(times, heights, label=f'ADS Area = {round(A_ads[n]*144,2)} in²')
-#     plt.text(times[-1], heights[-1], f' {heights[-1]:.1f} ft', fontsize=5, ha='left', va='center')
+    # Skip rows with event information based on the '#' identifier in the 'Time' column
+    df = df[~df['# Time (s)'].astype(str).str.startswith('#')]
+
+    # Convert the 'Time' column to integers
+    df["time"] = df['# Time (s)'].astype(float)
+
+    # Apply Exponential Weighted Moving Average (EWMA) smoothing
+    df["smoothed_altitude"] = df['Altitude (ft)'].ewm(alpha=alpha, min_periods=1).mean()
+    df["smoothed_velocity"] = df['Vertical velocity (ft/s)'].ewm(alpha=alpha, min_periods=1).mean()
+    df["smoothed_acceleration"] = df['Vertical acceleration (ft/s²)'].ewm(alpha=alpha, min_periods=1).mean()
+
+    return df
+
+def not_trajectories():
+    properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
+    
+    file_path = project_root / "../openrocket_data/Disturbance_Sims_Pressure.csv"
+    df = pd.read_csv(file_path, skiprows=5)
+    df_clean = clean_openrocket_data(df, 1)
+    total_rows = len(df)
+    N = 100
+    
+    step_size = max(total_rows // N, 1)
+    
+    all_tracjectories = []
+
+    properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 6/144})
+    
+    # Iterate through evenly spaced rows
+    for index in range(0, total_rows, step_size):
+        if index > total_rows:
+            return
+        row = df_clean.iloc[index]
+        ic = type('ics', (object,), {'t_0': row['time'], 'v_0': row['smoothed_velocity'], 'h_0': row['smoothed_altitude']})
+        states = ode_solver(ic, properties, dt=0.01)
+        all_tracjectories.append(states)
+        
+    return all_tracjectories
+
+#     # Plot results
+#     plt.figure()
+#     # plot the maximum apogees
+#     # plt.plot(ic_times_mach, apogees_mach, label=f'ADS Area = {round(A_ads_mach * 144, 2)} in²')
+#     plt.title("Apogee vs Actuation Time")
+#     plt.xlabel("T+X ADS Starts Actuating [s]")
+#     plt.ylabel("Apogee [ft]")
+#     plt.grid(True)
+#     plt.legend()
+#     plt.show()
+
+# generic_run()
+# ads_area_comparison_run()
+not_trajectories()
+
+# plt.show()
