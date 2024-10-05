@@ -58,13 +58,17 @@ def comparison_plot():
     plt.legend()
     plt.xlabel('Time [s]')
     plt.ylabel('Altitude [ft]')
-    plt.show()
 
-def max_velocity_and_max_q():
-    df = pd.read_csv(file_path / "Disturbance_Sims_Base.csv", skiprows=5)
-    df_cleaned = clean_openrocket_data(df, 1)
-    velocity = max(df_cleaned['smoothed_velocity'])
-    return 1
+def random_math():
+    v = 281
+    T, p, rho, a, nu = fluid_properties(1000)
+    F_drag = 0.5 * rho * v**2 * 0.6 * 25/144
+
+    # 6.9241154475
+
+    print(F_drag)
 
 comparison_plot()
-max_velocity_and_max_q()
+random_math()
+
+# plt.show()

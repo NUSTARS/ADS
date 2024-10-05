@@ -61,11 +61,11 @@ def interpolate_cd_general(v, h):
 
     # Interpolate Cd based on Re or M for incompressible vs compressible flow
     if M_local < 0.3: # Incompressible flow
-        Re_column = df['Re']
+        Re_column = df[df.columns[1]]
         Cd_column = df['Cd']
         Cd = np.interp(Re_local, Re_column, Cd_column)
     else: # Compressible flow
-        M_column = df['M']
+        M_column = df[df.columns[0]]
         Cd_column = df['Cd']
         Cd = np.interp(M_local, M_column, Cd_column)
 
@@ -194,21 +194,21 @@ def not_trajectories():
             states_inactive = ode_solver(ic, properties_inactive, dt=0.01)
             all_trajectories_inactive.append(states_inactive)
         except Exception as e:
-            print(f"Error processing row {index}: {e}")
+            # print(f"Error processing row {index}: {e}")
+            pass
     
     fig, ax1 = plt.subplots(figsize=(10, 6))
     
     for index in range(len(all_trajectories_active)):
         try:
             active_apogee = max(all_trajectories_active[index][1])
-            print(active_apogee)
             inactive_apogee = max(all_trajectories_inactive[index][1])
-            print(inactive_apogee)
             delta = max(all_trajectories_inactive[index][1]) - max(all_trajectories_active[index][1])
             ax1.plot(start_time[index], delta, 'ro')
 
         except Exception as e:
-            print(f"Error processing row {index}: {e}")
+            # print(f"Error processing row {index}: {e}")
+            pass
 
     # Set plot titles and labels
     ax1.set_title("Various Trajectories where ADS is Started at T+X")
