@@ -46,17 +46,43 @@ def interpolate_cd_ads(Re):
     interp_Cd = np.interp(Re, known_Re, known_Cd)
     return interp_Cd
 
-df_openrocket = None
+df_openrocket_global = None
+poly_func = None
 def interpolate_cd_openrocket(Re):
-    global df_openrocket
-    if df_openrocket is None:
+    global df_openrocket_global
+    global poly_func
+    if df_openrocket_global is None:
         file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
-        df_openrocket = pd.read_csv(file_path, skiprows=5)
-        df_openrocket = clean_openrocket_data(df_openrocket, 1)
-        df_openrocket = df_openrocket[df_openrocket['smoothed_velocity'] > 0]
-        
-    interp_Cd = np.interp(Re, df_openrocket['Reynolds number (​)'], df_openrocket['Drag coefficient (​)'])
-    return interp_Cd
+        df_openrocket_global = pd.read_csv(file_path, skiprows=5)
+        df_openrocket_global = clean_openrocket_data(df_openrocket_global, 1)
+        df_openrocket_global = df_openrocket_global[df_openrocket_global['smoothed_velocity'] > 0]
+
+        Re_data = df_openrocket_global['Reynolds number (​)']
+        min_Re = Re_data.min()
+        max_Re = Re_data.max()
+        Cd_data = df_openrocket_global['Drag coefficient (​)']
+
+        poly_coeffs = np.polyfit(Re_data, Cd_data, 20) 
+        poly_func = np.poly1d(poly_coeffs) # Create a polynomial function from the coefficients
+    
+    # # Check if the provided Re is outside the bounds
+    # if Re < min_Re or Re > max_Re:
+    #     print(f"Warning: Reynolds number {Re} is outside the data range ({min_Re}, {max_Re}).")
+    #     pass
+
+    # Re_data = df_openrocket_global['Reynolds number (​)']
+    # min_Re = Re_data.min()
+    # max_Re = Re_data.max()
+    # Cd_data = df_openrocket_global['Drag coefficient (​)']
+
+    # Cd_interp = np.interp(Re, Re_data, Cd_data)
+    # For some reason, this one does not work
+    
+    # Use the polynomial to interpolate the drag coefficient for the given Reynolds number
+    Cd_interp = poly_func(Re)
+
+    # print(f"Warning: Reynolds number {Re} is Cd {Cd_interp}.")
+    return Cd_interp
 
 df_rasaeroii = None
 def interpolate_cd_rasaeroii(Re):
@@ -306,30 +332,97 @@ def not_trajectories():
     ax2.set_ylabel("Velocity at ADS Activation [ft/s]")
     ax1.grid(True)
 
-def cd_comparison():
-    # Compare the Cd values computed from various sources
-    Re_range = np.linspace(0, 5e6, 50)
+def plot_ahmads_cdf():
+    # Read generic data
+    file_path = project_root / "../cfd_data/cfd_incompressible_base.csv"
+    df = pd.read_csv(file_path, skiprows=6)
+    df["Cd"] = (df["P3"] / 4.448) / (0.5 * df["P1"] * df["P2"]**2 * AREF)
     fig, ax1 = plt.subplots(figsize=(10, 6))
-    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
-    # Cd_rasaeroii = [interpolate_cd_rasaeroii(Re) for Re in Re_range]
-    ax1.plot(Re_range, Cd_openrocket, label='OpenRocket')
-    # ax1.plot(Re_range, Cd_rasaeroii, label='RasAeroII')
-    
-    for i in np.linspace(0, 2, num=2):  # 1 to 7 with 0.5 intervals
-        Cd_map = [interpolate_cd_rasaeroii_map(Re, i) for Re in Re_range]
-        ax1.plot(Re_range, Cd_map, label=f'RasAeroII Map -- {i:.1f} in²')
-
+    ax1.plot(df['P4'], df['Cd'], label='Incompressible Flow')
     ax1.set_title("Drag Coefficient vs Reynolds Number")
     ax1.set_xlabel("Reynolds Number")
     ax1.set_ylabel("Drag Coefficient")
     ax1.legend()
     ax1.grid(True)
 
-generic_run()
-ads_area_comparison_run()
-not_trajectories()
-cd_comparison()
+def cd_comparison_pure_data():
+    fig, ax1 = plt.subplots(figsize=(10, 6))
 
-print("All plots except the LAST one use openrocket Cd data. The last plot compares Cd values from different sources.")
+    file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
+    df_openrocket = pd.read_csv(file_path, skiprows=5)
+    df_openrocket = clean_openrocket_data(df_openrocket, 1)
+    df_openrocket = df_openrocket[df_openrocket['smoothed_velocity'] > 0]
+
+    Re = df_openrocket['Reynolds number (​)']
+    Cd = df_openrocket['Drag coefficient (​)']
+
+    ax1.plot(Re, Cd, 'ro', label='OpenRocket Pure Data')
+
+    # file_path = project_root / "../rasaeroii_data/0.CSV"
+    # df_rasaeroii = pd.read_csv(file_path)
+    # Re = df_rasaeroii['Reynolds Number']
+    # Cd = df_rasaeroii['CD']
+    # ax1.plot(Re, Cd, 'b-', label='RasAeroII Pure Data')
+
+    # file_path = project_root / "../cfd_data/cfd_incompressible_base.csv"
+    # df = pd.read_csv(file_path, skiprows=6)
+    # df["Cd"] = (df["P3"] / 4.448) / (0.5 * df["P1"] * df["P2"]**2 * AREF)
+    # ax1.plot(df['P4'], df['Cd'], label='Incompressible Flow')
+
+    Re_range = np.linspace(0, 5e6, 50)
+
+    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
+    ax1.plot(Re_range, Cd_openrocket, label='OpenRocket Interpolation')
+
+    ax1.set_xlim([0, 5e6])
+    ax1.set_title("Drag Coefficient vs Reynolds Number")
+    ax1.set_xlabel("Reynolds Number")
+    ax1.set_ylabel("Drag Coefficient")
+    ax1.legend()
+    ax1.grid(True)
+
+
+def cd_comparison():
+    # Compare the Cd values computed from various sources
+    Re_range = np.linspace(0, 5e6, 50)
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
+    ax1.plot(Re_range, Cd_openrocket, label='OpenRocket Interpolation')
+
+    file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
+    df_openrocket = pd.read_csv(file_path, skiprows=5)
+    df_openrocket = clean_openrocket_data(df_openrocket, 1)
+    df_openrocket = df_openrocket[df_openrocket['smoothed_velocity'] > 0]
+
+    Re = df_openrocket['Reynolds number (​)']
+    Cd = df_openrocket['Drag coefficient (​)']
+    ax1.plot(Re, Cd, 'r-', label='OpenRocket Pure Data')
+    ax1.set_title("Drag Coefficient vs Reynolds Number")
+        
+    for i in np.linspace(0, 1, num=1):  # 1 to 7 with 0.5 intervals
+        Cd_map = [interpolate_cd_rasaeroii_map(Re, i) for Re in Re_range]
+        ax1.plot(Re_range, Cd_map, label=f'RasAeroII Map -- {i:.1f} in²')
+
+    file_path = project_root / "../cfd_data/cfd_incompressible_base.csv"
+    df = pd.read_csv(file_path, skiprows=6)
+    df["Cd"] = (df["P3"] / 4.448) / (0.5 * df["P1"] * df["P2"]**2 * AREF)
+    ax1.plot(df['P4'], df['Cd'], label='Incompressible Flow')
+
+    ax1.set_xlim([0, 5e6])
+    ax1.set_title("Drag Coefficient vs Reynolds Number")
+    ax1.set_xlabel("Reynolds Number")
+    ax1.set_ylabel("Drag Coefficient")
+    ax1.legend()
+    ax1.grid(True)
+
+# generic_run()
+# ads_area_comparison_run()
+# not_trajectories()
+cd_comparison()
+# cd_comparison_pure_data()
+
+print("All plots except the cd comparison one use openrocket Cd data. The last plot compares Cd values from different sources.")
+
+# plot_ahmads_cdf()
 
 plt.show()

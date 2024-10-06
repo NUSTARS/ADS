@@ -71,4 +71,4 @@ def random_math():
 comparison_plot()
 random_math()
 
-# plt.show()
+plt.show()
