@@ -261,7 +261,7 @@ def not_trajectories():
     start_time = []
     all_trajectories_active = []
     all_trajectories_inactive = []
-    properties_active = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 6.68/144})
+    properties_active = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 7/144})
     properties_inactive = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 0})
     
     for index in range(0, total_rows, step_size):
