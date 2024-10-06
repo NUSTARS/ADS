@@ -115,22 +115,55 @@ def ode_solver(ics, properties, dt=0.01):
     return states
 
 def generic_run():
-    """Simulate the rocket for a generic without ADS."""
-    ics = type('ics', (object,), {'t_0': 2.8, 'v_0': 656.6, 'h_0': 1000})
-    properties = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
+    """Simulate the rocket for a generic without ADS and compare to OpenRocket."""
+    file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
+    df = pd.read_csv(file_path, skiprows=5)
+    df_clean = clean_openrocket_data(df, 1)
+
+    # Get rid of this magic number
+    df_clean = df_clean[df_clean['time'] > 3.141]
+
+    ics = type('ics', (object,), {'t_0': 3.141, 'v_0': 646.342, 'h_0': 1144.009})
+    properties = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 0})
     states = ode_solver(ics, properties)
     
-    fig, ax1 = plt.subplots(figsize=(10, 6))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
     
-    # Use properties.A_ads to refer to the ADS area
     ax1.plot(states[0], states[1], label=f'ADS Area = {(properties.A_ads)*144:.2f} in²')
+    openrocket_time = df_clean['time'][df_clean['smoothed_velocity'] > 0]
+    openrocket_altitude = df_clean['smoothed_altitude'][df_clean['smoothed_velocity'] > 0]
+    # openrocket_velocity = df_clean['smoothed_velocity'][df_clean['smoothed_velocity'] > 0]
+    ax1.plot(openrocket_time, openrocket_altitude, label='OpenRocket Data (v > 0)', linestyle='--')
+
+    # compute the error between openrocket altittude and the simulation
+    # assume the arrays are different sizes
+    simulated_altitude_interpolated = np.interp(openrocket_time, states[0], states[1])
+
+    # Compute the absolute error between OpenRocket and simulated altitudes
+    error = np.abs(openrocket_altitude - simulated_altitude_interpolated)
+
+    ax2.plot(openrocket_time, error, label='Error', linestyle=':', color='r')
+    ax1.set_title(f'Rocket Altitude vs Time -- h0: {ics.h_0} ft, v0: {ics.v_0} ft/s')
     
-    # Set the title, labels, legend, and grid
-    ax1.set_title("Rocket Altitude vs Time -- h0: 1000 ft, v0: 656.6 ft/s")
-    ax1.set_xlabel("Time [s]")
-    ax1.set_ylabel("Altitude [ft]")
-    ax1.legend()
+    # plot error on the righ axis
+    ax1.set_ylabel('Altitude [ft]')
+    ax1.legend(loc='upper left')
     ax1.grid(True)
+
+    # Customize the second subplot (Error)
+    ax2.set_xlabel('Time [s]')
+    ax2.set_ylabel('∆ (OpenRocket - 1DOF Sim) [ft]')
+    ax2.legend(loc='upper left')
+    ax2.grid(True)
+
+    # Adjust layout to prevent overlap of subplots
+    plt.tight_layout()
+
+    # # Set the title, labels, legend, and grid
+    # ax1.set_xlabel("Time [s]")
+    # ax1.set_ylabel("Altitude [ft]")
+    # ax1.legend()
+    # ax1.grid(True)
 
 def ads_area_comparison_run():
     """Simulate the rocket for different ADS areas and plot the results."""
@@ -138,7 +171,7 @@ def ads_area_comparison_run():
     ics = type('ics', (object,), {'t_0': 2.8, 'v_0': 656.6, 'h_0': 1000})
     fig, ax1 = plt.subplots(figsize=(10, 6))
     for ads_area in ads_areas:
-        properties = type(' properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': ads_area/144})
+        properties = type(' properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': ads_area/144})
         states = ode_solver(ics, properties)
         ax1.plot(states[0], states[1], label=f'ADS Area = {ads_area} in²')
     ax1.set_title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {ics.h_0} ft, v0: {ics.v_0} ft/s")
@@ -178,8 +211,8 @@ def not_trajectories():
     start_time = []
     all_trajectories_active = []
     all_trajectories_inactive = []
-    properties_active = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 6.68/144})
-    properties_inactive = type('properties', (object,), {'mass': 0.90, 'A_vehicle': 24.581150/144, 'A_ads': 0})
+    properties_active = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 6.68/144})
+    properties_inactive = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 0})
     
     for index in range(0, total_rows, step_size):
         try:
