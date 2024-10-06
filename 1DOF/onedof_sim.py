@@ -216,7 +216,7 @@ def generic_run():
 
 def ads_area_comparison_run():
     """Simulate the rocket for different ADS areas and plot the results."""
-    ads_areas = [0.5, 1, 2, 3, 4, 5, 6]
+    ads_areas = [0, 1, 2, 3, 4, 5, 6, 24]
     ics = type('ics', (object,), {'t_0': 3.141, 'v_0': 646.342, 'h_0': 1144.009})
     fig, ax1 = plt.subplots(figsize=(10, 6))
     for ads_area in ads_areas:
