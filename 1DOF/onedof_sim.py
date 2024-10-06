@@ -75,16 +75,14 @@ def interpolate_cd_rasaeroii_map(Re, actuation):
     global data_points
 
     if data_points is None:
-        print("Building RasaeroII map...")
         # Get list of all rasaeroii files in the directory ../rasaeroii_data/
         file_path = project_root / "../rasaeroii_data/"
-        csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
+        csv_list = [file for file in os.listdir(file_path) if file.endswith('.CSV')]
 
         # Initialize data points
         data_points = {}
 
         # Read each CSV file (ADS_1, ADS_2, etc.)
-        print("Reading CSV files...")
         for csv in csv_list:
             actuation_area = int(csv.split('.')[0])  # Extract actuation area from file name
             df = pd.read_csv(file_path / Path(csv))
@@ -103,8 +101,6 @@ def interpolate_cd_rasaeroii_map(Re, actuation):
 
     # Step 2: Interpolate to find the final Cd value at the desired actuation area
     Cd_final = np.interp(actuation, actuation_areas, Cd_values)
-
-    # print(f"Interpolated Cd value: {Cd_final}")
 
     return Cd_final
 
@@ -307,17 +303,15 @@ def not_trajectories():
 def cd_comparison():
     # Compare the Cd values computed from various sources
     Re_range = np.linspace(0, 5e6, 50)
-    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
-    Cd_rasaeroii = [interpolate_cd_rasaeroii(Re) for Re in Re_range]
-    Cd_0 = [interpolate_cd_rasaeroii_map(Re, 0) for Re in Re_range]
-    Cd_1 = [interpolate_cd_rasaeroii_map(Re, 1) for Re in Re_range]
-    Cd_0p1 = [interpolate_cd_rasaeroii_map(Re, 0.1) for Re in Re_range]
     fig, ax1 = plt.subplots(figsize=(10, 6))
+    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
+    # Cd_rasaeroii = [interpolate_cd_rasaeroii(Re) for Re in Re_range]
     ax1.plot(Re_range, Cd_openrocket, label='OpenRocket')
-    ax1.plot(Re_range, Cd_rasaeroii, label='RasAeroII')
-    ax1.plot(Re_range, Cd_0, label='Test 1 -- Known')
-    ax1.plot(Re_range, Cd_1, label='Test 2 -- Known')
-    ax1.plot(Re_range, Cd_0p1, label='Test 3 -- Unknown')
+    # ax1.plot(Re_range, Cd_rasaeroii, label='RasAeroII')
+    
+    for i in np.linspace(1, 7, num=7):  # 1 to 7 with 0.5 intervals
+        Cd_map = [interpolate_cd_rasaeroii_map(Re, i) for Re in Re_range]
+        ax1.plot(Re_range, Cd_map, label=f'RasAeroII Map -- {i:.1f} in²')
 
     ax1.set_title("Drag Coefficient vs Reynolds Number")
     ax1.set_xlabel("Reynolds Number")
@@ -329,5 +323,7 @@ generic_run()
 ads_area_comparison_run()
 not_trajectories()
 cd_comparison()
+
+print("All plots except the LAST one use openrocket Cd data. The last plot compares Cd values from different sources.")
 
 plt.show()
