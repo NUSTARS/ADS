@@ -3,13 +3,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 import os
+from scipy.interpolate import griddata
 
 ### GLOBAL CONSTANTS IN IMPERIAL UNITS
-g = 32.174  # acceleration due to gravity in ft/s^2
+G = 32.174  # acceleration due to gravity in ft/s^2
+MASS = 33.5/G
+LREF = 5.15/12
+AREF = (5.15**2)*np.pi/4/144
 
 project_root = Path(__file__).parent  # Gets the current directory where the script is located
 
-def fluid_properties(altitude):
+def fluid_properties_and_constants(altitude, velocity, length):
     """Air density based on altitude (ft)."""
     if altitude < 36152:
         T = 59 - 0.00356 * altitude  # Temperature in Fahrenheit
@@ -22,16 +26,19 @@ def fluid_properties(altitude):
     else:
         rho = -1
 
-    a = (1.4 * 8.314 * (T + 459.7) / 0.02896)**0.5  # Speed of sound in ft/s
+    # Convert temperature from Fahrenheit to Rankine for speed of sound calculation
+    T_rankine = T + 459.7
+    
+    # Speed of sound in ft/s (using specific gas constant for air in imperial units: 1716 ft·lb/(slug·°R))
+    a = (1.4 * 1716 * T_rankine)**0.5  
 
-    nu = 1.568e-5 * (T + 459.7) / 518.67 * (518.67 + 110.4) / (T + 110.4)  # Kinematic viscosity in ft^2/s
+    # Kinematic viscosity in ft^2/s (Sutherland's law adjustment)
+    nu = 1.568e-5 * T_rankine / 518.67 * (518.67 + 110.4) / (T + 110.4)
 
-    return T, p, rho, a, nu
+    Re = velocity * length / nu
+    M = velocity / a
 
-def reynolds_number(velocity, length, nu, rho):
-    """Calculate Reynolds number based on velocity, characteristic length, kinematic viscosity, and density."""
-    Re = rho * velocity * length / nu
-    return Re
+    return T, p, rho, a, nu, Re, M
 
 def interpolate_cd_ads(Re):
     known_Re = [0, 3.308e6]
@@ -39,42 +46,91 @@ def interpolate_cd_ads(Re):
     interp_Cd = np.interp(Re, known_Re, known_Cd)
     return interp_Cd
 
-def interpolate_cd_vehicle(Re):
-    known_Re = [2.08e6, 3.308e6]
-    known_Cd = [0.582, 0.638]
-    interp_Cd = np.interp(Re, known_Re, known_Cd)
+df_openrocket = None
+def interpolate_cd_openrocket(Re):
+    global df_openrocket
+    if df_openrocket is None:
+        file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
+        df_openrocket = pd.read_csv(file_path, skiprows=5)
+        df_openrocket = clean_openrocket_data(df_openrocket, 1)
+        df_openrocket = df_openrocket[df_openrocket['smoothed_velocity'] > 0]
+        
+    interp_Cd = np.interp(Re, df_openrocket['Reynolds number (​)'], df_openrocket['Drag coefficient (​)'])
     return interp_Cd
 
-def interpolate_cd_general(v, h):
+df_rasaeroii = None
+def interpolate_cd_rasaeroii(Re):
+    global df_rasaeroii
+
+    if df_rasaeroii is None:
+        file_path = project_root / "../rasaeroii_data/0.csv"
+        df_rasaeroii = pd.read_csv(file_path)
+
+    Cd = np.interp(Re, df_rasaeroii['Reynolds Number'], df_rasaeroii['CD'])
+    return Cd
+
+data_points = None
+def interpolate_cd_rasaeroii_map(Re, actuation):
+    """Interpolate drag coefficient based on Reynolds number and actuation area."""
+    global data_points
+
+    if data_points is None:
+        print("Building RasaeroII map...")
+        # Get list of all rasaeroii files in the directory ../rasaeroii_data/
+        file_path = project_root / "../rasaeroii_data/"
+        csv_list = [file for file in os.listdir(file_path) if file.endswith('.csv')]
+
+        # Initialize data points
+        data_points = {}
+
+        # Read each CSV file (ADS_1, ADS_2, etc.)
+        print("Reading CSV files...")
+        for csv in csv_list:
+            actuation_area = int(csv.split('.')[0])  # Extract actuation area from file name
+            df = pd.read_csv(file_path / Path(csv))
+
+            # Store Reynolds number and CD values for each actuation area
+            data_points[actuation_area] = {
+                'Reynolds Number': df['Reynolds Number'].values,
+                'CD': df['CD'].values
+            }
+
+    # Step 1: Interpolate to find Cd values for the known actuation areas using the interpolated Re value
+    actuation_areas = np.array(sorted(data_points.keys()))
+    
+    # Interpolate Cd for the specific Reynolds number at each actuation area
+    Cd_values = np.array([np.interp(Re, data_points[area]['Reynolds Number'], data_points[area]['CD']) for area in actuation_areas])
+
+    # Step 2: Interpolate to find the final Cd value at the desired actuation area
+    Cd_final = np.interp(actuation, actuation_areas, Cd_values)
+
+    # print(f"Interpolated Cd value: {Cd_final}")
+
+    return Cd_final
+
+def interpolate_cd_cfd(Re, M):
     """Interpolate drag coefficient and force based on velocity and altitude."""
-
-    # Assume reference area and length dependent ONLY on vehicle outer diameter
-
-    # Calculate Reynolds number and Mach number
-    T, p, rho, a, nu = fluid_properties(h)
-    Re_local = reynolds_number(v, 5.15/144, nu, rho)
-    M_local = v / a
 
     # Read generic data
     file_path = project_root / "../cfd_data/generic.csv"
     df = pd.read_csv(file_path)
 
     # Interpolate Cd based on Re or M for incompressible vs compressible flow
-    if M_local < 0.3: # Incompressible flow
+    if M < 0.3: # Incompressible flow
         Re_column = df[df.columns[1]]
         Cd_column = df['Cd']
-        Cd = np.interp(Re_local, Re_column, Cd_column)
+        Cd = np.interp(Re, Re_column, Cd_column)
     else: # Compressible flow
         M_column = df[df.columns[0]]
         Cd_column = df['Cd']
-        Cd = np.interp(M_local, M_column, Cd_column)
+        Cd = np.interp(M, M_column, Cd_column)
 
     # Compute drag force
-    F_drag = 0.5 * rho * v**2 * Cd * 5.15/144
+    # F_drag = 0.5 * rho * v**2 * Cd * 5.15/144
 
-    return Cd, F_drag
+    return Cd
 
-def ode_solver(ics, properties, dt=0.01):
+def ode_solver(ics, properties, cd_handle="openrocket", dt=0.01):
     """Solve the 1DOF equations of motion using Euler integration."""
 
     # Initialize variables
@@ -91,17 +147,22 @@ def ode_solver(ics, properties, dt=0.01):
         states[2].append(current_velocity)
 
         # Compute altitude-dependent fluid properties
-        T, p, rho, a, nu = fluid_properties(current_height)
-        Re = reynolds_number(current_velocity, 5.15/144, nu, rho)
+        T, p, rho, a, nu, Re, M = fluid_properties_and_constants(current_height, current_velocity, LREF)
         
         # Lookup drag coefficients
-        Cd_vehicle = interpolate_cd_vehicle(Re)
+        # Cd_vehicle = interpolate_cd_vehicle(Re)
+        if cd_handle == 'rasaeroii':
+            Cd_vehicle = interpolate_cd_rasaeroii(Re)
+        elif cd_handle == 'openrocket':
+            Cd_vehicle = interpolate_cd_openrocket(Re)
+        elif cd_handle == 'cfd':
+            Cd_vehicle = interpolate_cd_cfd(Re, M)
         Cd_ads = interpolate_cd_ads(Re)
 
         # Compute forces
         F_drag_vehicle = 0.5 * rho * current_velocity**2 * Cd_vehicle * properties.A_vehicle
         F_drag_ADS = 0.5 * rho * current_velocity**2 * Cd_ads * properties.A_ads
-        F_gravity = properties.mass * g
+        F_gravity = properties.mass * G
 
         # Apply F = ma
         F_net = 0 - F_drag_ADS - F_drag_vehicle - F_gravity
@@ -123,21 +184,21 @@ def generic_run():
     # Get rid of this magic number
     df_clean = df_clean[df_clean['time'] > 3.141]
 
+    # Get rid of this magic number too
     ics = type('ics', (object,), {'t_0': 3.141, 'v_0': 646.342, 'h_0': 1144.009})
-    properties = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 0})
-    states = ode_solver(ics, properties)
+    properties = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 0})
+    states_openrocket = ode_solver(ics, properties, cd_handle='openrocket')
+    states_rasaeroii = ode_solver(ics, properties, cd_handle='rasaeroii')
     
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
     
-    ax1.plot(states[0], states[1], label=f'ADS Area = {(properties.A_ads)*144:.2f} in²')
+    ax1.plot(states_openrocket[0], states_openrocket[1], label='1DOF -- OpenRocket Cd')
+    ax1.plot(states_rasaeroii[0], states_rasaeroii[1], label='1DOF -- RasAeroII Cd')
     openrocket_time = df_clean['time'][df_clean['smoothed_velocity'] > 0]
     openrocket_altitude = df_clean['smoothed_altitude'][df_clean['smoothed_velocity'] > 0]
-    # openrocket_velocity = df_clean['smoothed_velocity'][df_clean['smoothed_velocity'] > 0]
-    ax1.plot(openrocket_time, openrocket_altitude, label='OpenRocket Data (v > 0)', linestyle='--')
+    ax1.plot(openrocket_time, openrocket_altitude, label='CSV -- OpenRocket Data', linestyle='--')
 
-    # compute the error between openrocket altittude and the simulation
-    # assume the arrays are different sizes
-    simulated_altitude_interpolated = np.interp(openrocket_time, states[0], states[1])
+    simulated_altitude_interpolated = np.interp(openrocket_time, states_openrocket[0], states_openrocket[1])
 
     # Compute the absolute error between OpenRocket and simulated altitudes
     error = np.abs(openrocket_altitude - simulated_altitude_interpolated)
@@ -145,7 +206,6 @@ def generic_run():
     ax2.plot(openrocket_time, error, label='Error', linestyle=':', color='r')
     ax1.set_title(f'Rocket Altitude vs Time -- h0: {ics.h_0} ft, v0: {ics.v_0} ft/s')
     
-    # plot error on the righ axis
     ax1.set_ylabel('Altitude [ft]')
     ax1.legend(loc='upper left')
     ax1.grid(True)
@@ -156,22 +216,15 @@ def generic_run():
     ax2.legend(loc='upper left')
     ax2.grid(True)
 
-    # Adjust layout to prevent overlap of subplots
     plt.tight_layout()
-
-    # # Set the title, labels, legend, and grid
-    # ax1.set_xlabel("Time [s]")
-    # ax1.set_ylabel("Altitude [ft]")
-    # ax1.legend()
-    # ax1.grid(True)
 
 def ads_area_comparison_run():
     """Simulate the rocket for different ADS areas and plot the results."""
     ads_areas = [0.5, 1, 2, 3, 4, 5, 6]
-    ics = type('ics', (object,), {'t_0': 2.8, 'v_0': 656.6, 'h_0': 1000})
+    ics = type('ics', (object,), {'t_0': 3.141, 'v_0': 646.342, 'h_0': 1144.009})
     fig, ax1 = plt.subplots(figsize=(10, 6))
     for ads_area in ads_areas:
-        properties = type(' properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': ads_area/144})
+        properties = type(' properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': ads_area/144})
         states = ode_solver(ics, properties)
         ax1.plot(states[0], states[1], label=f'ADS Area = {ads_area} in²')
     ax1.set_title(f"Rocket Altitude vs Time for Various ADS Area -- h0: {ics.h_0} ft, v0: {ics.v_0} ft/s")
@@ -197,6 +250,7 @@ def clean_openrocket_data(df, alpha):
     return df
 
 def not_trajectories():    
+    # Uses OpenRocket trajectory data to compare the effect of ADS activation on apogee
     file_path = project_root / "../openrocket_data/Disturbance_Sims_Base.csv"
     df = pd.read_csv(file_path, skiprows=5)
     df_clean = clean_openrocket_data(df, 1)
@@ -211,8 +265,8 @@ def not_trajectories():
     start_time = []
     all_trajectories_active = []
     all_trajectories_inactive = []
-    properties_active = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 6.68/144})
-    properties_inactive = type('properties', (object,), {'mass': 33.5/32.17, 'A_vehicle': 24.581150/144, 'A_ads': 0})
+    properties_active = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 6.68/144})
+    properties_inactive = type('properties', (object,), {'mass': MASS, 'A_vehicle': AREF, 'A_ads': 0})
     
     for index in range(0, total_rows, step_size):
         try:
@@ -250,8 +304,30 @@ def not_trajectories():
     ax1.legend() # Display a legend
     ax1.grid(True)
 
+def cd_comparison():
+    # Compare the Cd values computed from various sources
+    Re_range = np.linspace(0, 5e6, 50)
+    Cd_openrocket = [interpolate_cd_openrocket(Re) for Re in Re_range]
+    Cd_rasaeroii = [interpolate_cd_rasaeroii(Re) for Re in Re_range]
+    Cd_0 = [interpolate_cd_rasaeroii_map(Re, 0) for Re in Re_range]
+    Cd_1 = [interpolate_cd_rasaeroii_map(Re, 1) for Re in Re_range]
+    Cd_0p1 = [interpolate_cd_rasaeroii_map(Re, 0.1) for Re in Re_range]
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+    ax1.plot(Re_range, Cd_openrocket, label='OpenRocket')
+    ax1.plot(Re_range, Cd_rasaeroii, label='RasAeroII')
+    ax1.plot(Re_range, Cd_0, label='Test 1 -- Known')
+    ax1.plot(Re_range, Cd_1, label='Test 2 -- Known')
+    ax1.plot(Re_range, Cd_0p1, label='Test 3 -- Unknown')
+
+    ax1.set_title("Drag Coefficient vs Reynolds Number")
+    ax1.set_xlabel("Reynolds Number")
+    ax1.set_ylabel("Drag Coefficient")
+    ax1.legend()
+    ax1.grid(True)
+
 generic_run()
 ads_area_comparison_run()
 not_trajectories()
+cd_comparison()
 
 plt.show()
