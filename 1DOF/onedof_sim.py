@@ -252,7 +252,7 @@ def not_trajectories():
     df_clean = clean_openrocket_data(df, 1)
 
     # Get rid of this magic number
-    df_clean = df_clean[df_clean['time'] > 2.88]
+    df_clean = df_clean[df_clean['time'] > 3]
 
     total_rows = len(df)
     N = 100
@@ -281,25 +281,30 @@ def not_trajectories():
             pass
     
     fig, ax1 = plt.subplots(figsize=(10, 6))
+    ax2 = ax1.twinx()
     
     for index in range(len(all_trajectories_active)):
         try:
             # active_apogee = max(all_trajectories_active[index][1])
             # inactive_apogee = max(all_trajectories_inactive[index][1])
             delta = max(all_trajectories_inactive[index][1]) - max(all_trajectories_active[index][1])
+            # find the time where this trajectory started
+            # get the velocity at that time
             ax1.plot(start_time[index], delta, 'ro')
+
+            velocity_at_ads = np.interp(start_time[index], df_clean['time'], df_clean['smoothed_velocity'])
+            ax2.plot(start_time[index], velocity_at_ads, 'bo')
+
         except Exception as e:
             # print(f"Error processing row {index}: {e}")
             pass
 
     # Set plot titles and labels
     ax1.set_title("Various Trajectories where ADS is Started at T+X")
-    ax1.set_xlabel("Time [s]")
+    ax1.set_xlabel("T+XX where ADS Activates 100% [s]")
     ax1.set_ylabel("Delta [ft]")
-    ax1.legend()
+    ax2.set_ylabel("Velocity at ADS Activation [ft/s]")
     ax1.grid(True)
-
-
 
 def cd_comparison():
     # Compare the Cd values computed from various sources
