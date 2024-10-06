@@ -284,11 +284,10 @@ def not_trajectories():
     
     for index in range(len(all_trajectories_active)):
         try:
-            active_apogee = max(all_trajectories_active[index][1])
-            inactive_apogee = max(all_trajectories_inactive[index][1])
+            # active_apogee = max(all_trajectories_active[index][1])
+            # inactive_apogee = max(all_trajectories_inactive[index][1])
             delta = max(all_trajectories_inactive[index][1]) - max(all_trajectories_active[index][1])
             ax1.plot(start_time[index], delta, 'ro')
-
         except Exception as e:
             # print(f"Error processing row {index}: {e}")
             pass
@@ -297,8 +296,10 @@ def not_trajectories():
     ax1.set_title("Various Trajectories where ADS is Started at T+X")
     ax1.set_xlabel("Time [s]")
     ax1.set_ylabel("Delta [ft]")
-    ax1.legend() # Display a legend
+    ax1.legend()
     ax1.grid(True)
+
+
 
 def cd_comparison():
     # Compare the Cd values computed from various sources
@@ -309,7 +310,7 @@ def cd_comparison():
     ax1.plot(Re_range, Cd_openrocket, label='OpenRocket')
     # ax1.plot(Re_range, Cd_rasaeroii, label='RasAeroII')
     
-    for i in np.linspace(1, 7, num=7):  # 1 to 7 with 0.5 intervals
+    for i in np.linspace(0, 2, num=2):  # 1 to 7 with 0.5 intervals
         Cd_map = [interpolate_cd_rasaeroii_map(Re, i) for Re in Re_range]
         ax1.plot(Re_range, Cd_map, label=f'RasAeroII Map -- {i:.1f} in²')
 
