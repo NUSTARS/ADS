@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from pathlib import Path
 import os
-from scipy.interpolate import griddata
+#from scipy.interpolate import griddata
 
 ### GLOBAL CONSTANTS IN IMPERIAL UNITS
 G = 32.174  # acceleration due to gravity in ft/s^2
@@ -62,24 +62,17 @@ def interpolate_cd_openrocket(Re):
         max_Re = Re_data.max()
         Cd_data = df_openrocket_global['Drag coefficient (​)']
 
-        poly_coeffs = np.polyfit(Re_data, Cd_data, 20) 
-        poly_func = np.poly1d(poly_coeffs) # Create a polynomial function from the coefficients
-    
+    Re_data = df_openrocket_global['Reynolds number (​)']
+    min_Re = Re_data.min()
+    max_Re = Re_data.max()
+    Cd_data = df_openrocket_global['Drag coefficient (​)']
     # # Check if the provided Re is outside the bounds
-    # if Re < min_Re or Re > max_Re:
-    #     print(f"Warning: Reynolds number {Re} is outside the data range ({min_Re}, {max_Re}).")
-    #     pass
-
-    # Re_data = df_openrocket_global['Reynolds number (​)']
-    # min_Re = Re_data.min()
-    # max_Re = Re_data.max()
-    # Cd_data = df_openrocket_global['Drag coefficient (​)']
-
-    # Cd_interp = np.interp(Re, Re_data, Cd_data)
-    # For some reason, this one does not work
-    
-    # Use the polynomial to interpolate the drag coefficient for the given Reynolds number
-    Cd_interp = poly_func(Re)
+    if Re < min_Re or Re > max_Re:
+        print(f"Warning: Reynolds number {Re} is outside the data range ({min_Re}, {max_Re}).")
+        pass
+    #have to set the period to np.inf so that it sorts the data
+    #np.interp only works for monotomically increasing x so when the data has some 0s it broke
+    Cd_interp = np.interp(Re, Re_data, Cd_data,period=np.inf)
 
     # print(f"Warning: Reynolds number {Re} is Cd {Cd_interp}.")
     return Cd_interp
