@@ -179,10 +179,11 @@ def ode_solver(ics, properties, cd_handle="openrocket", dt=0.01):
             Cd_vehicle = interpolate_cd_openrocket(Re)
         elif cd_handle == 'cfd':
             Cd_vehicle = interpolate_cd_cfd(Re, M)
-        Cd_ads = interpolate_cd_ads(Re)
+        # Cd_ads = interpolate_cd_ads(Re)
+        Cd_ads = 1.28
 
         # Compute forces
-        F_drag_vehicle = 0.5 * rho * current_velocity**2 * Cd_vehicle * properties.A_vehicle
+        F_drag_vehicle = 0.5 * rho * current_velocity**2 * Cd_vehicle * AREF
         F_drag_ADS = 0.5 * rho * current_velocity**2 * Cd_ads * properties.A_ads
         F_gravity = properties.mass * G
 
@@ -242,7 +243,7 @@ def generic_run():
 
 def ads_area_comparison_run():
     """Simulate the rocket for different ADS areas and plot the results."""
-    ads_areas = [0, 1, 2, 3, 4, 5, 6, 24]
+    ads_areas = [0, 1, 3, 6, 8]
     ics = type('ics', (object,), {'t_0': 3.141, 'v_0': 646.342, 'h_0': 1144.009})
     fig, ax1 = plt.subplots(figsize=(10, 6))
     for ads_area in ads_areas:
@@ -416,7 +417,7 @@ def cd_comparison():
     ax1.grid(True)
 
 # generic_run()
-# ads_area_comparison_run()
+ads_area_comparison_run()
 # not_trajectories()
 cd_comparison()
 # cd_comparison_pure_data()
