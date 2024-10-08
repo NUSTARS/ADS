@@ -59,16 +59,16 @@ def comparison_plot():
     plt.xlabel('Time [s]')
     plt.ylabel('Altitude [ft]')
 
-def random_math():
-    v = 281
-    T, p, rho, a, nu = fluid_properties(1000)
-    F_drag = 0.5 * rho * v**2 * 0.6 * 25/144
+# def random_math():
+#     v = 281
+#     T, p, rho, a, nu = fluid_properties(1000)
+#     F_drag = 0.5 * rho * v**2 * 0.6 * 25/144
 
-    # 6.9241154475
+#     # 6.9241154475
 
-    print(F_drag)
+#     print(F_drag)
 
 comparison_plot()
-random_math()
+# random_math()
 
 plt.show()
