@@ -16,8 +16,10 @@
 const double Ix = 0; // Moment of inertia about the X-axis [slugs*ft^2]
 const double Iy = 0; // Moment of inertia about the Y-axis [slugs*ft^2]
 const double Iz = 0; // Moment of inertia about the Z-axis [slugs*ft^2]
-const double MEASURED_MASS = 0; // Mass of the rocket with motor [slugs]
-const double M = MEASURED_MASS * 0.9; // Mass of the rocket with burned out motor [slugs] (TODO Implement)
+const double BALLAST_MASS = 0; // Mass of the ballast [slugs]
+const double BURNOUT_MASS = 0.9; // Mass of the rocket with burned out motor [slugs]
+const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system
+const double CG = 0; // distance from the tip of the nosecone to the CG [in]
 const int A = 0; // Cross sectional area of the rocket airframe [in^2]
 
 //
