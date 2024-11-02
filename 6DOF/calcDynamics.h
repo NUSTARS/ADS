@@ -1,6 +1,8 @@
 /*calcDynamics.h*/
 
 #include <iostream>
+#include <Eigen/Core>
+
 
 // ADS 6DOF Simulator
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
@@ -17,18 +19,20 @@ double getAlpha();
 //
 // Takes in .... 
 //
-std::vector<double> getAeroForces();
+Eigen::Vector3d getAeroForces();
 
 
 // getAeroMoments
 //
 // Takes in .... 
 //
-std::vector<double> getAeroMoment();
+Eigen::Vector3d getAeroMoment();
 
 
 // getAeroMoments
 //
 // Takes in q and computes R inverse which is the inverse of the transfomraiton from world to rocket frame
 //
-// double getRinv();
+Eigen::Matrix3d getRinv();
+
+Eigen::Vector3d calcWindNoise();
