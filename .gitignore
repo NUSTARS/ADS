@@ -1,0 +1,29 @@
+# Build files and directories
+/6DOF/build/
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.exe
+
+# CMake generated files
+CMakeFiles/
+CMakeLists.txt
+CMakeCache.txt
+cmake_install.cmake
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
