@@ -30,3 +30,5 @@ Thumbs.db
 *.tmp
 *.json
 *.cmake
+
+cheat_sheet.txt

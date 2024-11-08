@@ -7,6 +7,7 @@
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
 // NUSTARS NSL 2025
 //
+#include<Eigen/Core>
 
 class q{
     private:
@@ -14,18 +15,9 @@ class q{
         // State variables for state equations
         //
 
-        double vX; // Linear velocities
-        double vY;
-        double vZ;
-
-        double omegaX; // Angular velocities
-        double omegaY;
-        double omegaZ;
-
-        double theta; // Euler angle rotation
-        double psi;
-        double phi;
-
+        Eigen::Vector3d v; // Linear velocities
+        Eigen::Vector3d omega; // Angular velocities
+        Eigen::Vector3d theta; // Euler angle rotation
         double h; // Altitude
 
         double u; // Current control signal for flaps: 0 = fully closed, 1 = fully opened
@@ -35,7 +27,7 @@ class q{
         //
         // constructor (maybe make it take in an array instead?)
         //
-        q(double newVX, double newVY, double newVZ, double newOmegaX, double newOmegaY, double newOmegaZ, double newTheta, double newPsi, double newPhi, double newH, double newU);
+        q(Eigen::Vector3d newV, Eigen::Vector3d newOmega, Eigen::Vector3d newTheta, double newH, double newU);
         
         //
         // copy constructor:
@@ -46,19 +38,9 @@ class q{
         //
         // Accessors
         //
-
-        double getVX() const;
-        double getVY() const;
-        double getVZ() const;
-
-        double getOmegaX() const;
-        double getOmegaY() const;
-        double getOmegaZ() const;
-
-        double getTheta() const;
-        double getPsi() const;
-        double getPhi() const;
-        
+        Eigen::Vector3d getV() const;
+        Eigen::Vector3d getOmega() const;
+        Eigen::Vector3d getTheta() const;      
         double getH() const;
 
         double getU() const;

@@ -16,7 +16,7 @@ q addSensorNoise(const q& currentState) {
     double noise_mean = 0.0;
     double noise_stddev = 0.01; // Standard deviation of noise, adjust as needed
 
-    return q(
+   /*return q(
         addGaussianNoise(currentState.getVX(), noise_mean, noise_stddev),
         addGaussianNoise(currentState.getVY(), noise_mean, noise_stddev),
         addGaussianNoise(currentState.getVZ(), noise_mean, noise_stddev),
@@ -28,12 +28,13 @@ q addSensorNoise(const q& currentState) {
         addGaussianNoise(currentState.getPhi(), noise_mean, noise_stddev),
         addGaussianNoise(currentState.getH(), noise_mean, noise_stddev),
         addGaussianNoise(currentState.getU(), noise_mean, noise_stddev)
-    );
+    );*/
+    return q(Eigen::Vector3d(0,0,0),Eigen::Vector3d(0,0,0),Eigen::Vector3d(0,0,0), 0, 0);
 }
 
 int main() {
     // post boost initial state -- fill in with real numbers
-    q currentState(0,0,0,0,0,0,0,0,0,0,0);
+    q currentState(Eigen::Vector3d(0,0,0), Eigen::Vector3d(0,0,0), Eigen::Vector3d(0,0,0), 0, 0);
     double dt = 0.1;
     double max_simTime = 30;
     double current_t = 0.0;

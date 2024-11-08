@@ -14,16 +14,10 @@
 //
 // constructor (maybe make it take in an array instead?)
 //
-q::q(double newVX, double newVY, double newVZ, double newOmegaX, double newOmegaY, double newOmegaZ, double newTheta, double newPsi, double newPhi, double newH, double newU){
-    vX = newVX;
-    vY = newVY;
-    vZ = newVZ;
-    omegaX = newOmegaX;
-    omegaY = newOmegaY;
-    omegaZ = newOmegaZ;
+q::q(Eigen::Vector3d newV, Eigen::Vector3d newOmega, Eigen::Vector3d newTheta, double newH, double newU){
+    v = newV;
+    omega = newOmega;
     theta = newTheta;
-    psi = newPsi;
-    phi = newPhi;
     h = newH;
     u = newU;
 }
@@ -32,15 +26,9 @@ q::q(double newVX, double newVY, double newVZ, double newOmegaX, double newOmega
 // copy constructor:
 //
 q::q(const q& other){
-    vX = other.getVX();
-    vY = other.getVY();
-    vZ = other.getVZ();
-    omegaX = other.getOmegaX();
-    omegaY = other.getOmegaY();
-    omegaZ = other.getOmegaZ();
+    v = other.getV();
+    omega = other.getOmega();
     theta = other.getTheta();
-    psi = other.getPsi();
-    phi = other.getPhi();
     h = other.getH();
     u = other.getU();
 }
@@ -49,18 +37,9 @@ q::q(const q& other){
 //
 // Accessors
 //
-double q::getVX() const {return vX;}
-double q::getVY() const {return vY;}
-double q::getVZ() const {return vZ;}
-
-double q::getOmegaX() const {return omegaX;}
-double q::getOmegaY() const {return omegaY;}
-double q::getOmegaZ() const {return omegaZ;}
-
-double q::getTheta() const {return theta;}
-double q::getPsi() const {return psi;}
-double q::getPhi() const {return phi;}
-        
+Eigen::Vector3d q::getV() const {return v;}
+Eigen::Vector3d q::getOmega() const {return v;}
+Eigen::Vector3d q::getTheta() const {return theta;}      
 double q::getH() const {return h;}
 
 double q::getU() const {return u;}
