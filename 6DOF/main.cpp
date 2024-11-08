@@ -33,37 +33,37 @@ q addSensorNoise(const q& currentState) {
 
 int main() {
     // post boost initial state -- fill in with real numbers
-    // q currentState(0,0,0,0,0,0,0,0,0,0,0)
-    // double dt = 0.1
-    // double max_simTime = 30
-    // double current_t = 0.0
+    q currentState(0,0,0,0,0,0,0,0,0,0,0)
+    double dt = 0.1
+    double max_simTime = 30
+    double current_t = 0.0
 
-    // //run while the sim is less than 30 seconds and havent reached apogee 
-    // while ((current_t < max_simTime) && !(at_apogee(currentState))) {
+    //run while the sim is less than 30 seconds and havent reached apogee 
+    while ((current_t < max_simTime) && !(at_apogee(currentState))) {
 
-    //     q sensorReadingState = addSensorNoise(currentState);
-    //     currentState = simulate(sensorReadingState, dt);
+        q sensorReadingState = addSensorNoise(currentState);
+        currentState = simulate(sensorReadingState, dt);
 
-    // }
+    }
 
 
 
-    // Define a 2x2 matrix with predefined values
-    Eigen::Matrix2d matA;
-    matA << 1, 2,
-            3, 4;
+    // // Define a 2x2 matrix with predefined values
+    // Eigen::Matrix2d matA;
+    // matA << 1, 2,
+    //         3, 4;
 
-    // Define another 2x2 matrix
-    Eigen::Matrix2d matB;
-    matB << 5, 6,
-            7, 8;
+    // // Define another 2x2 matrix
+    // Eigen::Matrix2d matB;
+    // matB << 5, 6,
+    //         7, 8;
 
-    // Print the matrices
-    std::cout << "Matrix A:\n" << matA << "\n\n";
-    std::cout << "Matrix B:\n" << matB << "\n\n";
+    // // Print the matrices
+    // std::cout << "Matrix A:\n" << matA << "\n\n";
+    // std::cout << "Matrix B:\n" << matB << "\n\n";
 
-    // Matrix addition
-    Eigen::Matrix2d matSum = matA + matB;
-    std::cout << "A + B:\n" << matSum << "\n\n";
+    // // Matrix addition
+    // Eigen::Matrix2d matSum = matA + matB;
+    // std::cout << "A + B:\n" << matSum << "\n\n";
 
 };
