@@ -10,7 +10,7 @@
 *.exe
 
 # CMake generated files
-CMakeFiles/
+/6DOF/
 CMakeLists.txt
 CMakeCache.txt
 cmake_install.cmake
@@ -27,3 +27,5 @@ Thumbs.db
 # Logs and temporary files
 *.log
 *.tmp
+*.json
+*.cmake
