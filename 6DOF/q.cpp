@@ -33,6 +33,33 @@ q::q(const q& other){
     u = other.getU();
 }
 
+//
+// overloading operators
+//
+q q::operator+(const q& obj2){
+    Eigen::Vector3d newV = v + obj2.getV();
+    Eigen::Vector3d newOmega = omega + obj2.getOmega();
+    Eigen::Vector3d newTheta = theta + obj2.getTheta();
+    double newH = h + obj2.getH();
+    double newU = u + obj2.getU();
+
+    return q(newV, newOmega, newTheta, newH, newU);
+}
+q operator*(const q& obj, double a){
+    Eigen::Vector3d newV = a*obj.getV();
+    Eigen::Vector3d newOmega = a*obj.getOmega();
+    Eigen::Vector3d newTheta = a*obj.getTheta();
+    double newH = a*obj.getH();
+    double newU = a*obj.getU();
+
+    return q(newV, newOmega, newTheta, newH, newU);
+}
+q q::operator-(const q& obj2){
+    return obj1 + -1.0*obj2;
+}
+q q::operator/(const q& obj, double a){
+    return (1.0/a)*obj;
+}
 
 //
 // Accessors

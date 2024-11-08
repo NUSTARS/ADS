@@ -33,6 +33,6 @@ Eigen::Vector3d getAeroMoment();
 //
 // Takes in q and computes R inverse which is the inverse of the transfomraiton from world to rocket frame
 //
-Eigen::Matrix3d getRinv();
+Eigen::Matrix3d getR();
 
 Eigen::Vector3d calcWindNoise();

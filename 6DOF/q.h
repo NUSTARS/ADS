@@ -34,6 +34,12 @@ class q{
         //
         q(const q& other);
 
+        //
+        // operators
+        //
+        q q::operator+(const q& obj2);
+        q q::operator*(const double& a);
+
 
         //
         // Accessors

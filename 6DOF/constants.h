@@ -23,6 +23,11 @@ const double CG = 0; // distance from the tip of the nosecone to the CG [in]
 const int A = 0; // Cross sectional area of the rocket airframe [in^2]
 
 //
+// Electronics constants
+//
+const double DT = 0.01; // time step for integration
+
+//
 // Atmospheric constants
 //
 const int P0 = 0; // Gauge pressure on the ground [inHg]

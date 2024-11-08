@@ -51,7 +51,7 @@ Vector3d getAeroMoments() {
 };
 
 
-Matrix3d getRinv() {
+Matrix3d getR() {
     Matrix3d m(3,3);
    //fill in the rest of this matrix using q
    return m;
