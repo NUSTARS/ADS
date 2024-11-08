@@ -1,5 +1,6 @@
 # Build files and directories
 /6DOF/build/
+/build/
 *.o
 *.obj
 *.a
