@@ -37,8 +37,9 @@ class q{
         //
         // operators
         //
-        q q::operator+(const q& obj2);
-        q q::operator*(const double& a);
+        q q::operator+(const q& obj);
+        q q::operator*(double a);
+        q q::operator/(double a);
 
 
         //

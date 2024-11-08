@@ -17,12 +17,11 @@
 q getqdot(q curr_q){}
 
 q integrate(q curr_q){
-    q k1 =  0.1 * getqdot(curr_q);
-    q k2 = curr_q + k1;
-    //q k2 = DT * getqdot(curr_q + k1/2.);
-    q k3 = DT * getqdot(curr_q + k2/2.);
-    q k4 = DT * getqdot(curr_q + k3);
-    q new_q = curr_q + (1/6.) * (k1 + 2.0*k2 + 2.0*k3 + k4);
+    q k1 = getqdot(curr_q) * DT;
+    q k2 = getqdot(curr_q + k1/2.0) * DT;
+    q k3 = getqdot(curr_q + k2/2.0) * DT;
+    q k4 = getqdot(curr_q + k3) * DT;
+    q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
     return new_q;
 }
 

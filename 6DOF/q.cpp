@@ -36,29 +36,26 @@ q::q(const q& other){
 //
 // overloading operators
 //
-q q::operator+(const q& obj2){
-    Eigen::Vector3d newV = v + obj2.getV();
-    Eigen::Vector3d newOmega = omega + obj2.getOmega();
-    Eigen::Vector3d newTheta = theta + obj2.getTheta();
-    double newH = h + obj2.getH();
-    double newU = u + obj2.getU();
+q q::operator+(const q& obj){
+    Eigen::Vector3d newV = v + obj.getV();
+    Eigen::Vector3d newOmega = omega + obj.getOmega();
+    Eigen::Vector3d newTheta = theta + obj.getTheta();
+    double newH = h + obj.getH();
+    double newU = u + obj.getU();
 
     return q(newV, newOmega, newTheta, newH, newU);
 }
-q operator*(const q& obj, double a){
-    Eigen::Vector3d newV = a*obj.getV();
-    Eigen::Vector3d newOmega = a*obj.getOmega();
-    Eigen::Vector3d newTheta = a*obj.getTheta();
-    double newH = a*obj.getH();
-    double newU = a*obj.getU();
+q q::operator*(double a){
+    Eigen::Vector3d newV = a*v;
+    Eigen::Vector3d newOmega = a*omega;
+    Eigen::Vector3d newTheta = a*theta;
+    double newH = a*h;
+    double newU = a*u;
 
     return q(newV, newOmega, newTheta, newH, newU);
 }
-q q::operator-(const q& obj2){
-    return obj1 + -1.0*obj2;
-}
-q q::operator/(const q& obj, double a){
-    return (1.0/a)*obj;
+q q::operator/(double a){
+    return (*this)*(1.0/a);
 }
 
 //
