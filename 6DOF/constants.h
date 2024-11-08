@@ -10,6 +10,8 @@
 // NUSTARS NSL 2025
 //
 
+#include <Eigen/Core>
+
 //
 // Mechanical constants
 //
@@ -21,6 +23,7 @@ const double BURNOUT_MASS = 0.9; // Mass of the rocket with burned out motor [sl
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system
 const double CG = 0; // distance from the tip of the nosecone to the CG [in]
 const int A = 0; // Cross sectional area of the rocket airframe [in^2]
+Eigen::Vector3d G(0,0,-9.81);
 
 //
 // Electronics constants
