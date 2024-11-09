@@ -40,7 +40,6 @@ q getqdot(q curr_q){
 }
 
 q integrate(q curr_q){
-    // Only post multiplication works right now, should fix
     q k1 = getqdot(curr_q) * DT;
     q k2 = getqdot(curr_q + k1/2.0) * DT;
     q k3 = getqdot(curr_q + k2/2.0) * DT;

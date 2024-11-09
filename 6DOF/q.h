@@ -37,9 +37,9 @@ class q{
         //
         // operators
         //
-        q q::operator+(const q& obj);
-        q q::operator*(double a);
-        q q::operator/(double a);
+        q operator+(const q& obj);
+        q operator*(double a);
+        q operator/(double a);
 
 
         //
@@ -59,3 +59,5 @@ class q{
 
 
 };
+
+q operator*(double a, const q& obj);

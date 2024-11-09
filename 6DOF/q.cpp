@@ -54,6 +54,9 @@ q q::operator*(double a){
 
     return q(newV, newOmega, newTheta, newH, newU);
 }
+q operator*(double a, q& obj){
+    return obj*a;
+}
 q q::operator/(double a){
     return (*this)*(1.0/a);
 }
