@@ -75,8 +75,8 @@ Matrix3d getR() {
 };
     
 
-Vector3D calcWindNoise() {
+Vector3d calcWindNoise() {
     ///FILL IN WITH RANDOM MODEL probably a function of something 
-    Vector3D w(1,2,3);
+    Vector3d w(1,2,3);
     return w;
 }

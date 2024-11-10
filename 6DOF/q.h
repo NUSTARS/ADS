@@ -7,9 +7,13 @@
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
 // NUSTARS NSL 2025
 //
+#ifndef q_H
+#define q_H
+
 #include<Eigen/Core>
 
-class q{
+
+class q {
     private:
         //
         // State variables for state equations
@@ -61,3 +65,5 @@ class q{
 };
 
 q operator*(double a, const q& obj);
+
+#endif // q_H

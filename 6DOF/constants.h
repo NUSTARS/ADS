@@ -10,6 +10,9 @@
 // NUSTARS NSL 2025
 //
 
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
+
 #include <Eigen/Core>
 
 //
@@ -41,3 +44,5 @@ const int T0 = 0; // Temperature on the ground [F]
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
 //
 double F(double t); 
+
+#endif 

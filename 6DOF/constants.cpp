@@ -1,4 +1,5 @@
 /*constants.cpp*/
+#include "constants.h"
 
 //
 // Constants that will be used throuhout the 6DOF simulator.

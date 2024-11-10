@@ -19,7 +19,7 @@ q getqdot(q curr_q){
     Eigen::Vector3d omega = curr_q.getOmega();
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
-    Eigen::Vector3d M_aero = getAeroMoments(F_aero, curr_q);
+    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = getR()*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));

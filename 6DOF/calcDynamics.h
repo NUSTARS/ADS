@@ -13,26 +13,26 @@
 // getVMag
 //
 // Takes in q
-double getV_Squared();
+double getV_Squared(q);
 
 // getAlpha
 //
 // Takes in q 
-double getAlpha();
+double getAlpha(q);
 
 
 // getAeroForces
 //
 // Takes in .... 
 //
-Eigen::Vector3d getAeroForces();
+Eigen::Vector3d getAeroForces(q);
 
 
 // getAeroMoments
 //
 // Takes in .... 
 //
-Eigen::Vector3d getAeroMoment();
+Eigen::Vector3d getAeroMoments(q);
 
 
 // getAeroMoments
