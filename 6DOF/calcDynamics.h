@@ -6,8 +6,14 @@
 
 // ADS 6DOF Simulator
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
-// NUSTARS NSL 2025
+//  NUSTARS NSL 2025
 
+
+
+// getVMag
+//
+// Takes in q
+double getV_Squared();
 
 // getAlpha
 //
