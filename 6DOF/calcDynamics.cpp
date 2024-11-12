@@ -68,10 +68,26 @@ Vector3d getAeroMoments(q state) {
 };
 
 
-Matrix3d getR() { 
+Matrix3d getR(q state) { 
     Matrix3d m(3,3);
-   //fill in the rest of this matrix using q
-   return m;
+    double phi = state.getOmega()(0);
+    double theta = state.getOmega()(1);
+    double psi = state.getOmega()(2);
+    
+    Matrix3d Rx {{1,         0,         0},
+                 {0,  cos(phi),  sin(phi)},
+                 {0, -sin(phi), cos(phi)}};
+
+    Matrix3d Ry {{cos(theta), 0, -sin(theta)},
+                 {0         , 1,           0},
+                 {sin(theta), 0,  cos(theta)}};
+    Matrix3d Rz {{cos(phi) , sin(phi), 0},
+                 {-sin(phi), cos(phi), 0},
+                 {        0,        0, 1}};
+    
+    m = Rx * Ry * Rz;
+
+    return m;
 };
     
 
