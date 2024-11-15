@@ -51,10 +51,12 @@ Vector3d getAeroForces(q curr_q) {
     double alpha = getAlpha(curr_q);
     double v_mag = getV_Squared(curr_q);
     
-    double FAx = 0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
-    double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
+    double FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
+    double FAn = -0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
     double FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
     double FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+
+
 
     Vector3d v(FAx,FAy,FAz);
     return v;
@@ -77,17 +79,18 @@ Matrix3d getR(q curr_q) {
     double psi = curr_q.getTheta()(2);
     
     Matrix3d Rx {{1,         0,         0},
-                 {0,  cos(phi),  sin(phi)},
-                 {0, -sin(phi), cos(phi)}};
+                 {0,  cos(theta),  sin(theta)},
+                 {0, -sin(theta), cos(theta)}};
 
-    Matrix3d Ry {{cos(theta), 0, -sin(theta)},
+    Matrix3d Ry {{cos(phi), 0, -sin(phi)},
                  {0         , 1,           0},
-                 {sin(theta), 0,  cos(theta)}};
-    Matrix3d Rz {{cos(phi) , sin(phi), 0},
-                 {-sin(phi), cos(phi), 0},
+                 {sin(phi), 0,  cos(phi)}};
+    Matrix3d Rz {{cos(psi) , sin(psi), 0},
+                 {-sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
+    Matrix3d R_SB {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
     
-    m = Rx * Ry * Rz;
+    m = R_SB * Rx * Ry * Rz;
 
     return m;
 };
@@ -102,7 +105,7 @@ Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
     double a0 = 0;
     double a1 = a(1, a0);
     double a2 = a(2, a1);
-    double pinkNoise = w - a1 * (past_w(2)) - a2* past_w(1);
+    double pinkNoise = w - a1 * (past_w(0)) - a2* past_w(1);
     double windNoise = wind_velocity + pinkNoise/wind_std;
 
     past_w(1) = past_w(0);

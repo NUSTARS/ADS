@@ -25,7 +25,7 @@ const double BALLAST_MASS = 0; // Mass of the ballast [slugs]
 const double BURNOUT_MASS = 34.959/32.17; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system
 const double CG = 70.61/12.0; // distance from the tip of the nosecone to the CG [ft]
-const int A = 20.831/144.0; // Cross sectional area of the rocket airframe [ft^2]
+const double A = 20.831/144.0; // Cross sectional area of the rocket airframe [ft^2]
 const Eigen::Vector3d G(0,0,-32.17); // in ft/s^2
 
 //

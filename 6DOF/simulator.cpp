@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
@@ -21,7 +22,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getR(curr_q)*G;
+    Eigen::Vector3d F_grav = getR(curr_q).inverse()*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -46,16 +47,17 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
 
     q k1 = getqdot(curr_q) * DT;
-    q k2 = getqdot(curr_q + k1/2.0) * DT;
-    q k3 = getqdot(curr_q + k2/2.0) * DT;
-    q k4 = getqdot(curr_q + k3) * DT;
-    q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
+    //q k2 = getqdot(curr_q + k1/2.0) * DT;
+    //q k3 = getqdot(curr_q + k2/2.0) * DT;
+    //q k4 = getqdot(curr_q + k3) * DT;
+    //q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
+    q new_q = curr_q + k1*DT;
     return new_q;
 }
 
 
 bool atApogee(q curr_q){
-    return (getR(curr_q)*curr_q.getV())(2) <= 0;
+    return (getR(curr_q)*curr_q.getV())(2) < 0;
 }
 
 double getApogee(q curr_q, double b){
@@ -65,10 +67,13 @@ double getApogee(q curr_q, double b){
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
-        temp_q.setU(F(t-b));
+        //temp_q.setU(F(t-b));
+        temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
+        std::cout << temp_q.getTheta()(0) << std::endl;
         t += DT;
     }
+    
 
     return temp_q.getH();
 }
