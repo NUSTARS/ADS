@@ -25,10 +25,12 @@ int main() {
     // post boost initial state -- fill in with real numbers
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
-    std::cout << getApogee(currentState) << std::endl;
+    std::cout << currentState << std::endl;
 
-    double max_simTime = 30;
-    double current_t = 0.0;
+    //std::cout << getApogee(currentState) << std::endl;
+
+    //double max_simTime = 30;
+    //double current_t = 0.0;
 
     /*
     // run while the sim is less than 30 seconds and havent reached apogee 

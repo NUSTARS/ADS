@@ -60,6 +60,17 @@ q operator*(double a, q& obj){
 q q::operator/(double a){
     return (*this)*(1.0/a);
 }
+bool q::operator == (const q &q){ 
+    return v == q.getV() && omega == q.getOmega() && theta == q.getTheta() && h == q.getH() && u == q.getU();
+} 
+std::ostream & operator << (std::ostream &out, const q &q){
+    out << "V_B = <" << q.getV()(0) << ", " << q.getV()(1) << ", " << q.getV()(2) << ">" << std::endl;
+    out << "Omega_B = <" << q.getOmega()(0) << ", " << q.getOmega()(1) << ", " << q.getOmega()(2) << ">" << std::endl;
+    out << "Theta_EB = <" << q.getTheta()(0) << ", " << q.getTheta()(1) << ", " << q.getTheta()(2) << ">" << std::endl;
+    out << "Altitude: " << q.getH() << std::endl;
+    out << "U: " << q.getU() << std::endl;
+    return out;
+}
 
 //
 // Accessors

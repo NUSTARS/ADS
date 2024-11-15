@@ -44,6 +44,7 @@ class q {
         q operator+(const q& obj);
         q operator*(double a);
         q operator/(double a);
+        bool operator == (const q &q);
 
 
         //
@@ -65,5 +66,6 @@ class q {
 };
 
 q operator*(double a, const q& obj);
+std::ostream & operator << (std::ostream &out, const q &q);
 
 #endif // Q_H
