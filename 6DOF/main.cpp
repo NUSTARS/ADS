@@ -24,8 +24,12 @@ int main() {
         //call SHISHIR CODE to get b, set B in current state going forward
         double signal = find_u(SensorNoiseState, 5150, 10); //forward integrate is placeholder
 
+        Eigen::Vector2d old_w;
+        old_w[0] = 0;
+        old_w[1] = 0;
+
         SensorNoiseState.setU(signal);
-        q currentState = integrate(SensorNoiseState);
+        q currentState = integrate(SensorNoiseState, old_w);
 
         current_t += DT;
 
