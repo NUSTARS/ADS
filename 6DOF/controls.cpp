@@ -6,6 +6,7 @@
 #include "simulator.h"
 #include <Eigen/Core>
 #include "q.h"
+#include "constants.h"
 
 std::vector<double> createRange(double start, double end, double step) {
     std::vector<double> range;
