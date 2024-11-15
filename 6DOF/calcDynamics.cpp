@@ -72,9 +72,9 @@ Vector3d getAeroMoments(q curr_q) {
 
 Matrix3d getR(q curr_q) { 
     Matrix3d m(3,3);
-    double phi = curr_q.getOmega()(0);
-    double theta = curr_q.getOmega()(1);
-    double psi = curr_q.getOmega()(2);
+    double phi = curr_q.getTheta()(0);
+    double theta = curr_q.getTheta()(1);
+    double psi = curr_q.getTheta()(2);
     
     Matrix3d Rx {{1,         0,         0},
                  {0,  cos(phi),  sin(phi)},
