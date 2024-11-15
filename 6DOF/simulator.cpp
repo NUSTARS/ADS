@@ -41,7 +41,7 @@ q getqdot(q curr_q){
 
 }
 
-q integrate(q curr_q, Eigen::Vector2d old_w){
+q integrate(q curr_q, Eigen::Vector2d* old_w){
 
     Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
 
@@ -62,7 +62,7 @@ double getApogee(q curr_q, double b){
     q temp_q = curr_q;
     double t = 0.0;
 
-    Eigen::Vector2d old_w {0.0, 0.0};
+    Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         temp_q.setU(F(t-b));
