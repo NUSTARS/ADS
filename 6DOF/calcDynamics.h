@@ -37,12 +37,22 @@ Eigen::Vector3d getAeroMoments(q);
 
 // getAeroMoments
 //
-// Takes in q and computes R inverse which is the inverse of the transfomraiton from world to rocket frame
+// Takes in q and computes R inverse which is the inverse of the transformation from world to rocket frame
 //
 Eigen::Matrix3d getR(q);
 
-Eigen::Vector3d calcWindNoise(q, Eigen::Vector2d old_w);
 
+// calcWindNoise
+//
+// takes in the past two white noise Ws and generates a pink noise signal
+//
+Eigen::Vector3d calcWindNoise(q, Eigen::Vector2d* old_w);
+
+
+// a
+//
+// takes in which a it is and the a before and calculates the current a
+//
 double a(int k, double past_A);
 
 #endif // calcDynamics_H
