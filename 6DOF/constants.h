@@ -38,6 +38,10 @@ const double DT = 0.01; // time step for integration
 //
 const int P0 = 0; // Gauge pressure on the ground [inHg]
 const int T0 = 0; // Temperature on the ground [F]
+const int wind_velocity = 0; //Average wind velocity
+const int wind_angle = 0; //Average wind angle
+const double alpha = 5/3; //Pink noise 1/f power
+const double wind_std = 2.252;
 
 //
 // Controls function: 
