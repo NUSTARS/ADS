@@ -16,7 +16,7 @@ int main() {
     double initial_h = 898.599;
     Eigen::Vector2d* old_wind = new Eigen::Vector2d(0,0);
 
-    Eigen::Matrix3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0))*initial_v_world;
+    Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0))*initial_v_world;
 
     // post boost initial state -- fill in with real numbers
     q currentState(Eigen::Vector3d(0,0,0), initial_omega, Eigen::Vector3d(0,0,0), initial_h, 0);
