@@ -34,7 +34,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = curr_q.getOmega();
+    Eigen::Vector3d thetadot = curr_q.getOmega(); // FIX
     double hdot = (getR(curr_q)*curr_q.getV())(2);
 
     //udot always 0 since we control it so the dynamics don't update it
@@ -70,7 +70,6 @@ double getApogee(q curr_q, double b){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
-        std::cout << temp_q.getTheta()(0) << std::endl;
         t += DT;
     }
     
