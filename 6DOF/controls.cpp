@@ -69,7 +69,7 @@ std::vector<double> generateRampingFunction(double duration, double b, double f,
 
 double find_u(q states, double apogee, double err) {
 	double f = 0.5;	  
-	double timestep = 0.01;
+	double timestep = DT;
 	std::vector<double> b_list = createRange(-10.0, 20.0, timestep);
 	double b_final = binary_search(b_list, apogee, err, states);
 	if (b_final < -1*f) { // if b is less than ramp time, prolly wanna get those flaps out
