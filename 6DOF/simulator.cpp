@@ -43,7 +43,7 @@ q getqdot(q curr_q){
 
 q integrate(q curr_q, Eigen::Vector2d old_w){
 
-    Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
+    Eigen::Vector3d windNoise = calcWindNoise(curr_q, &old_w);
 
     q k1 = getqdot(curr_q) * DT;
     q k2 = getqdot(curr_q + k1/2.0) * DT;
