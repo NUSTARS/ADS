@@ -5,6 +5,7 @@
 #include <iostream>
 #include <Eigen/Core>
 #include "q.h"
+#include <vector>
 
 std::vector<double> createRange(double start, double end, double step);
 

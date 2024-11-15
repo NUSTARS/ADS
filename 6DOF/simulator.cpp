@@ -69,8 +69,10 @@ double getApogee(q curr_q, double b){
         temp_q = integrate(temp_q, old_w);
         t += DT;
     }
+
+    return temp_q.getH();
 }
 
 double getApogee(q curr_q){
-    getApogee(curr_q, 1000);// shifting 1000 seconds to the right is plenty for a 20s flight time to make sure we never hit
+    return getApogee(curr_q, 1000);// shifting 1000 seconds to the right is plenty for a 20s flight time to make sure we never hit
 }
