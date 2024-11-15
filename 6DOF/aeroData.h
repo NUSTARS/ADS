@@ -8,6 +8,9 @@
 // NUSTARS NSL 2025
 //
 
+#ifndef aeroData_H
+#define aeroData_H
+
 //
 // getCD
 //
@@ -37,3 +40,5 @@ double getCP(double vSquared, double alpha, double u, double h);
 // returns the air density [lb/ft^3] at the current altitude
 //
 double getRho(double h);
+
+#endif // aeroData_H

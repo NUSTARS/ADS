@@ -1,3 +1,7 @@
+#ifndef CONTROLS_H
+#define CONTROLS_H
+
+
 #include <iostream>
 #include <Eigen/Core>
 #include "q.h"
@@ -12,3 +16,5 @@ double binary_search(const std::vector<double>& b,
 std::vector<double> generateRampingFunction(double duration, double b, double f, double timestep);
 
 double find_u(q states, double apogee, double err);
+
+#endif 

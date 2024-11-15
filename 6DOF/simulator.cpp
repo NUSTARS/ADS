@@ -66,7 +66,7 @@ double getApogee(q curr_q, double b){
 
     while(!atApogee(temp_q)){
         temp_q.setU(F(t-b));
-        temp_q = integrate(temp_q,, old_w);
+        temp_q = integrate(temp_q, old_w);
         t += DT;
     }
 }

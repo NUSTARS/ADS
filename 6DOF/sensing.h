@@ -1,3 +1,6 @@
+#ifndef SENSING_H
+#define SENSING_H
+
 #include <iostream>
 #include <Eigen/Core>
 #include "q.h"
@@ -13,4 +16,6 @@ q addGaussianNoise(q currentState, double IMUmean, double IMUstddev, double BMPm
 Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double BMPmean, double BMPstddev);
 
 q addSensorNoise(q currentState);
+
+#endif
 
