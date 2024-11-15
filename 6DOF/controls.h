@@ -2,6 +2,12 @@
 #include <Eigen/Core>
 #include "q.h"
 
+
+//
+// createRange
+//
+// Takes in start, end and timestep to create range list
+//
 std::vector<double> createRange(double start, double end, double step);
 
 double binary_search(const std::vector<double>& b, 
