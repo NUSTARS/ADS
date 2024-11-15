@@ -7,8 +7,8 @@
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
 // NUSTARS NSL 2025
 //
-#ifndef q_H
-#define q_H
+#ifndef Q_H
+#define Q_H
 
 #include<Eigen/Core>
 
@@ -66,4 +66,4 @@ class q {
 
 q operator*(double a, const q& obj);
 
-#endif // q_H
+#endif // Q_H

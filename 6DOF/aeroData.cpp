@@ -1,4 +1,5 @@
 #include "aeroData.h"
+#include <cmath>
 /*aeroData.cpp*/
 
 //
@@ -15,7 +16,7 @@
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cd
 //
 double getCD(double vSquared, double alpha, double u, double h){
-    return -1; // TODO get this from CFD ppl
+    return cos(alpha)*(0.5+u/2.0); // TODO get this from CFD ppl
 }
 
 //
@@ -24,7 +25,7 @@ double getCD(double vSquared, double alpha, double u, double h){
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cn
 //
 double getCN(double vSquared, double alpha, double u, double h){
-    return -1; // TODO get this from CFD ppl
+    return sin(alpha)*(0.5+u/2.0); // TODO get this from CFD ppl
 }
 
 
@@ -32,10 +33,10 @@ double getCN(double vSquared, double alpha, double u, double h){
 // getCP
 //
 // Takes in vSquared, angle of attack, control signal, and altitude to output 
-// the current distance [in] from the CP to tip of the nosecone
+// the current distance [ft] from the CP to tip of the nosecone
 //
 double getCP(double vSquared, double alpha, double u, double h){
-    return -1; // TODO get this from CFD ppl
+    return 83.0/12; // TODO get this from CFD ppl
 }
 
 //

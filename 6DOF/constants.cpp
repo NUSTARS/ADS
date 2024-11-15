@@ -16,5 +16,5 @@ double F(double t){
 //
 // TODO: Test different functions for f and implement one
 //
-return t*t;
+return t;
 }
