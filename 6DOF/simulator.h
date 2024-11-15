@@ -8,6 +8,9 @@
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
 // NUSTARS NSL 2025
 
+#ifndef SIMULATOR_H
+#define SIMULATOR_H
+
 #include <iostream>
 #include <Eigen/Core>
 #include "q.h"
@@ -38,6 +41,8 @@ bool atApogee(q curr_q);
 //
 double getApogee(q curr_q, double b);
 double getApogee(q curr_q);
+
+#endif
 
 
 

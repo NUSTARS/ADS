@@ -1,13 +1,13 @@
 /*calcDynamics.h*/
-
-#include <iostream>
-#include <Eigen/Core>
-
-
 // ADS 6DOF Simulator
 // Shishir Bandapalli, Max Hughes, Tara Saxena, Preston Shin
 //  NUSTARS NSL 2025
 
+#ifndef CALCDYNAMICS_H
+#define CALCDYNAMICS_H
+
+#include <iostream>
+#include <Eigen/Core>
 
 
 // getVMag
@@ -39,6 +39,10 @@ Eigen::Vector3d getAeroMoments(q);
 //
 // Takes in q and computes R inverse which is the inverse of the transfomraiton from world to rocket frame
 //
-Eigen::Matrix3d getR();
+Eigen::Matrix3d getR(q);
 
-Eigen::Vector3d calcWindNoise();
+Eigen::Vector3d calcWindNoise(q, Eigen::Vector2d old_w);
+
+double a(int k, double past_A);
+
+#endif // calcDynamics_H
