@@ -11,7 +11,6 @@
 *.exe
 
 # CMake generated files
-/6DOF/
 CMakeLists.txt
 CMakeCache.txt
 cmake_install.cmake
