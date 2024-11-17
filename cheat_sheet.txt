@@ -4,6 +4,7 @@ install cmake
 cmake -G "MinGW Makefiles" -S . -B build
 mingw32-make -C build 
 .\build\my_program.exe
+./build/test/all_tests
 
 all run in 6DOF
 also make a build folder
