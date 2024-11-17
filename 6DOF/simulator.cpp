@@ -14,6 +14,10 @@
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
+#include <vector>
+#include "matplotlibcpp.h"
+
+namespace plt = matplotlibcpp;
 
 q getqdot(q curr_q){
 
@@ -63,15 +67,24 @@ bool atApogee(q curr_q){
 double getApogee(q curr_q, double b){
     q temp_q = curr_q;
     double t = 0.0;
-
+    std::vector<double> times;
+	std::vector<double> alts;
+	alts.push_back(temp_q.getH());
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
+        times.push_back(t);
+        alts.push_back(temp_q.getH());
         t += DT;
     }
+    
+    plt::figure();
+    plt::plot(times, alts, "b-");
+    plt::ylabel("Height");
+    plt::xlabel("Time")
     
 
     return temp_q.getH();

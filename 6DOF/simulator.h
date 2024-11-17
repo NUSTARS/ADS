@@ -14,6 +14,7 @@
 #include <iostream>
 #include <Eigen/Core>
 #include "q.h"
+#include <vector>
 
 // getqdot
 //
