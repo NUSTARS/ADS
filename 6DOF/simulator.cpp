@@ -15,9 +15,9 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include <vector>
-#include "matplotlibcpp.h"
+#include "gnuplot-iostream.h"
 
-namespace plt = matplotlibcpp;
+
 
 q getqdot(q curr_q){
 
@@ -65,27 +65,30 @@ bool atApogee(q curr_q){
 }
 
 double getApogee(q curr_q, double b){
+	Gnuplot gp;
     q temp_q = curr_q;
     double t = 0.0;
-    std::vector<double> times;
-	std::vector<double> alts;
-	alts.push_back(temp_q.getH());
+    std::vector<std::pair<double, double>> height
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
-        times.push_back(t);
-        alts.push_back(temp_q.getH());
+        height.push_back({t,temp_q.getH()})
         t += DT;
     }
     
-    plt::figure();
-    plt::plot(times, alts, "b-");
-    plt::ylabel("Height");
-    plt::xlabel("Time")
-    plt::show();
+    gp << "set xlabel 'time'\n";
+    gp << "set ylabel 'Height'\n";
+    gp << "set key top left\n"; // Position the legend
+
+    // Plot one dataset per axis
+    gp << "plot '-' with lines title 'Height' lt rgb 'blue'\n";
+
+    // Send the datasets to gnuplot
+    gp.send1d(height); // Data for the first y-axis
+
     
 
     return temp_q.getH();
