@@ -1,0 +1,21 @@
+# Enable testing
+enable_testing()
+
+# FetchContent to manage GoogleTest dependencies
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(googletest)
+
+# Include project source directory for access to headers
+include_directories("${PROJECT_SOURCE_DIR}")
+
+# Create a single executable for all tests
+add_executable(all_tests simple.cpp)  # Combine both files into one executable
+target_link_libraries(all_tests gtest gtest_main)
+
+# Register the tests with ctest (ensuring the executable is properly registered)
+add_test(NAME all_tests COMMAND all_tests)
