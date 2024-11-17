@@ -14,8 +14,6 @@
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
-#include <vector>
-#include "gnuplot-iostream.h"
 
 
 
@@ -65,29 +63,26 @@ bool atApogee(q curr_q){
 }
 
 double getApogee(q curr_q, double b){
-	Gnuplot gp;
     q temp_q = curr_q;
     double t = 0.0;
-    std::vector<std::pair<double, double>> height
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
-        height.push_back({t,temp_q.getH()})
         t += DT;
     }
     
-    gp << "set xlabel 'time'\n";
-    gp << "set ylabel 'Height'\n";
-    gp << "set key top left\n"; // Position the legend
+    //gp << "set xlabel 'time'\n";
+    //gp << "set ylabel 'Height'\n";
+    //gp << "set key top left\n"; // Position the legend
 
     // Plot one dataset per axis
-    gp << "plot '-' with lines title 'Height' lt rgb 'blue'\n";
+    //gp << "plot '-' with lines title 'Height' lt rgb 'blue'\n";
 
     // Send the datasets to gnuplot
-    gp.send1d(height); // Data for the first y-axis
+    //gp.send1d(height); // Data for the first y-axis
 
     
 
