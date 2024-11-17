@@ -85,6 +85,7 @@ double getApogee(q curr_q, double b){
     plt::plot(times, alts, "b-");
     plt::ylabel("Height");
     plt::xlabel("Time")
+    plt::show();
     
 
     return temp_q.getH();
