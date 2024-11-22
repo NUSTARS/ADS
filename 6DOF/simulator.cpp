@@ -78,13 +78,24 @@ double getApogee(q curr_q, double b){
 	std::vector<double> thetax;
 	std::vector<double> thetay;
 	std::vector<double> thetaz;
-	alts.push_back(temp_q.getH());
+	times.push_back(t);
+        alts.push_back(temp_q.getH());
+        velocx.push_back(temp_q.getV()(0));
+        velocy.push_back(temp_q.getV()(1));
+        velocz.push_back(temp_q.getV()(2));
+        omegax.push_back(temp_q.getOmega()(0));
+        omegay.push_back(temp_q.getOmega()(1));
+        omegaz.push_back(temp_q.getOmega()(2));
+        thetax.push_back(temp_q.getTheta()(0));
+        thetay.push_back(temp_q.getTheta()(1));
+        thetaz.push_back(temp_q.getTheta()(2));
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
+        t += DT;
         times.push_back(t);
         alts.push_back(temp_q.getH());
         velocx.push_back(temp_q.getV()(0));
@@ -96,7 +107,7 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        t += DT;
+        
         std::cout << t << std::endl;
     }
     
