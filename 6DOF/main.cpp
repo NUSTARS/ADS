@@ -14,8 +14,11 @@ int main() {
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, 204.934, 694.52); // they only give it in world
     Eigen::Vector3d initial_omega(7.62E-09, 0.014, -1.19E-05); // good
-    Eigen::Vector3d initial_theta(0.009*0.01745, 72.505*0.01745, 0); // should check these
+    //Eigen::Vector3d initial_theta(0.009*0.01745, 72.505*0.01745, 0); // should check these
     double initial_h = 898.599; // good
+
+    // For Testing
+    Eigen::Vector3d initial_theta(0, 0, 0); // should check these
 
     //convert from WORLD to BODY using R_BW (R_WB inverse)
     Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0)).inverse()*initial_v_world; 
