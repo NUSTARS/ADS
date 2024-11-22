@@ -35,11 +35,17 @@ Eigen::Vector3d getAeroForces(q);
 Eigen::Vector3d getAeroMoments(q);
 
 
-// getAeroMoments
+// getR
 //
-// Takes in q and computes R inverse which is the inverse of the transformation from world to rocket frame
+// Takes in q and computes R which is the transformation from world to rocket frame
 //
 Eigen::Matrix3d getR(q);
+
+// getRinv
+//
+// Takes in q and computes inverse of R which is the transformation from rocket to world frame
+//
+Eigen::Matrix3d getRinv(q curr_q);
 
 
 // calcWindNoise

@@ -24,7 +24,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getR(curr_q).inverse()*G;
+    Eigen::Vector3d F_grav = getRinv(curr_q)*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -36,7 +36,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = (getR(curr_q).inverse())*curr_q.getOmega(); 
+    Eigen::Vector3d thetadot = getRinv(curr_q)*curr_q.getOmega(); 
     double hdot = (getR(curr_q)*curr_q.getV())(2);
 
     //udot always 0 since we control it so the dynamics don't update it
