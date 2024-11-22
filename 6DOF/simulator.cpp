@@ -26,8 +26,10 @@ q getqdot(q curr_q){
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
 
-    Eigen::Vector3d F_aero = getAeroForces(curr_q);
-    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
+    //Eigen::Vector3d F_aero = getAeroForces(curr_q); remove aero for now
+    //Eigen::Vector3d M_aero = getAeroMoments(curr_q);
+    Eigen::Vector3d F_aero{0,0,0};
+    Eigen::Vector3d M_aero{0,0,0};
     Eigen::Vector3d F_grav = getRinv(curr_q)*G;
     std::cout << "curr_q: " << curr_q << std::endl;
     std::cout << "F_grav: " << F_grav << std::endl;
@@ -108,7 +110,7 @@ double getApogee(q curr_q, double b){
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
-        //temp_q.setU(F(t-b));
+        //temp_q.setU(F(t-b)); remove control for now
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
         t += DT;
