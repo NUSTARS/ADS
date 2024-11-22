@@ -15,7 +15,7 @@
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
-
+#include "simulator.h"
 
 
 q getqdot(q curr_q){
