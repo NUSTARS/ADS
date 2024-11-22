@@ -17,7 +17,7 @@ if list(csv_data.columns) != names:
 
 data = pd.concat([data, csv_data], ignore_index=True)
 
-print(data)
+# print(data)
 
 # Step 2: Extract the x-axis data
 # Replace 'X' with the actual column name for the x-axis
