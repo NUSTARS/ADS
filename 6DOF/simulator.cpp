@@ -72,7 +72,7 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
 
     q new_q_thetalimits (new_q.getV(), new_q.getOmega(), scaled_theta, new_q.getH(),new_q.getU());
 
-    return new_q;
+    return new_q_thetalimits;
 }
 
 
