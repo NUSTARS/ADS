@@ -97,6 +97,7 @@ double getApogee(q curr_q, double b){
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
         t += DT;
+        std::cout << t << std::endl;
     }
     
     std::ofstream outfile("data.csv");
