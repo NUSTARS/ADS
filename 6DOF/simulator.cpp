@@ -16,12 +16,9 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include "simulator.h"
-<<<<<<< HEAD
-=======
 #include <cmath>
 
 
->>>>>>> 891aec712c5cc6150b816e6d6fb76c12e77cbe47
 
 
 q getqdot(q curr_q){
