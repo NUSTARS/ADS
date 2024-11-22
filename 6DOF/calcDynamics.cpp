@@ -133,7 +133,8 @@ Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
     old_w = &past_w;
 
     Vector3d ang(0,sin(wind_angle),cos(wind_angle)); //i am assuming wind is planar (max said this was ok)
-    return windNoise * ang;
+    // return windNoise * ang;
+    return Eigen::Vector3d(0,0,0);
 };
 
 double a(int k, double past_A) {

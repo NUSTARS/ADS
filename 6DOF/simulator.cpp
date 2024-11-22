@@ -16,6 +16,8 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include "simulator.h"
+#include <cmath>
+
 
 
 
@@ -58,6 +60,18 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     //q k4 = getqdot(curr_q + k3) * DT;
     //q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
     q new_q = curr_q + k1;
+
+    Eigen::Vector3d scaled_theta;
+    Eigen::Vector3d theta = new_q.getTheta();
+    for (int i = 0; i < theta.size(); ++i) {
+        scaled_theta[i] = std::fmod(theta[i], 2*M_PI); // Wrap angle
+        if (scaled_theta[i] < 0) {
+            scaled_theta[i] += 2*M_PI; // Ensure positivity
+        }
+}
+
+    q new_q_thetalimits (new_q.getV(), new_q.getOmega(), scaled_theta, new_q.getH(),new_q.getU());
+
     return new_q;
 }
 

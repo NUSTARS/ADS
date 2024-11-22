@@ -4,14 +4,29 @@ import matplotlib.pyplot as plt
 # Step 1: Load the CSV file
 # Replace 'your_file.csv' with the path to your CSV file
 file_path = 'data.csv'
-data = pd.read_csv(file_path)
+
+names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz"]
+data = pd.DataFrame(columns=names)
+
+
+# Read data from CSV
+csv_data = pd.read_csv(file_path)
+
+if list(csv_data.columns) != names:
+    csv_data.columns = names  # Assign names if CSV does not have headers or has mismatched headers
+
+data = pd.concat([data, csv_data], ignore_index=True)
+
+print(data)
 
 # Step 2: Extract the x-axis data
 # Replace 'X' with the actual column name for the x-axis
-x = data[0]  # X-axis data
+x = data["time"]  # X-axis data
 
 
-plt.plot(data[0],data[5])
+
+
+plt.plot(x,data["thetax"])
 
 # Step 4: Add labels, title, and legend
 plt.xlabel('time')  # Replace with your label
