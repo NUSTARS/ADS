@@ -115,7 +115,7 @@ double getApogee(q curr_q, double b){
     
     std::ofstream outfile("data.csv");
 	
-	outfile << "time" << "," << "alts" << "," << "vx" << "," << "vy" << "," << "vz" << "," << "wx" << "," << "wy" << "," << "wz" << "," << "thetax" << "," << "thetay" << "," << "thetaz" << "\n";
+
 	
 	// Write data rows
     for (size_t i = 0; i < alts.size(); ++i) {
