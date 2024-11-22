@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include <random>
 #include "q.h"
 #include "calcDynamics.h"
@@ -90,6 +91,7 @@ Matrix3d getR(q curr_q) {
                  {-sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
     Matrix3d R_SB {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
+    Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
     m = R_SB * Rx * Ry * Rz;
 
@@ -99,6 +101,7 @@ Matrix3d getR(q curr_q) {
 // given coords in earth frame, converts to body frame 
 Matrix3d getRinv(q curr_q){
 
+    /*
     double phi = curr_q.getTheta()(0);
     double theta = curr_q.getTheta()(1);
     double psi = curr_q.getTheta()(2);
@@ -107,7 +110,10 @@ Matrix3d getRinv(q curr_q){
     Matrix3d R   {{1, sin(phi)*tan(theta), cos(phi)*tan(theta)}, 
                   {0, cos(phi), -sin(phi)},
                   {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    */
+    Matrix3d R = getR(curr_q).inverse();
     return R;
+    
 }
     
 //calculates pink wind noise signal and multiplies by wind direction vector to get wind noise vector (idk math so hopefully u understand what i mean)
@@ -128,7 +134,8 @@ Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
     old_w = &past_w;
 
     Vector3d ang(0,sin(wind_angle),cos(wind_angle)); //i am assuming wind is planar (max said this was ok)
-    return windNoise * ang;
+    // return windNoise * ang;
+    return Eigen::Vector3d(0,0,0);
 };
 
 double a(int k, double past_A) {
