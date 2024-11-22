@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <Eigen/Core>
+#include <Eigen/Dense>
 #include <random>
 #include "q.h"
 #include "calcDynamics.h"
@@ -89,7 +90,7 @@ Matrix3d getR(q curr_q) {
     Matrix3d Rz {{cos(psi) , sin(psi), 0},
                  {-sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
-    Matrix3d R_SB {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
+    Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
     m = R_SB * Rx * Ry * Rz;
 
@@ -99,6 +100,7 @@ Matrix3d getR(q curr_q) {
 // given coords in earth frame, converts to body frame 
 Matrix3d getRinv(q curr_q){
 
+    /*
     double phi = curr_q.getTheta()(0);
     double theta = curr_q.getTheta()(1);
     double psi = curr_q.getTheta()(2);
@@ -107,7 +109,10 @@ Matrix3d getRinv(q curr_q){
     Matrix3d R   {{1, sin(phi)*tan(theta), cos(phi)*tan(theta)}, 
                   {0, cos(phi), -sin(phi)},
                   {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    */
+    Matrix3d R = getR(curr_q).inverse();
     return R;
+    
 }
     
 //calculates pink wind noise signal and multiplies by wind direction vector to get wind noise vector (idk math so hopefully u understand what i mean)
