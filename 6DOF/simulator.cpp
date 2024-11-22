@@ -26,6 +26,7 @@ q getqdot(q curr_q){
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = getRinv(curr_q)*G;
+    std::cout << "F_grav: " << F_grav << std::endl;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -54,7 +55,7 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     //q k3 = getqdot(curr_q + k2/2.0) * DT;
     //q k4 = getqdot(curr_q + k3) * DT;
     //q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
-    q new_q = curr_q + k1*DT;
+    q new_q = curr_q + k1;
     return new_q;
 }
 
