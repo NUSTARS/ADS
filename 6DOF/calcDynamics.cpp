@@ -11,6 +11,7 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include "aeroData.h"
+#include "cmath"
 
 using std::random_device;
 using Eigen::Matrix2d;
@@ -71,7 +72,7 @@ Vector3d getAeroMoments(q curr_q) {
     return v;
 };
 
-
+// given coords in body frame, converts to earth frame
 Matrix3d getR(q curr_q) { 
     Matrix3d m(3,3);
     double phi = curr_q.getTheta()(0);
@@ -94,6 +95,20 @@ Matrix3d getR(q curr_q) {
 
     return m;
 };
+
+// given coords in earth frame, converts to body frame 
+Matrix3d getRinv(q curr_q){
+
+    double phi = curr_q.getTheta()(0);
+    double theta = curr_q.getTheta()(1);
+    double psi = curr_q.getTheta()(2);
+
+    //My brain tells me this won't work but this is what matlab says
+    Matrix3d R   {{1, sin(phi)*tan(theta), cos(phi)*tan(theta)}, 
+                  {0, cos(phi), -sin(phi)},
+                  {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    return R;
+}
     
 //calculates pink wind noise signal and multiplies by wind direction vector to get wind noise vector (idk math so hopefully u understand what i mean)
 Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {

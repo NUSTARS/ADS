@@ -24,7 +24,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getR(curr_q).inverse()*G;
+    Eigen::Vector3d F_grav = getRinv(curr_q)*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -36,7 +36,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = curr_q.getOmega(); // FIX
+    Eigen::Vector3d thetadot = getRinv(curr_q)*curr_q.getOmega(); 
     double hdot = (getR(curr_q)*curr_q.getV())(2);
 
     //udot always 0 since we control it so the dynamics don't update it
@@ -63,30 +63,32 @@ bool atApogee(q curr_q){
 }
 
 double getApogee(q curr_q, double b){
+    namespace plt = matplotlibcpp;
     q temp_q = curr_q;
     double t = 0.0;
+    std::vector<double> times;
+	std::vector<double> alts;
+	alts.push_back(temp_q.getH());
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
+        times.push_back(t);
+        alts.push_back(temp_q.getH());
         t += DT;
     }
     
-    //gp << "set xlabel 'time'\n";
-    //gp << "set ylabel 'Height'\n";
-    //gp << "set key top left\n"; // Position the legend
-
-    // Plot one dataset per axis
-    //gp << "plot '-' with lines title 'Height' lt rgb 'blue'\n";
-
-    // Send the datasets to gnuplot
-    //gp.send1d(height); // Data for the first y-axis
-
+    plt::figure();
+    plt::plot(times, alts, "b-");
+    plt::ylabel("Height");
+    plt::xlabel("Time")
+    plt::show();
     
 
     return temp_q.getH();
+
 }
 
 double getApogee(q curr_q){
