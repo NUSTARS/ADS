@@ -76,7 +76,7 @@ std::ostream & operator << (std::ostream &out, const q &q){
 // Accessors
 //
 Eigen::Vector3d q::getV() const {return v;}
-Eigen::Vector3d q::getOmega() const {return v;}
+Eigen::Vector3d q::getOmega() const {return omega;}
 Eigen::Vector3d q::getTheta() const {return theta;}      
 double q::getH() const {return h;}
 
