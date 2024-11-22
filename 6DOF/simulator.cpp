@@ -36,7 +36,7 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = curr_q.getOmega(); // FIX
+    Eigen::Vector3d thetadot = (getR(curr_q).inverse())*curr_q.getOmega(); 
     double hdot = (getR(curr_q)*curr_q.getV())(2);
 
     //udot always 0 since we control it so the dynamics don't update it
