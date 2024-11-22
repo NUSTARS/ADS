@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <Eigen/Core>
+#include <fstream>
 #include <Eigen/Dense>
 #include "q.h"
 #include "calcDynamics.h"
@@ -63,7 +64,6 @@ bool atApogee(q curr_q){
 }
 
 double getApogee(q curr_q, double b){
-    namespace plt = matplotlibcpp;
     q temp_q = curr_q;
     double t = 0.0;
     std::vector<double> times;
@@ -80,12 +80,15 @@ double getApogee(q curr_q, double b){
         t += DT;
     }
     
-    plt::figure();
-    plt::plot(times, alts, "b-");
-    plt::ylabel("Height");
-    plt::xlabel("Time")
-    plt::show();
-    
+    std::ofstream outfile("data.csv");
+	
+	// Write data rows
+    for (size_t i = 0; i < alts.size(); ++i) {
+        outfile << times[i] << "," << alts[i] << "\n";
+    }
+
+    outfile.close();
+
 
     return temp_q.getH();
 
