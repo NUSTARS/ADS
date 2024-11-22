@@ -90,7 +90,6 @@ Matrix3d getR(q curr_q) {
     Matrix3d Rz {{cos(psi) , sin(psi), 0},
                  {-sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
-    Matrix3d R_SB {{0, 1, 0}, {0, 0, 1}, {1, 0, 0}};
     Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
     m = R_SB * Rx * Ry * Rz;
