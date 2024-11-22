@@ -16,6 +16,12 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include "simulator.h"
+<<<<<<< HEAD
+=======
+#include <cmath>
+
+
+>>>>>>> 891aec712c5cc6150b816e6d6fb76c12e77cbe47
 
 
 q getqdot(q curr_q){
@@ -26,6 +32,7 @@ q getqdot(q curr_q){
     Eigen::Vector3d F_aero = getAeroForces(curr_q);
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = getRinv(curr_q)*G;
+    std::cout << "curr_q: " << curr_q << std::endl;
     std::cout << "F_grav: " << F_grav << std::endl;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
@@ -56,7 +63,19 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     //q k4 = getqdot(curr_q + k3) * DT;
     //q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
     q new_q = curr_q + k1;
-    return new_q;
+
+    Eigen::Vector3d scaled_theta;
+    Eigen::Vector3d theta = new_q.getTheta();
+    for (int i = 0; i < theta.size(); ++i) {
+        scaled_theta[i] = std::fmod(theta[i], 2*M_PI); // Wrap angle
+        if (scaled_theta[i] < 0) {
+            scaled_theta[i] += 2*M_PI; // Ensure positivity
+        }
+}
+
+    q new_q_thetalimits (new_q.getV(), new_q.getOmega(), scaled_theta, new_q.getH(),new_q.getU());
+
+    return new_q_thetalimits;
 }
 
 
@@ -78,13 +97,24 @@ double getApogee(q curr_q, double b){
 	std::vector<double> thetax;
 	std::vector<double> thetay;
 	std::vector<double> thetaz;
-	alts.push_back(temp_q.getH());
+	times.push_back(t);
+        alts.push_back(temp_q.getH());
+        velocx.push_back(temp_q.getV()(0));
+        velocy.push_back(temp_q.getV()(1));
+        velocz.push_back(temp_q.getV()(2));
+        omegax.push_back(temp_q.getOmega()(0));
+        omegay.push_back(temp_q.getOmega()(1));
+        omegaz.push_back(temp_q.getOmega()(2));
+        thetax.push_back(temp_q.getTheta()(0));
+        thetay.push_back(temp_q.getTheta()(1));
+        thetaz.push_back(temp_q.getTheta()(2));
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
         //temp_q.setU(F(t-b));
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
+        t += DT;
         times.push_back(t);
         alts.push_back(temp_q.getH());
         velocx.push_back(temp_q.getV()(0));
@@ -96,10 +126,13 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        t += DT;
+        
+        std::cout << t << std::endl;
     }
     
     std::ofstream outfile("data.csv");
+	
+
 	
 	// Write data rows
     for (size_t i = 0; i < alts.size(); ++i) {
