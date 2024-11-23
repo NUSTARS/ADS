@@ -18,5 +18,5 @@ TEST(MathOperations, MultiplicationWorks) {
 }
 
 TEST(calcDynamics, simpleVSquared){
-    q testq = q(Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(0, 0, 0), )
+    q testq = q(Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(0, 0, 0), Eigen::Vector3d(0, 0, 0), 0.0, 0.0);
 }
