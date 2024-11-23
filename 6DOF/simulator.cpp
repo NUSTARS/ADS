@@ -50,6 +50,7 @@ q getqdot(q curr_q){
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
     Eigen::Vector3d thetadot = specialR*omega; 
+    //Eigen::Vector3d thetadot = getRinv(curr_q)*omega; 
     double hdot = (getR(curr_q)*v)(2);
 
     //udot always 0 since we control it so the dynamics don't update it

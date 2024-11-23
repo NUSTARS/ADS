@@ -36,8 +36,8 @@ const double DT = 0.01; // time step for integration
 //
 // Atmospheric constants
 //
-const int P0 = 0; // Gauge pressure on the ground [inHg]
-const int T0 = 0; // Temperature on the ground [F]
+const int P0 = 30; // Gauge pressure on the ground [inHg]
+const int T0 = 60; // Temperature on the ground [F]
 const int wind_velocity = 0; //Average wind velocity
 const int wind_angle = 0; //Average wind angle
 const double alpha = 5/3; //Pink noise 1/f power

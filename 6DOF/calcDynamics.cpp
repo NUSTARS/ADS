@@ -77,8 +77,7 @@ Vector3d getAeroMoments(q curr_q) {
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(getV_Squared(curr_q), getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
-    Vector3d v(0, -dist * forces(2), -dist * forces(1));
-    std::cout << "FAy: " << forces(1) << " MAz: " << v(2) << std::endl; 
+    Vector3d v(0, dist * forces(2), -dist * forces(1));
     return v;
 };
 
@@ -101,7 +100,7 @@ Matrix3d getR(q curr_q) {
                  {        0,        0, 1}};
     Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
-    m = R_SB * Rx * Ry * Rz;
+    m = R_SB * Ry * Ry * Rz;
 
     return m;
 };
