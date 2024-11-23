@@ -19,7 +19,7 @@ int main() {
 
     // For Testing
     Eigen::Vector3d initial_v_world(0, 200, 700.00);
-    Eigen::Vector3d initial_theta(0, M_PI/2.0, 0);
+    Eigen::Vector3d initial_theta(0, 0, 0);
     Eigen::Vector3d initial_omega(0, 0, 0);
 
     //convert from WORLD to BODY using R_BW (R_WB inverse)

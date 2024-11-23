@@ -100,8 +100,8 @@ Matrix3d getR(q curr_q) {
                  {        0,        0, 1}};
     Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
-    //m = R_SB * Rx * Ry * Rz;
-    m = Rx * Ry * Rz;
+    m = R_SB * Rx * Ry * Rz;
+    //m = Rx * Ry * Rz;
 
     return m;
 };

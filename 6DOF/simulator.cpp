@@ -38,14 +38,16 @@ q getqdot(q curr_q){
     double omegaYdot = (1/Iy)*(M_aero(1) - omega(0)*omega(2)*(Ix-Iz));
     double omegaZdot = (1/Iz)*(M_aero(2) - omega(0)*omega(1)*(Iy-Ix));
 
-    std::cout << "omegaZdot: " << omegaZdot << std::endl;
     Eigen::Vector3d euler = curr_q.getTheta();
-    double theta = euler(0);
-    double phi = euler(1);
+    double phi = euler(0);
+    double theta = euler(1);
     
-    Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
-                    {0, cos(phi), -sin(phi)},
-                    {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    //Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
+    //                {0, cos(phi), -sin(phi)},
+    //                {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    Eigen::Matrix3d specialR{{cos(phi)*tan(theta), -sin(phi)*sin(theta), 1}, //source: max fucking around in sympy
+                    {-sin(phi), -cos(phi), 0},
+                    {cos(phi)/cos(theta), -sin(phi)/cos(theta), 0}};
     Eigen::Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
