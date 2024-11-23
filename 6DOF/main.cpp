@@ -18,7 +18,7 @@ int main() {
     double initial_h = 898.599; // good
 
     // For Testing
-    Eigen::Vector3d initial_v_world(0, 20, 694.52);
+    Eigen::Vector3d initial_v_world(0, 200, 700.00);
     Eigen::Vector3d initial_theta(0, 0, 0);
     Eigen::Vector3d initial_omega(0, 0, 0);
 

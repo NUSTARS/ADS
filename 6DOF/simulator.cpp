@@ -38,10 +38,19 @@ q getqdot(q curr_q){
     double omegaYdot = (1/Iy)*(M_aero(1) - omega(0)*omega(2)*(Ix-Iz));
     double omegaZdot = (1/Iz)*(M_aero(2) - omega(0)*omega(1)*(Iy-Ix));
 
+    std::cout << "omegaZdot: " << omegaZdot << std::endl;
+    Eigen::Vector3d euler = curr_q.getTheta();
+    double theta = euler(0);
+    double phi = euler(1);
+    
+    Eigen::Matrix3d specialR{{1, sin(theta)*sin(phi), cos(theta)*tan(phi)},
+                    {0, cos(theta), -sin(theta)},
+                    {0, sin(theta)/cos(phi), cos(theta)/cos(phi)}};
+
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = getRinv(curr_q)*curr_q.getOmega(); 
-    double hdot = (getR(curr_q)*curr_q.getV())(2);
+    Eigen::Vector3d thetadot = specialR*omega; 
+    double hdot = (getR(curr_q)*v)(2);
 
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
@@ -63,7 +72,7 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     Eigen::Vector3d theta = new_q.getTheta();
     for (int i = 0; i < theta.size(); ++i) {
         scaled_theta[i] = std::fmod(theta[i], 2*M_PI); // Wrap angle
-        if (scaled_theta[i] < 0) {
+        if (scaled_theta[i] < -M_PI) {
             scaled_theta[i] += 2*M_PI; // Ensure positivity
         }
 }
@@ -122,7 +131,7 @@ double getApogee(q curr_q, double b){
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
         
-        std::cout << temp_q.getH() << std::endl;
+        std::cout << "Altitude: " << temp_q.getH() << std::endl;
     }
     
     std::ofstream outfile("data.csv");

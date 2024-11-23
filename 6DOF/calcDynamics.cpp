@@ -56,17 +56,16 @@ Vector3d getAeroForces(q curr_q) {
     double FAy = 0.0;
     double FAz = 0.0;
 
-    if(v_mag>0.0){ 
+    if(v_mag > 0.0){ 
         double alpha = getAlpha(curr_q);
         
         FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
-        double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
+        double FAn = -0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
 
         if(sqrt(vy*vy+vz*vz) > 0){ // should already by true if FAn > 0
-            FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
-            FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+            FAy = FAn*vy / sqrt(vy*vy+vz*vz);
+            FAz = FAn*vz / sqrt(vy*vy+vz*vz);
         }
-        std::cout << "alpha: " << alpha << std::endl;
     }
 
     Vector3d v(FAx,FAy,FAz);
@@ -79,6 +78,7 @@ Vector3d getAeroMoments(q curr_q) {
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(getV_Squared(curr_q), getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
     Vector3d v(0, -dist * forces(2), -dist * forces(1));
+    std::cout << "FAy: " << forces(1) << " MAz: " << v(2) << std::endl; 
     return v;
 };
 
