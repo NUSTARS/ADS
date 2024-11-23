@@ -43,14 +43,15 @@ q getqdot(q curr_q){
     double theta = euler(0);
     double phi = euler(1);
     
-    Eigen::Matrix3d specialR{{1, sin(theta)*sin(phi), cos(theta)*tan(phi)},
-                    {0, cos(theta), -sin(theta)},
-                    {0, sin(theta)/cos(phi), cos(theta)/cos(phi)}};
+    Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
+                    {0, cos(phi), -sin(phi)},
+                    {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    Eigen::Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
+    //Eigen::Vector3d thetadot = R_SB*specialR*omega; 
     Eigen::Vector3d thetadot = specialR*omega; 
-    //Eigen::Vector3d thetadot = getRinv(curr_q)*omega; 
     double hdot = (getR(curr_q)*v)(2);
 
     //udot always 0 since we control it so the dynamics don't update it
@@ -85,6 +86,7 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
 
 
 bool atApogee(q curr_q){
+    std::cout << "V_z Earth: " << (getR(curr_q)*curr_q.getV())(2) << std::endl;
     return (getR(curr_q)*curr_q.getV())(2) < 0;
 }
 
