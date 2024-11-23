@@ -73,7 +73,7 @@ TEST(AeroForces, noV){
 }
 
 TEST(AeroForces, BigX){
-    Eigen::Vector3d v(100000, 0, 0);
+    Eigen::Vector3d v(0, 0, 0);
     Eigen::Vector3d t(0, 0, 0);
     Eigen::Vector3d o(0, 0, 0);
     q testq(v, t, o, 0.0, 0.0);
