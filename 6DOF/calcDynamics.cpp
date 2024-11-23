@@ -57,7 +57,7 @@ Vector3d getAeroForces(q curr_q) {
     double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
     double FAy = 0.0;
     double FAz = 0.0;
-    if(sqrt(vy*vy+vz*vz) > 0){
+    if(sqrt(vy*vy+vz*vz) > 0){ //check this to make sure it makes sense dynamics wise
         double FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
         double FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
     }
