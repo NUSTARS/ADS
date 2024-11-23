@@ -19,8 +19,8 @@
 // Mechanical constants
 //
 const double Ix = (103.26)/(32.17*144); // Moment of inertia about the X-axis [slugs*ft^2]
-const double Iy = 15906/(32.17*144); // Moment of inertia about the Y-axis [slugs*ft^2]
-const double Iz = 15906/(32.17*144); // Moment of inertia about the Z-axis [slugs*ft^2]
+const double Iy = 15906.0/(32.17*144); // Moment of inertia about the Y-axis [slugs*ft^2]
+const double Iz = 15906.0/(32.17*144); // Moment of inertia about the Z-axis [slugs*ft^2]
 const double BALLAST_MASS = 0; // Mass of the ballast [slugs]
 const double BURNOUT_MASS = 34.959/32.17; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system

@@ -27,10 +27,11 @@ q getqdot(q curr_q){
     Eigen::Vector3d omega = curr_q.getOmega();
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
-    //Eigen::Vector3d M_aero = getAeroMoments(curr_q); //remove aero for now
-    //Eigen::Vector3d F_aero{0,0,0};
-    Eigen::Vector3d M_aero{0,0,0};
+    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = getRinv(curr_q)*G;
+
+    std::cout << "Aero Forces: " << F_aero << std::endl;
+    std::cout << "Aero Moments: " << M_aero << std::endl;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -124,7 +125,7 @@ double getApogee(q curr_q, double b){
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
         
-        std::cout << temp_q.getH() << std::endl;
+        //std::cout << temp_q.getH() << std::endl;
     }
     
     std::ofstream outfile("data.csv");
