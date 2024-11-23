@@ -16,7 +16,7 @@
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cd
 //
 double getCD(double vSquared, double alpha, double u, double h){
-    return cos(alpha)*(0.5+u/2.0); // TODO get this from CFD ppl
+    return cos(alpha)*(0.6+u/2.0); // TODO get this from CFD ppl
 }
 
 //
@@ -25,7 +25,7 @@ double getCD(double vSquared, double alpha, double u, double h){
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cn
 //
 double getCN(double vSquared, double alpha, double u, double h){
-    return sin(alpha)*(0.5+u/2.0); // TODO get this from CFD ppl
+    return sin(alpha)*(0.6+u/2.0); // TODO get this from CFD ppl
 }
 
 
@@ -42,7 +42,7 @@ double getCP(double vSquared, double alpha, double u, double h){
 //
 // getRho
 //
-// returns the air density [lb/ft^3] at the current altitude
+// returns the air density [slug/ft^3] at the current altitude
 //
 double getRho(double h){
     double rho = -1;

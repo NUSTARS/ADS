@@ -39,7 +39,7 @@ double getAlpha(q curr_q){
     if(v_mag == 0){
         return 0;
     }
-    double alpha = acos(vx/v_mag); 
+    double alpha = acos(vx/getV_Mag(curr_q)); 
     return alpha;
 };
 
@@ -59,15 +59,15 @@ Vector3d getAeroForces(q curr_q) {
     double FAy = 0.0;
     double FAz = 0.0;
 
-    if(v_mag>0.0){ 
+    if(v_mag > 0.0){ 
         double alpha = getAlpha(curr_q);
         
-        double FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
-        double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
+        FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
+        double FAn = -0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
 
-        if(sqrt(vy*vy+vz*vz) > 0){ //check this to make sure it makes sense dynamics wise
-            double FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
-            double FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+        if(sqrt(vy*vy+vz*vz) > 0){ // should already by true if FAn > 0
+            FAy = FAn*vy / sqrt(vy*vy+vz*vz);
+            FAz = FAn*vz / sqrt(vy*vy+vz*vz);
         }
     }
 
@@ -76,11 +76,14 @@ Vector3d getAeroForces(q curr_q) {
 };
 
 Vector3d getAeroMoments(q curr_q) {
+    double vx = curr_q.getV()(0);
+    double vy = curr_q.getV()(1);
+    double vz = curr_q.getV()(2);
     Vector3d forces = getAeroForces(curr_q);
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
-    dist = getCP(getV_Mag(curr_q), getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
-    Vector3d v(0, dist * forces(2), dist * forces(1));
+    dist = getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
+    Vector3d v(0, dist * forces(2), -dist * forces(1));
     return v;
 };
 
@@ -92,18 +95,19 @@ Matrix3d getR(q curr_q) {
     double psi = curr_q.getTheta()(2);
     
     Matrix3d Rx {{1,         0,         0},
-                 {0,  cos(theta),  sin(theta)},
-                 {0, -sin(theta), cos(theta)}};
+                 {0,  cos(phi),  sin(phi)},
+                 {0, -sin(phi), cos(phi)}};
 
-    Matrix3d Ry {{cos(phi), 0, -sin(phi)},
+    Matrix3d Ry {{cos(theta), 0, -sin(theta)},
                  {0         , 1,           0},
-                 {sin(phi), 0,  cos(phi)}};
+                 {sin(theta), 0,  cos(theta)}};
     Matrix3d Rz {{cos(psi) , sin(psi), 0},
                  {-sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
     Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
     
-    m = R_SB * Rx * Ry * Rz;
+    //m = R_SB * Rx * Ry * Rz;
+    m = Rx * Ry * Rz;
 
     return m;
 };
