@@ -35,7 +35,7 @@ double getAlpha(q curr_q){
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    double alpha = vx/sqrt(getV_Squared(curr_q)); //technically this is not angle of attack, no?
+    double alpha = acos(vx/sqrt(getV_Squared(curr_q))); 
     return alpha;
 };
 
@@ -44,21 +44,29 @@ Vector3d getAeroForces(q curr_q) {
     //v_squared != vmag because we need wind; FIX
     // need to add some sort of wind term 
 
-    //maybe add a new function here that says calc wind --> need to look @ pink noise model 
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
     double h = curr_q.getH();
     double u = curr_q.getU();
-    double alpha = getAlpha(curr_q);
     double v_mag = getV_Squared(curr_q);
-    
-    double FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
-    double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
-    double FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
-    double FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+    //maybe add a new function here that says calc wind --> need to look @ pink noise model
 
+    double FAx = 0.0;
+    double FAy = 0.0;
+    double FAz = 0.0;
 
+    if(v_mag>0.0){ 
+        double alpha = getAlpha(curr_q);
+        
+        double FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
+        double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
+
+        if(sqrt(vy*vy+vz*vz) > 0){ //check this to make sure it makes sense dynamics wise
+            double FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
+            double FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+        }
+    }
 
     Vector3d v(FAx,FAy,FAz);
     return v;
