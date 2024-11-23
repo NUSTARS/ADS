@@ -10,7 +10,7 @@
 #ifndef Q_H
 #define Q_H
 
-#include<Eigen/Core>
+#include <Eigen/Core>
 
 
 class q {

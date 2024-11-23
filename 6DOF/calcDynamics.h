@@ -8,12 +8,13 @@
 
 #include <iostream>
 #include <Eigen/Core>
+#include "q.h"
 
 
 // getVMag
 //
 // Takes in q
-double getV_Squared(q);
+double getV_Mag(q);
 
 // getAlpha
 //

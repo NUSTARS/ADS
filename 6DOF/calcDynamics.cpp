@@ -22,12 +22,12 @@ using std::sqrt;
 
 
 
-double getV_Squared(q curr_q){
+double getV_Mag(q curr_q){
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    double v_mag = vx*vx + vy*vy + vz*vz;
-    return v_mag;
+    double v_sqr = vx*vx + vy*vy + vz*vz;
+    return sqrt(v_sqr);
 };
 
 
@@ -35,13 +35,16 @@ double getAlpha(q curr_q){
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    double alpha = acos(vx/sqrt(vx*vx+vy*vy+vz*vz)); 
+    double v_mag = getV_Mag(curr_q);
+    if(v_mag == 0){
+        return 0;
+    }
+    double alpha = acos(vx/getV_Mag(curr_q)); 
     return alpha;
 };
 
 
 Vector3d getAeroForces(q curr_q) {
-    //v_squared != vmag because we need wind; FIX
     // need to add some sort of wind term 
 
     double vx = curr_q.getV()(0);
@@ -49,7 +52,7 @@ Vector3d getAeroForces(q curr_q) {
     double vz = curr_q.getV()(2);
     double h = curr_q.getH();
     double u = curr_q.getU();
-    double v_mag = getV_Squared(curr_q);
+    double v_mag = getV_Mag(curr_q);
     //maybe add a new function here that says calc wind --> need to look @ pink noise model
 
     double FAx = 0.0;
@@ -73,10 +76,13 @@ Vector3d getAeroForces(q curr_q) {
 };
 
 Vector3d getAeroMoments(q curr_q) {
+    double vx = curr_q.getV()(0);
+    double vy = curr_q.getV()(1);
+    double vz = curr_q.getV()(2);
     Vector3d forces = getAeroForces(curr_q);
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
-    dist = getCP(getV_Squared(curr_q), getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
+    dist = getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
     Vector3d v(0, dist * forces(2), -dist * forces(1));
     return v;
 };

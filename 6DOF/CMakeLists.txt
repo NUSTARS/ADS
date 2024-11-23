@@ -24,7 +24,9 @@ add_executable(my_program
 )
 
 # Add the test directory if it exists
-if(EXISTS “${CMAKE_SOURCE_DIR}/test/CMakeLists.txt”)
-  add_subdirectory(test)
-  enable_testing()
-endif()
+message(STATUS "Source directory: ${CMAKE_SOURCE_DIR}") 
+message("hi")
+# if(EXISTS “${CMAKE_SOURCE_DIR}/test/CMakeLists.txt”)
+add_subdirectory(test)
+enable_testing()
+# endif()
