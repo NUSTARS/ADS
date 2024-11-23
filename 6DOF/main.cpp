@@ -27,8 +27,9 @@ int main() {
 
     // post boost initial state
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
+    q q2 = currentState;
 
-    std::cout << currentState << std::endl;
+    std::cout << q2 << std::endl;
     std::cout << "Apogee Reached: " << getApogee(currentState) << std::endl;
 
     /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
