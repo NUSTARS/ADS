@@ -35,7 +35,7 @@ double getAlpha(q curr_q){
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    double alpha = vx/sqrt(getV_Squared(curr_q)); //technically this is not angle of attack, no?
+    double alpha = acos(vx/sqrt(getV_Squared(curr_q))); 
     return alpha;
 };
 
