@@ -78,7 +78,7 @@ Vector3d getAeroMoments(q curr_q) {
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(getV_Squared(curr_q), getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
-    Vector3d v(0, dist * forces(2), dist * forces(1));
+    Vector3d v(0, -dist * forces(2), -dist * forces(1));
     return v;
 };
 
