@@ -56,6 +56,8 @@ q getqdot(q curr_q){
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v)(2);
 
+    std::cout << "Drag: " << F_aero(0) << std::endl;
+
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
 
@@ -88,7 +90,6 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
 
 
 bool atApogee(q curr_q){
-    std::cout << "V_z Earth: " << (getR(curr_q)*curr_q.getV())(2) << std::endl;
     return (getR(curr_q)*curr_q.getV())(2) < 0;
 }
 

@@ -52,7 +52,7 @@ Vector3d getAeroForces(q curr_q) {
     double vz = curr_q.getV()(2);
     double h = curr_q.getH();
     double u = curr_q.getU();
-    double v_mag = getV_Mag(curr_q);
+    double v_mag = getV_Mag(curr_q) * getV_Mag(curr_q);
     //maybe add a new function here that says calc wind --> need to look @ pink noise model
 
     double FAx = 0.0;
