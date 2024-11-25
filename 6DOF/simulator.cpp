@@ -27,23 +27,38 @@ q getqdot(q curr_q){
     Eigen::Vector3d omega = curr_q.getOmega();
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
-    //Eigen::Vector3d M_aero = getAeroMoments(curr_q); //remove aero for now
-    //Eigen::Vector3d F_aero{0,0,0};
-    Eigen::Vector3d M_aero{0,0,0};
+    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = getRinv(curr_q)*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
     double vZdot = (1/M)*(F_aero(2) + F_grav(2)) - (omega(0)*v(1)-omega(1)*v(0));
 
-    double omegaXdot = (1/Ix)*(M_aero(0) - v(1)*v(2)*(Iz-Iy));
-    double omegaYdot = (1/Iy)*(M_aero(1) - v(0)*v(2)*(Ix-Iz));
-    double omegaZdot = (1/Iz)*(M_aero(2) - v(0)*v(1)*(Iy-Ix));
+    double omegaXdot = (1/Ix)*(M_aero(0) - omega(1)*omega(2)*(Iz-Iy));
+    double omegaYdot = (1/Iy)*(M_aero(1) - omega(0)*omega(2)*(Ix-Iz));
+    double omegaZdot = (1/Iz)*(M_aero(2) - omega(0)*omega(1)*(Iy-Ix));
+
+    Eigen::Vector3d euler = curr_q.getTheta();
+    double phi = euler(0);
+    double theta = euler(1);
+    
+    Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
+                   {0, cos(phi), -sin(phi)},
+                   {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    //Eigen::Matrix3d specialR{{cos(phi)*tan(theta), -sin(phi)*sin(theta), 1}, //source: max fucking around in sympy
+    //                {-sin(phi), -cos(phi), 0},
+    //                {cos(phi)/cos(theta), -sin(phi)/cos(theta), 0}};
+    //Eigen::Matrix3d specialR{{1, sin(phi)*cos(phi)*cos(theta), cos(phi)*cos(phi)*cos(theta)},
+    //               {0, sin(theta), -sin(phi)*cos(theta)},
+    //              {0, -sin(phi), -cos(phi)}};
+    //specialR *= (1.0/(sin(phi)*sin(phi)*cos(theta) + sin(theta)*cos(phi)));
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    Eigen::Vector3d thetadot = getRinv(curr_q)*curr_q.getOmega(); 
-    double hdot = (getR(curr_q)*curr_q.getV())(2);
+    Eigen::Vector3d thetadot = specialR*omega; 
+    double hdot = (getR(curr_q)*v)(2);
+
+    std::cout << "Drag: " << F_aero(0) << std::endl;
 
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
@@ -65,7 +80,7 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     Eigen::Vector3d theta = new_q.getTheta();
     for (int i = 0; i < theta.size(); ++i) {
         scaled_theta[i] = std::fmod(theta[i], 2*M_PI); // Wrap angle
-        if (scaled_theta[i] < 0) {
+        if (scaled_theta[i] < -M_PI) {
             scaled_theta[i] += 2*M_PI; // Ensure positivity
         }
 }
@@ -124,7 +139,7 @@ double getApogee(q curr_q, double b){
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
         
-        std::cout << temp_q.getH() << std::endl;
+        std::cout << "Altitude: " << temp_q.getH() << std::endl;
     }
     
     std::ofstream outfile("data.csv");

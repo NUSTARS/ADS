@@ -12,9 +12,9 @@ FetchContent_MakeAvailable(googletest)
 
 # Include project source directory for access to headers
 include_directories("${PROJECT_SOURCE_DIR}")
-
+include_directories(${CMAKE_SOURCE_DIR}/eigen)
 # Create a single executable for all tests
-add_executable(all_tests simple.cpp)  # Combine both files into one executable
+add_executable(all_tests simple.cpp ${CMAKE_SOURCE_DIR}/q.cpp ${CMAKE_SOURCE_DIR}/calcDynamics.cpp ${CMAKE_SOURCE_DIR}/aeroData.cpp)  # Combine both files into one executable
 target_link_libraries(all_tests gtest gtest_main)
 
 # Register the tests with ctest (ensuring the executable is properly registered)

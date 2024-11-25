@@ -18,19 +18,22 @@ int main() {
     double initial_h = 898.599; // good
 
     // For Testing
-    Eigen::Vector3d initial_v_world(0, 0, 694.52);
+    Eigen::Vector3d initial_v_world(0, 200, 700.00);
     Eigen::Vector3d initial_theta(0, 0, 0);
     Eigen::Vector3d initial_omega(0, 0, 0);
 
     //convert from WORLD to BODY using R_BW (R_WB inverse)
-    Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0)).inverse()*initial_v_world; 
+    //Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0)).inverse()*initial_v_world; 
+    Eigen::Vector3d initial_v_body(700, 100, 0); //temp
+
+    std::cout << "inital v body: " << initial_v_body << std::endl;
 
     // post boost initial state
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
     q q2 = currentState;
 
     std::cout << q2 << std::endl;
-    std::cout << "Apogee Reached: " << getApogee(currentState) << std::endl;
+    getApogee(currentState);
 
     /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
 
