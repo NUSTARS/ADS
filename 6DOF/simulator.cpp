@@ -42,17 +42,19 @@ q getqdot(q curr_q){
     double phi = euler(0);
     double theta = euler(1);
     
-    //Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
-    //                {0, cos(phi), -sin(phi)},
-    //                {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
-    Eigen::Matrix3d specialR{{cos(phi)*tan(theta), -sin(phi)*sin(theta), 1}, //source: max fucking around in sympy
-                    {-sin(phi), -cos(phi), 0},
-                    {cos(phi)/cos(theta), -sin(phi)/cos(theta), 0}};
-    Eigen::Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
+    Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
+                   {0, cos(phi), -sin(phi)},
+                   {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
+    //Eigen::Matrix3d specialR{{cos(phi)*tan(theta), -sin(phi)*sin(theta), 1}, //source: max fucking around in sympy
+    //                {-sin(phi), -cos(phi), 0},
+    //                {cos(phi)/cos(theta), -sin(phi)/cos(theta), 0}};
+    //Eigen::Matrix3d specialR{{1, sin(phi)*cos(phi)*cos(theta), cos(phi)*cos(phi)*cos(theta)},
+    //               {0, sin(theta), -sin(phi)*cos(theta)},
+    //              {0, -sin(phi), -cos(phi)}};
+    //specialR *= (1.0/(sin(phi)*sin(phi)*cos(theta) + sin(theta)*cos(phi)));
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
-    //Eigen::Vector3d thetadot = R_SB*specialR*omega; 
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v)(2);
 
