@@ -63,11 +63,11 @@ Vector3d getAeroForces(q curr_q) {
         double alpha = getAlpha(curr_q);
         
         FAx = -0.5*A*getRho(h)*getCD(v_mag, alpha, u, h)*v_mag;
-        double FAn = -0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
+        double FAn = 0.5*A*getRho(h)*getCN(v_mag, alpha, u, h)*v_mag;
 
         if(sqrt(vy*vy+vz*vz) > 0){ // should already by true if FAn > 0
-            FAy = FAn*vy / sqrt(vy*vy+vz*vz);
-            FAz = FAn*vz / sqrt(vy*vy+vz*vz);
+            FAy = -FAn*vy / sqrt(vy*vy+vz*vz);
+            FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
         }
     }
 
