@@ -31,7 +31,7 @@ const Eigen::Vector3d G(0,0,-32.17); // in ft/s^2
 //
 // Electronics constants
 //
-const double DT = 0.01; // time step for integration
+const double DT = 0.05; // time step for integration
 
 //
 // Atmospheric constants

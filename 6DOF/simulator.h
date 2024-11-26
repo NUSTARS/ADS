@@ -43,6 +43,9 @@ bool atApogee(q curr_q);
 double getApogee(q curr_q, double b);
 double getApogee(q curr_q);
 
+q  getqdot_testing(q curr_q);
+double getApogee_testing(q curr_q);
+
 #endif
 
 

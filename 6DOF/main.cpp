@@ -12,7 +12,7 @@
 
 int main() {
 
-    double OR_LATERAL_VELOCITY = 147.901; //[ft/s]
+    double OR_LATERAL_VELOCITY = 74.223; //[ft/s]
     double OR_VERTICAL_VELOCITY = 725.333; //[ft/s]
     double OR_PITCH_RATE = -3.52E-04; // [r/s]
     double OR_YAW_RATE = 3.74E-04; // [r/s]
@@ -38,7 +38,7 @@ int main() {
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
     std::cout << currentState << std::endl;
-    std::cout << getApogee(currentState)<< std::endl;
+    std::cout << getApogee_testing(currentState)<< std::endl;
 
     /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
 
