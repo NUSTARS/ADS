@@ -29,3 +29,4 @@ Thumbs.db
 *.tmp
 *.json
 *.cmake
+6DOF/CMakeLists.txt
