@@ -61,11 +61,10 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
     Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
 
     q k1 = getqdot(curr_q) * DT;
-    //q k2 = getqdot(curr_q + k1/2.0) * DT;
-    //q k3 = getqdot(curr_q + k2/2.0) * DT;
-    //q k4 = getqdot(curr_q + k3) * DT;
-    //q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
-    q new_q = curr_q + k1;
+    q k2 = getqdot(curr_q + k1/2.0) * DT;
+    q k3 = getqdot(curr_q + k2/2.0) * DT;
+    q k4 = getqdot(curr_q + k3) * DT;
+    q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
 
     Eigen::Vector3d scaled_theta;
     Eigen::Vector3d theta = new_q.getTheta();

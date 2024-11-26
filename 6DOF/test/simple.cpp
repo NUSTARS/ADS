@@ -6,21 +6,6 @@
 #include "aeroData.h"
 #include "cmath"
 
-TEST(One, EqualsOne)
-{
-    EXPECT_EQ(1, 1);
-}
-
-TEST(MathOperations, AdditionWorks) {
-    int result = 2 + 2;
-    EXPECT_EQ(result, 4); 
-}
-
-TEST(MathOperations, MultiplicationWorks) {
-    int result = 2 * 3;
-    EXPECT_EQ(result, 6); // Passes if `result == 6`
-}
-
 TEST(VSquared, ZeroV){
     Eigen::Vector3d v(0, 0, 0);
     q testq(v, v, v, 0.0, 0.0);
