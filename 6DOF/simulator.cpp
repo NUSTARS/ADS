@@ -158,7 +158,7 @@ q  getqdot_testing(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getRinv(curr_q)*G;
+    Eigen::Vector3d F_grav = getR(curr_q).inverse()*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -197,6 +197,8 @@ q  getqdot_testing(q curr_q){
     double aoa = getAlpha(curr_q);
     double drag = F_aero.norm();
 
+    std::cout<< F_grav << std::endl;
+
     std::cout << "| alt: " << curr_q.getH();
     std::cout << "| vert_v: " << vert_v;
     std::cout << "| vert_a: " << vert_a;
@@ -211,7 +213,7 @@ q  getqdot_testing(q curr_q){
     std::cout << "| yaw rate: " << omega(2)/(2.0*M_PI); // r/s
     std::cout << "| drag: " << 4.448*drag; // N
     std::cout << "| zenith: " << 90 - (180.0/M_PI)*euler(2); // deg
-    std::cout << "| azimuth: " << (180.0/M_PI)*euler(1); // deg
+    std::cout << "| azimuth: " << (180.0/M_PI)*euler(0); // deg
     std::cout << std::endl;
 
 

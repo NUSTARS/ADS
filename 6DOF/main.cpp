@@ -12,18 +12,18 @@
 
 int main() {
 
-    double OR_LATERAL_VELOCITY = 74.223; //[ft/s]
-    double OR_VERTICAL_VELOCITY = 725.333; //[ft/s]
-    double OR_PITCH_RATE = -3.52E-04; // [r/s]
-    double OR_YAW_RATE = 3.74E-04; // [r/s]
-    double OR_AZIMUTH = 0.018; // [deg]
-    double OR_ZENITH = 84.158; // deg
-    double initial_h = 928.76; // ft
+    double OR_LATERAL_VELOCITY = 73.969; //[ft/s]
+    double OR_VERTICAL_VELOCITY = 721.373; //[ft/s]
+    double OR_PITCH_RATE = -1.73E-04; // [r/s]
+    double OR_YAW_RATE = -5.27E-06; // [r/s]
+    double OR_AZIMUTH = 0.017; // [deg]
+    double OR_ZENITH = 84.166; // [deg]
+    double initial_h = 964.927; // [ft]
 
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
     Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
-    Eigen::Vector3d initial_theta(0, OR_AZIMUTH*M_PI/180.0, (90-OR_ZENITH)*M_PI/180.0); // not sure
+    Eigen::Vector3d initial_theta((OR_AZIMUTH)*M_PI/180.0, 0, (90-OR_ZENITH)*M_PI/180.0); // not sure
 
     // For Testing
     //Eigen::Vector3d initial_theta(0, 0, 0);
