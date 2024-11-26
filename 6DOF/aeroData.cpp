@@ -25,7 +25,7 @@ double getCD(double vSquared, double alpha, double u, double h){
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cn
 //
 double getCN(double vSquared, double alpha, double u, double h){
-    return sin(alpha)*(20+u/2.0); // TODO get this from CFD ppl
+    return pow(alpha,1.3)*(26+u/2.0); // TODO get this from CFD ppl
 }
 
 
