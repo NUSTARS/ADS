@@ -11,10 +11,12 @@
 *.exe
 
 # CMake generated files
-# CMakeLists.txt
+CMakeLists.txt
 CMakeCache.txt
 cmake_install.cmake
+6DOF/cmakelists.txt
 
+6DOF/CMakeLists.txt
 # IDE and editor files
 .idea/
 .vscode/
