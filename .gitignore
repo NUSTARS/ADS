@@ -32,3 +32,4 @@ Thumbs.db
 *.json
 *.cmake
 6DOF/cmakelists.txt
+6DOF/CMakeLists.txt
