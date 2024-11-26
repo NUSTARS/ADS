@@ -197,7 +197,8 @@ q  getqdot_testing(q curr_q){
     double aoa = getAlpha(curr_q);
     double drag = F_aero.norm();
 
-    std::cout<< F_grav << std::endl;
+    std::cout<< "grav:" << F_grav << std::endl;
+    std::cout<< "aero:" << F_aero << std::endl;
 
     std::cout << "| alt: " << curr_q.getH();
     std::cout << "| vert_v: " << vert_v;

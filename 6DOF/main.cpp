@@ -23,7 +23,7 @@ int main() {
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
     Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
-    Eigen::Vector3d initial_theta(0, OR_AZIMUTH*M_PI/180.0, (90-OR_ZENITH)*M_PI/180.0); // not sure
+    Eigen::Vector3d initial_theta(OR_AZIMUTH*M_PI/180.0, 0, (90-OR_ZENITH)*M_PI/180.0); // not sure
 
     // For Testing
     //Eigen::Vector3d initial_theta(0, 0, 0);
