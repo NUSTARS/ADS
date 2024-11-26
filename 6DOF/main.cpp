@@ -12,29 +12,33 @@
 
 int main() {
 
+    double OR_LATERAL_VELOCITY = 74.223; //[ft/s]
+    double OR_VERTICAL_VELOCITY = 725.333; //[ft/s]
+    double OR_PITCH_RATE = -3.52E-04; // [r/s]
+    double OR_YAW_RATE = 3.74E-04; // [r/s]
+    double OR_AZIMUTH = 0.018; // [deg]
+    double OR_ZENITH = 84.158; // deg
+        double initial_h = 928.76; // ft
+
     // From OpenRocket
-    Eigen::Vector3d initial_v_world(0, 74.223, 725.333); // they only give it in world
-    Eigen::Vector3d initial_omega(0,	-3.52E-04,	3.74E-04); // good
-    Eigen::Vector3d initial_theta(0, 0.0182*M_PI/180,84.158 * M_PI/180); // should check these (roll, ?,?) --> radians
-    double initial_h = 928.76; // good
+    Eigen::Vector3d initial_v_world(OR_LATERAL_VELOCITY, 0, OR_VERTICAL_VELOCITY); // they only give it in world
+    Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
+    Eigen::Vector3d initial_theta(0, OR_AZIMUTH*M_PI/180.0, (90-OR_ZENITH)*M_PI/180.0); // should check these (roll, ?,?) --> radians
+
 
     // For Testing
-    // Eigen::Vector3d initial_v_world(0, 200, 694.52);
-    // Eigen::Vector3d initial_theta(0, 0, 0);
-    // Eigen::Vector3d initial_omega(0, 0, 0);
+    //Eigen::Vector3d initial_theta(0, 0, 0);
+    //Eigen::Vector3d initial_omega(0, 0, 0);
 
     //convert from WORLD to BODY using R_BW (R_WB inverse)
-    Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0)).inverse()*initial_v_world; 
-    // Eigen::Vector3d initial_v_body(700, 100, 0); //temp
-
-    std::cout << "inital v body: " << initial_v_body << std::endl;
+    Eigen::Vector3d initial_v_body = getR(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0))*initial_v_world; 
+    //Eigen::Vector3d initial_v_body(700, 0, 0); //temp
 
     // post boost initial state
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
-    q q2 = currentState;
 
-    std::cout << q2 << std::endl;
-    getApogee(currentState);
+    std::cout << currentState << std::endl;
+    std::cout << getApogee(currentState)<< std::endl;
 
     /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
 

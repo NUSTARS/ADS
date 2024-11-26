@@ -45,20 +45,11 @@ q getqdot(q curr_q){
     Eigen::Matrix3d specialR{{1, sin(phi)*sin(theta), cos(phi)*tan(theta)},
                    {0, cos(phi), -sin(phi)},
                    {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
-    //Eigen::Matrix3d specialR{{cos(phi)*tan(theta), -sin(phi)*sin(theta), 1}, //source: max fucking around in sympy
-    //                {-sin(phi), -cos(phi), 0},
-    //                {cos(phi)/cos(theta), -sin(phi)/cos(theta), 0}};
-    //Eigen::Matrix3d specialR{{1, sin(phi)*cos(phi)*cos(theta), cos(phi)*cos(phi)*cos(theta)},
-    //               {0, sin(theta), -sin(phi)*cos(theta)},
-    //              {0, -sin(phi), -cos(phi)}};
-    //specialR *= (1.0/(sin(phi)*sin(phi)*cos(theta) + sin(theta)*cos(phi)));
 
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v)(2);
-
-    std::cout << "Drag: " << F_aero(0) << std::endl;
 
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
@@ -138,8 +129,7 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        
-        std::cout << "Altitude: " << temp_q.getH() << std::endl;
+    
     }
     
     std::ofstream outfile("data.csv");

@@ -67,6 +67,10 @@ axes[1,1].grid(True)
 # Adjust layout to prevent overlap
 plt.tight_layout(rect=[0, 0, 1, 0.96])  # Adjust layout and leave space for main title
 
-# Step 4: Show or save the figure
 plt.show()
+
+# Step 4: Show or save the figure
+for i in plt.get_fignums():
+    plt.figure(i).savefig(f'Output_Figure_{i}.png', dpi=300)
+
 
