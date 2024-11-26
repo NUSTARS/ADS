@@ -13,16 +13,16 @@
 int main() {
 
     double OR_LATERAL_VELOCITY = 147.901; //[ft/s]
-    double OR_VERTICAL_VELOCITY = 714.84; //[ft/s]
-    double OR_PITCH_RATE = -0.001; // [r/s]
-    double OR_YAW_RATE = 1.90E-05; // [r/s]
-    double OR_AZIMUTH = 0.011; // [deg]
-    double OR_ZENITH = 78.315; // deg
-    double initial_h = 916.501; // ft
+    double OR_VERTICAL_VELOCITY = 725.333; //[ft/s]
+    double OR_PITCH_RATE = -3.52E-04; // [r/s]
+    double OR_YAW_RATE = 3.74E-04; // [r/s]
+    double OR_AZIMUTH = 0.018; // [deg]
+    double OR_ZENITH = 84.158; // deg
+    double initial_h = 928.76; // ft
 
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // they only give it in world
-    Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
+    Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good 
     Eigen::Vector3d initial_theta(0, OR_AZIMUTH*M_PI/180.0, (90-OR_ZENITH)*M_PI/180.0); // should check these (roll, ?,?) --> radians
 
 
