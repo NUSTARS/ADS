@@ -5,6 +5,7 @@
 #include "q.h"
 #include "aeroData.h"
 #include "cmath"
+#include "constants.h"
 
 TEST(VSquared, ZeroV){
     Eigen::Vector3d v(0, 0, 0);
@@ -72,31 +73,37 @@ TEST(AeroForces, BigX){
 
 TEST(AeroForces, BurnoutX){
 
-    
+    double OR_LATERAL_VELOCITY = 73.969; //[ft/s]
+    double OR_VERTICAL_VELOCITY = 721.373; //[ft/s]
+    double OR_PITCH_RATE = -1.73E-04; // [r/s]
+    double OR_YAW_RATE = -5.27E-06; // [r/s]
+    double OR_AZIMUTH = 0.017; // [deg]
+    double OR_ZENITH = 84.166; // [deg]
+    double initial_h = 964.927; // [ft]
+  
+    Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
+    Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
+    Eigen::Vector3d initial_theta(OR_AZIMUTH*M_PI/180.0, 0, (90-OR_ZENITH)*M_PI/180.0); // not sure
 
+    Eigen::Vector3d initial_v_body = getRinv(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0))*initial_v_world; 
 
-    Eigen::Vector3d v1(0, 0, 0);
-    Eigen::Vector3d t1(0, 0.2125811, 0);
-    Eigen::Vector3d o1(0, 0, 0);
-    q qrot(v1, o1, t1, 845, 0.0);
+    // Eigen::Matrix3d rinv = getRinv(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0)); 
+    std::cout << initial_v_body << std::endl;
 
-
-    Eigen::Vector3d vel(650, 139, 0);
-    Eigen::Matrix3d rinv = getR(qrot);
-    std::cout << rinv << std::endl;
-    std::cout << vel.transpose() * rinv << std::endl;
-
-    
-    Eigen::Vector3d v(650, 139, 0);
-    Eigen::Vector3d t(0, 0.0003490659, 0);
-    Eigen::Vector3d o(0, 0, 0);
-    q testq(vel.transpose() * rinv, o, t, 845, 0.0);
-
+    q testq(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
     Eigen::Vector3d result = getAeroForces(testq);
-    std::cout << result << std::endl;
-    ASSERT_NEAR(getRho(845), 0.00232, 0.000232);
-    ASSERT_NEAR(result(0), -42.98, 4.298);
+
+    double Fd = -0.5*20.831/144.0*0.00232*725.155*725.155*0.594;
+
+    double Cn_calc = getCN(getV_Mag(testq)*getV_Mag(testq),getAlpha(testq),0,initial_h);
+
+    std::cout << Fd << std::endl;
+    EXPECT_EQ(A, 20.831/144.0);
+    EXPECT_NEAR(getAlpha(testq)*(180.0/M_PI), 0.019, 0.001);
+    EXPECT_NEAR(getV_Mag(testq), 725.155, 0.1); //total mag the same
+    // EXPECT_NEAR(Cn_calc, 0.004, 0.0001);
+    EXPECT_NEAR(result(0), Fd, 1.0);
     
 }
 

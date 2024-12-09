@@ -196,6 +196,7 @@ q  getqdot_testing(q curr_q){
     double total_a = vdot.norm();
     double aoa = getAlpha(curr_q);
     double drag = F_aero.norm();
+    // (getR(curr_q)*F_aero)(2);
 
     std::cout<< "grav:" << F_grav << std::endl;
     std::cout<< "aero:" << F_aero << std::endl;
@@ -235,6 +236,7 @@ double getApogee_testing(q curr_q){
 
     while(!atApogee(temp_q)){
         std::cout << "TIME: " << t << std::endl;
+        std::cout << temp_q << std::endl;
         getqdot_testing(temp_q);
         std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP." << std::endl; 
         std::cin.get();

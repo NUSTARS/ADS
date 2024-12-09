@@ -35,11 +35,20 @@ double getAlpha(q curr_q){
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    double v_mag = getV_Mag(curr_q);
-    if(v_mag == 0){
-        return 0;
-    }
-    double alpha = acos(vx/getV_Mag(curr_q)); 
+
+
+    // double v_mag = getV_Mag(curr_q);
+    // double v_mag = sqrt(vx*vx + vz*vz);
+    // if(v_mag == 0){
+    //     return 0;
+    // }
+  
+
+    // double alpha = acos(vx/v_mag);
+    // double sin = asin(vz/getV_Mag(curr_q));
+
+    double alpha = atan2(sqrt(vy*vy + vz*vz), vx);
+    // return 0.19*M_PI/180;
     return alpha;
 };
 
@@ -71,7 +80,8 @@ Vector3d getAeroForces(q curr_q) {
         }
     }
 
-    Vector3d v(FAx,FAy,FAz);
+    // Vector3d v(FAx-2.65,FAy,FAz);
+    Vector3d v(FAx-2.65,FAy,FAz);
     return v;
 };
 

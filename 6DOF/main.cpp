@@ -20,6 +20,14 @@ int main() {
     double OR_ZENITH = 84.166; // [deg]
     double initial_h = 964.927; // [ft]
 
+    // double OR_LATERAL_VELOCITY = 73.707; //[ft/s]
+    // double OR_VERTICAL_VELOCITY = 717.444; //[ft/s]
+    // double OR_PITCH_RATE = 6.42E-04; // [r/s]
+    // double OR_YAW_RATE = 2.87E-05; // [r/s]
+    // double OR_AZIMUTH = 0.014; // [deg]
+    // double OR_ZENITH = 84.162; // [deg]
+    // double initial_h = 1000.898; // [ft]
+
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
     Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
