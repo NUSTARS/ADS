@@ -28,17 +28,26 @@ fusionfilt = ahrs10filter('IMUSampleRate', imuFs);
 
 % Configure AHRS filter parameters 
 
-%based on the BMI088 sensor 
-% https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmi088-ds001.pdf 
-fusionfilt.AccelerometerNoise = [230e-6, 230e-6, 230e-6];
-fusionfilt.GyroscopeNoise = deg2rad([0.014, 0.014, 0.014]);
-fusionfilt.GeomagneticVectorNoise = 50e-6;
-magNoise = 0.05;
+%OLD
+% fusionfilt.AccelerometerNoise = [230e-6, 230e-6, 230e-6];
+% fusionfilt.GyroscopeNoise = deg2rad([0.1, 0.1, 0.1]); %or 0.014
+% fusionfilt.GeomagneticVectorNoise = 50e-6;
+% magNoise = 0.05;
+
+%Bosch BMI088 sensor 
+fusionfilt.AccelerometerNoise = [0.000689, 0.000689, 0.000851]; %calc from bandwidth and noise density on datasheet
+fusionfilt.GyroscopeNoise = deg2rad([0.1, 0.1, 0.1]); 
+
+%Memsic MMC5983MA 3-axis magnetometer
+fusionfilt.GeomagneticVectorNoise = 0.5; 
+
+magNoise = 0.5;
 
 %For each time step
 for ii = 1:N
     accel = accelDataFiltered(ii, :);
     gyro = deg2rad(gyroDataFiltered(ii, :));
+    
     mag = magDataFiltered(ii, :);
     alt = altimeterDataFiltered(ii);
 
@@ -56,33 +65,6 @@ end
 eulerAngles = quat2eul(actQ, 'ZYX'); % Convert to Roll, Pitch, Yaw
 eulerAnglesDeg = rad2deg(eulerAngles); % Convert to degrees for plotting
 
-% % Plot results
-% figure;
-% subplot(3, 1, 1);
-% plot(timeDataFiltered, eulerAnglesDeg(:, 1)); 
-% title('Yaw (degrees)');
-% xlabel('Time (s)');
-% ylabel('Yaw');
-% 
-% subplot(3, 1, 2);
-% plot(timeDataFiltered, eulerAnglesDeg(:, 2));  
-% title('Pitch (degrees)');
-% xlabel('Time (s)');
-% ylabel('Pitch');
-% 
-% subplot(3, 1, 3);
-% plot(timeDataFiltered, eulerAnglesDeg(:, 3));  
-% title('Roll (degrees)');
-% xlabel('Time (s)');
-% ylabel('Roll');
-% 
-% % Plot height results
-% figure;
-% plot(timeDataFiltered, height * 3.28084); 
-% title('Estimated Height (feet)');
-% xlabel('Time (s)');
-% ylabel('Height (feet)');
-
 %Initialize angular positions for roll, pitch, and yaw
 angularPosition = zeros(size(gyroDataFiltered)); % Nx3 matrix
 
@@ -92,10 +74,13 @@ dt = diff(timeDataFiltered); % (N-1)x1 vector
 % Numerical integration to calculate angular positions
 for i = 2:length(timeDataFiltered)
     angularPosition(i, :) = angularPosition(i-1, :) + gyroDataFiltered(i-1, :) .* dt(i-1);
+    angularPosition(i, :) = mod(angularPosition(i, :), 360);  % Wrap to [0, 2*pi)
+    angularPosition(i, angularPosition(i, :) > 180) = angularPosition(i, angularPosition(i, :) > 180) - 360;  % Adjust to [-pi, pi)
 end
 
 % Plotting: Overlay with the fusion filter's roll, pitch, yaw results
 figure;
+
 
 % Roll
 subplot(3, 1, 1);
@@ -132,3 +117,4 @@ legend('Location', 'Best');
 
 % Adjust layout
 sgtitle('Comparison of Fusion Filter vs Integrated Angular Positions');
+
