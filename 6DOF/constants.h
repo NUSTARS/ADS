@@ -18,15 +18,15 @@
 //
 // Mechanical constants
 //
-const double Ix = 1.563; // Moment of inertia about the X-axis [lbs*ft^2*s^2]
-const double Iy = 200.756; // Moment of inertia about the Y-axis [lbs*ft^2*s^2]
-const double Iz = 200.756; // Moment of inertia about the Z-axis [lbs*ft^2*s^2]
+const double Ix = 0.049; // Moment of inertia about the X-axis [lbf*ft*s^2]
+const double Iy = 6.24; // Moment of inertia about the Y-axis [lbf*ft*s^2]
+const double Iz = 6.24; // Moment of inertia about the Z-axis [lbf*ft*s^2]
 const double BALLAST_MASS = 0; // Mass of the ballast [slugs]
 const double BURNOUT_MASS = 34.953/32.174; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system [slug]
 const double CG = 67.752/12.0; // distance from the tip of the nosecone to the CG [ft]
 const double A = 20.831/144.0; // Cross sectional area of the rocket airframe [ft^2]
-const Eigen::Vector3d G(0,0,-32.16); // in ft/s^2
+const Eigen::Vector3d G(0,0,-32.155); // [ft/s^2]
 
 //
 // Electronics constants

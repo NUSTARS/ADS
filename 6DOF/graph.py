@@ -35,7 +35,7 @@ axes[0, 0].set_ylabel('alt')
 axes[0, 0].grid(True)
 
 # Top-right
-axes[0, 1].plot(x, data['vx'], color='b',label='vx')
+#axes[0, 1].plot(x, data['vx'], color='b',label='vx')
 axes[0, 1].plot(x, data['vy'], color='g',label='vy')
 axes[0, 1].plot(x, data['vz'], color='r',label='vz')
 axes[0, 1].set_title('Velocities')

@@ -34,9 +34,9 @@ int main() {
     Eigen::Vector3d initial_theta(OR_AZIMUTH*M_PI/180.0, 0, (90-OR_ZENITH)*M_PI/180.0); // not sure
 
     // For Testing
-    //Eigen::Vector3d initial_theta(0, 0, 0);
-    //Eigen::Vector3d initial_omega(0, 0, 0);
-    //Eigen::Vector3d initial_v_body(700, 0, 0); //temp
+    // Eigen::Vector3d initial_theta(0, -0.1, 0);
+    // Eigen::Vector3d initial_omega(0, 0, 0);
+    // Eigen::Vector3d initial_v_body(700, 0, 10);
 
     //convert from WORLD to BODY using R_BW (R_WB inverse)
     Eigen::Vector3d initial_v_body = getRinv(q(Eigen::Vector3d(0,0,0), initial_omega, initial_theta, initial_h, 0))*initial_v_world; 
@@ -46,7 +46,8 @@ int main() {
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
     std::cout << currentState << std::endl;
-    std::cout << getApogee_testing(currentState)<< std::endl;
+    std::cout << getApogee(currentState)<< std::endl;
+    //std::cout << getApogee_testing(currentState)<< std::endl;
 
     /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
 

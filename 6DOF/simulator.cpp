@@ -14,6 +14,7 @@
 #include <Eigen/Dense>
 #include "q.h"
 #include "calcDynamics.h"
+#include "aeroData.h"
 #include "constants.h"
 #include "simulator.h"
 #include <cmath>
@@ -28,7 +29,10 @@ q getqdot(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getRinv(curr_q)*G;
+    Eigen::Vector3d F_grav = M*getRinv(curr_q)*G;
+    
+    //std::cout<<F_aero.cross(v)<<std::endl;
+    //std::cout<<F_aero<<std::endl;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -158,7 +162,7 @@ q  getqdot_testing(q curr_q){
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = getR(curr_q).inverse()*G;
+    Eigen::Vector3d F_grav = M*getR(curr_q).inverse()*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -195,8 +199,9 @@ q  getqdot_testing(q curr_q){
     double total_v = v.norm();
     double total_a = vdot.norm();
     double aoa = getAlpha(curr_q);
-    double drag = F_aero.norm();
-    // (getR(curr_q)*F_aero)(2);
+    //double drag = F_aero.norm();
+    double drag = (F_aero)(0);
+    //double drag = F_aero.dot(v)/v.norm(); // drag projected onto v 
 
     std::cout<< "grav:" << F_grav << std::endl;
     std::cout<< "aero:" << F_aero << std::endl;
