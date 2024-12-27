@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Step 1: Load the CSV file
 # Replace 'your_file.csv' with the path to your CSV file
@@ -7,6 +8,9 @@ file_path = 'data.csv'
 
 names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz"]
 data = pd.DataFrame(columns=names)
+
+file_path_OR = 'OR_data.csv' 
+data_OR = pd.read_csv(file_path_OR)
 
 
 # Read data from CSV
@@ -28,16 +32,19 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 
 # Plot on each subplot
 # Top-left
-axes[0, 0].plot(x, data['altitude'], color='b')
+axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
+axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
 axes[0, 0].set_title('Altitude')
 axes[0, 0].set_xlabel('time')
 axes[0, 0].set_ylabel('alt')
+axes[0, 0].legend()
 axes[0, 0].grid(True)
 
 # Top-right
-#axes[0, 1].plot(x, data['vx'], color='b',label='vx')
+# axes[0, 1].plot(x, data['vx'], color='b',label='vx')
 axes[0, 1].plot(x, data['vy'], color='g',label='vy')
 axes[0, 1].plot(x, data['vz'], color='r',label='vz')
+# axes[0,1].plot(data_OR['# Time (s)']-2.309, data_OR['Vertical velocity (ft/s)'], label='vertical velocity', linestyle='--', color='r')
 axes[0, 1].set_title('Velocities')
 axes[0, 1].set_xlabel('time')
 axes[0, 1].set_ylabel('vel')
