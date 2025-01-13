@@ -16,7 +16,7 @@
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cd
 //
 double getCD(double vSquared, double alpha, double u, double h){
-    return (0.536+u/2.0) + (vSquared*1.1E-07); // TODO get this from CFD ppl
+    return (0.48+u/2.0) + (vSquared*1.15E-07); // TODO get this from CFD ppl
 }
 
 //
@@ -36,7 +36,7 @@ double getCN(double vSquared, double alpha, double u, double h){
 // the current distance [ft] from the CP to tip of the nosecone
 //
 double getCP(double vSquared, double alpha, double u, double h){
-    return (pow(vSquared,0.66)*0.0002 + 84.0)/12; // TEMP
+    return (pow(vSquared,1.27/2.0)*0.00025 + 85.7)/12; // TEMP
 }
 
 //
