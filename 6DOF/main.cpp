@@ -12,13 +12,21 @@
 
 int main() {
 
-    double OR_LATERAL_VELOCITY = 73.969; //[ft/s]
-    double OR_VERTICAL_VELOCITY = 721.373; //[ft/s]
-    double OR_PITCH_RATE = -1.73E-04; // [r/s]
-    double OR_YAW_RATE = -5.27E-06; // [r/s]
-    double OR_AZIMUTH = 0.017; // [deg]
-    double OR_ZENITH = 84.166; // [deg]
-    double initial_h = 964.927; // [ft]
+    // double OR_LATERAL_VELOCITY = 71.354; //[ft/s]
+    // double OR_VERTICAL_VELOCITY = 692.409; //[ft/s]
+    // double OR_PITCH_RATE = 4.77E-04; // [r/s]
+    // double OR_YAW_RATE = 2.25E-05; // [r/s]
+    // double OR_ZENITH = 84.109; // [deg]
+    // double OR_AZIMUTH = 0.013; // [deg]
+    // double initial_h = 921.966; // [ft]
+
+    double OR_LATERAL_VELOCITY = 69.752; //[ft/s]
+    double OR_VERTICAL_VELOCITY = 674.312; //[ft/s]
+    double OR_PITCH_RATE = 1.86E-04; // [r/s]
+    double OR_YAW_RATE = 2.32E-06; // [r/s]
+    double OR_ZENITH = 84.071; // [deg]
+    double OR_AZIMUTH = 0.012; // [deg]
+    double initial_h = 897.358; // [ft]
 
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
