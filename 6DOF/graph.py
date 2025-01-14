@@ -37,11 +37,12 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 # axes[0, 0].set_title('Altitude')
 # axes[0, 0].set_xlabel('time (s)')
 # axes[0, 0].set_ylabel('alt (ft)')
-# axes[0, 0].legend()
-# axes[0, 0].grid(True)
+
 
 axes[0, 0].plot(x, data['windx'], color='b',label='windx')
 axes[0, 0].plot(x, data['windy'], color='g',label='windy')
+axes[0, 0].legend()
+axes[0, 0].grid(True)
 
 
 # Top-right
