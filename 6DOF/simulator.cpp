@@ -17,12 +17,13 @@
 #include "aeroData.h"
 #include "constants.h"
 #include "simulator.h"
+#include "wind.h"
 #include <cmath>
 
 
 
 
-q getqdot(q curr_q){
+q getqdot(q curr_q, Wind& wind){
 
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
@@ -57,14 +58,12 @@ q getqdot(q curr_q){
 
 }
 
-q integrate(q curr_q, Eigen::Vector2d old_w){
+q integrate(q curr_q, Wind& wind){
 
-    // Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
-
-    q k1 = getqdot(curr_q) * DT;
-    q k2 = getqdot(curr_q + k1/2.0) * DT;
-    q k3 = getqdot(curr_q + k2/2.0) * DT;
-    q k4 = getqdot(curr_q + k3) * DT;
+    q k1 = getqdot(curr_q, wind) * DT;
+    q k2 = getqdot(curr_q + k1/2.0, wind) * DT;
+    q k3 = getqdot(curr_q + k2/2.0, wind) * DT;
+    q k4 = getqdot(curr_q + k3, wind) * DT;
     q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
 
     Eigen::Vector3d scaled_theta;
@@ -89,7 +88,7 @@ bool atApogee(q curr_q){
 double getApogee(q curr_q, double b){
     q temp_q = curr_q;
     double t = 0.0;
-    Eigen::Vector2d old_w(0,0);
+    Wind wind;
 
     std::vector<double> times;
 	std::vector<double> alts;
@@ -108,8 +107,10 @@ double getApogee(q curr_q, double b){
     while(!atApogee(temp_q)){
         // temp_q.setU(F(t-b)); // remove control for now
         temp_q.setU(0);
-        temp_q = integrate(temp_q, old_w);
-        Eigen::Vector2d windNoise = calcWindNoise(curr_q, old_w);
+        wind.updateWind();
+        temp_q = integrate(temp_q, wind);
+
+        Eigen::Vector2d currWind = wind.getWind();
 
         times.push_back(t);
         alts.push_back(temp_q.getH());
@@ -122,8 +123,8 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        windx.push_back((windNoise)(0)); 
-        windy.push_back((windNoise)(1));
+        windx.push_back(currWind(0)); 
+        windy.push_back(currWind(1));
 
         t += DT;
     }
@@ -233,6 +234,7 @@ double getApogee_testing(q curr_q){
     temp_q.setU(0);
 
     while(!atApogee(temp_q)){
+        /*
         std::cout << "TIME: " << t << std::endl;
         std::cout << temp_q << std::endl;
         getqdot_testing(temp_q);
@@ -240,6 +242,7 @@ double getApogee_testing(q curr_q){
         std::cin.get();
         temp_q = integrate(temp_q, old_w);
         t += DT;
+        */
     }
 
     return temp_q.getH();

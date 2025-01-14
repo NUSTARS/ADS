@@ -63,6 +63,13 @@ class Wind {
         Wind();
 
         //
+        // updateWind
+        //
+        // GeneratesWind for next sample
+        //
+        void updateWind();
+
+        //
         // getWind
         //
         // Gets the current wind as a 2D vector

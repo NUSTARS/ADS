@@ -35,6 +35,7 @@ q addGaussianNoise(q currentState, double IMUmean, double IMUstddev, double BMPm
 
 Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double BMPmean, double BMPstddev) {
     //cannot apply error directly to velocity because never measure it 
+    /*
     q k1 = addGaussianNoise(getqdot(curr_q), IMUmean, IMUstddev,BMPmean, BMPstddev) * DT;
     q k2 = addGaussianNoise(getqdot(curr_q + k1/2.0), IMUmean, IMUstddev,BMPmean, BMPstddev) * DT;
     q k3 = addGaussianNoise(getqdot(curr_q + k2/2.0), IMUmean, IMUstddev,BMPmean, BMPstddev) * DT;
@@ -42,7 +43,7 @@ Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double 
     q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
     Eigen::Vector3d new_velocity = new_q.getV();
     return new_velocity; 
-
+    */
 }
 
 

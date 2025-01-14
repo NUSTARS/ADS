@@ -26,8 +26,9 @@ void Wind::calcWind(){
 
     // do the same for dir
     w = dist(generator);
-    double pinkNoise = w - a_values[1]*windSpeed[1] - a_values[2]*windDirection[1];
-    double windDirVal= WIND_ANGLE + WIND_STD*(pinkNoise/2.252);
+    pinkNoise = w - a_values[1]*windSpeed[1] - a_values[2]*windDirection[1];
+    //double windDirVal = WIND_ANGLE + WIND_STD*(pinkNoise/2.252);
+    double windDirVal = WIND_ANGLE;
 
     updateWindArrays(windSpeedVal, windDirVal);
 
@@ -52,9 +53,9 @@ void Wind::updateWindArrays(double newWindSpeed, double newWindDirection){
 //
 // generates array of a values based on OR formula
 //
-double* generateA(int numValues){
+double* Wind::generateA(int numValues){
 
-    double a_values[numValues];
+    double* a_values = new double[numValues];
     a_values[0] = 0;
 
     for(int k = 1; k < numValues; k++){
@@ -75,12 +76,20 @@ Wind::Wind(){
 }
 
 //
+// updateWind
+//
+// GeneratesWind for next sample
+//
+void Wind::updateWind(){
+    calcWind();
+}
+   
+//
 // getWind
 //
 // Gets the current wind as a 2D vector
 //
 Eigen::Vector2d Wind::getWind(){
-    calcWind();
     Eigen::Vector2d dir(sin(windDirection[0]),cos(windDirection[1]));
     return windSpeed[0]*dir;
 }
