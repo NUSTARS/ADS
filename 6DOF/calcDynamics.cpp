@@ -140,7 +140,7 @@ Matrix3d getRinv(q curr_q){
 }
     
 //calculates pink wind noise signal and multiplies by wind direction vector to get wind noise vector (idk math so hopefully u understand what i mean)
-Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
+Eigen::Vector2d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
     //generate pseudorandom number (wind)
     Eigen::Vector2d past_w = *old_w;
     std::random_device rd;
@@ -156,9 +156,9 @@ Vector3d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
     past_w(0) = w;
     old_w = &past_w;
 
-    Vector3d ang(0,sin(wind_angle),cos(wind_angle)); //i am assuming wind is planar (max said this was ok)
-    // return windNoise * ang;
-    return Eigen::Vector3d(0,0,0);
+    Eigen::Vector2d ang(sin(wind_angle),cos(wind_angle)); //i am assuming wind is planar (max said this was ok)
+    return windNoise * ang;
+    // return Eigen::Vector3d(0,0,0);
 };
 
 double a(int k, double past_A) {

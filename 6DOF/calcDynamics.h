@@ -53,7 +53,7 @@ Eigen::Matrix3d getRinv(q curr_q);
 //
 // takes in the past two white noise Ws and generates a pink noise signal
 //
-Eigen::Vector3d calcWindNoise(q, Eigen::Vector2d* old_w);
+Eigen::Vector2d calcWindNoise(q, Eigen::Vector2d* old_w);
 
 
 // a

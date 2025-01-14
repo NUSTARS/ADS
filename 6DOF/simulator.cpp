@@ -62,7 +62,7 @@ q getqdot(q curr_q){
 
 q integrate(q curr_q, Eigen::Vector2d* old_w){
 
-    Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
+    // Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
 
     q k1 = getqdot(curr_q) * DT;
     q k2 = getqdot(curr_q + k1/2.0) * DT;
@@ -103,18 +103,25 @@ double getApogee(q curr_q, double b){
 	std::vector<double> thetax;
 	std::vector<double> thetay;
 	std::vector<double> thetaz;
+    std::vector<double> windx;
+    std::vector<double> windy;
 	times.push_back(t);
-        alts.push_back(temp_q.getH());
-        velocx.push_back(temp_q.getV()(0));
-        velocy.push_back(temp_q.getV()(1));
-        velocz.push_back(temp_q.getV()(2));
-        omegax.push_back(temp_q.getOmega()(0));
-        omegay.push_back(temp_q.getOmega()(1));
-        omegaz.push_back(temp_q.getOmega()(2));
-        thetax.push_back(temp_q.getTheta()(0));
-        thetay.push_back(temp_q.getTheta()(1));
-        thetaz.push_back(temp_q.getTheta()(2));
+    alts.push_back(temp_q.getH());
+    velocx.push_back(temp_q.getV()(0));
+    velocy.push_back(temp_q.getV()(1));
+    velocz.push_back(temp_q.getV()(2));
+    omegax.push_back(temp_q.getOmega()(0));
+    omegay.push_back(temp_q.getOmega()(1));
+    omegaz.push_back(temp_q.getOmega()(2));
+    thetax.push_back(temp_q.getTheta()(0));
+    thetay.push_back(temp_q.getTheta()(1));
+    thetaz.push_back(temp_q.getTheta()(2));
+
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
+
+    windx.push_back((*old_w)(0)); 
+    windy.push_back((*old_w)(1));
+    
 
     while(!atApogee(temp_q)){
         temp_q.setU(F(t-b)); 
@@ -133,6 +140,10 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
+        Eigen::Vector2d windNoise = calcWindNoise(curr_q, old_w);
+        windx.push_back((windNoise)(0)); 
+        windy.push_back((windNoise)(1));
+        old_w = &windNoise;
     
     }
     
@@ -142,7 +153,7 @@ double getApogee(q curr_q, double b){
 	
 	// Write data rows
     for (size_t i = 0; i < alts.size(); ++i) {
-        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "\n";
+        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "," << windx[i] << "," << windy[i] << "\n";
     }
 
     outfile.close();

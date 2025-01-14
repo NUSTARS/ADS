@@ -29,6 +29,7 @@ int main() {
     // Eigen::Vector3d initial_theta(0, -0.1, 0);
     // Eigen::Vector3d initial_omega(0, 0, 0);
     // Eigen::Vector3d initial_v_body(700, 0, 10);
+  
     double phi = OR_AZIMUTH*M_PI/180.0;
     double theta = 0;
     double psi = (90-OR_ZENITH)*M_PI/180.0;

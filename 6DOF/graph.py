@@ -6,7 +6,7 @@ import numpy as np
 # Replace 'your_file.csv' with the path to your CSV file
 file_path = 'data.csv'
 
-names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz"]
+names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz", "windx", "windy"]
 data = pd.DataFrame(columns=names)
 
 file_path_OR = 'OR_data.csv' 
@@ -32,13 +32,17 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 
 # Plot on each subplot
 # Top-left
-axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
-axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
-axes[0, 0].set_title('Altitude')
-axes[0, 0].set_xlabel('time (s)')
-axes[0, 0].set_ylabel('alt (ft)')
-axes[0, 0].legend()
-axes[0, 0].grid(True)
+# axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
+# axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
+# axes[0, 0].set_title('Altitude')
+# axes[0, 0].set_xlabel('time (s)')
+# axes[0, 0].set_ylabel('alt (ft)')
+# axes[0, 0].legend()
+# axes[0, 0].grid(True)
+
+axes[0, 0].plot(x, data['windx'], color='b',label='windx')
+axes[0, 0].plot(x, data['windy'], color='g',label='windy')
+
 
 # Top-right
 # axes[0, 1].plot(x, data['vx'], color='b',label='vx')
@@ -79,5 +83,4 @@ plt.show()
 # Step 4: Show or save the figure
 for i in plt.get_fignums():
     plt.figure(i).savefig(f'Output_Figure_{i}.png', dpi=300)
-
 
