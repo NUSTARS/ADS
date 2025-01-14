@@ -21,7 +21,7 @@
 const double Ix = 4.48/32.174; // Moment of inertia about the X-axis [lbf*ft*s^2]
 const double Iy = 219.346/32.174; // Moment of inertia about the Y-axis [lbf*ft*s^2]
 const double Iz = 219.346/32.174; // Moment of inertia about the Z-axis [lbf*ft*s^2]
-const double BALLAST_MASS = 3.7/32.174; // Mass of the ballast [slugs]
+const double BALLAST_MASS = 0/32.174; // Mass of the ballast [slugs]
 const double BURNOUT_MASS = 36.727/32.174; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system [slug]
 const double CG = 68.093/12.0; // distance from the tip of the nosecone to the CG [ft]
