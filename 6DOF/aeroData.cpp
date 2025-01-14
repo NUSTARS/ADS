@@ -1,4 +1,5 @@
 #include "aeroData.h"
+#include "constants.h"
 #include <cmath>
 /*aeroData.cpp*/
 
@@ -16,7 +17,7 @@
 // Takes in vSquared, angle of attack, control signal, and altitude to output the current Cd
 //
 double getCD(double vSquared, double alpha, double u, double h){
-    return (0.48+u/2.0) + (vSquared*1.15E-07); // TODO get this from CFD ppl
+    return (0.481+u/2.0) + (vSquared*1.15E-07); // TODO get this from CFD ppl
 }
 
 //
@@ -36,7 +37,7 @@ double getCN(double vSquared, double alpha, double u, double h){
 // the current distance [ft] from the CP to tip of the nosecone
 //
 double getCP(double vSquared, double alpha, double u, double h){
-    return (pow(vSquared,1.27/2.0)*0.00025 + 85.7)/12; // TEMP
+    return (pow(vSquared,1.27/2.0)*0.00025 + 85.7)/12.0; // TEMP
 }
 
 //
@@ -45,17 +46,16 @@ double getCP(double vSquared, double alpha, double u, double h){
 // returns the air density [slug/ft^3] at the current altitude
 //
 double getRho(double h){
-    double rho = -1;
-    if ( h < 36152) {
-        double T = 59 - 0.00356 * h;
-        double p = 2116 * pow((T + 459.7) / 518.6, 5.256);
-        rho = p / (1718 * (T + 459.7)) ;
-    }
-    else if(h < 82345){
-        double T = -70;
-        double p = 473.1 * exp(1.73 - 0.000048 * h);
-        rho = p / (1718 * (T + 459.7));
-    }
+
+    double tKelvin = T0 + 273.15; // [K]
+    double currentAlt = (h+PAD_ALT)/3.281; // [m]
+    
+    double pressure = P0*exp(-0.0341688*currentAlt/tKelvin); // [Pa]
+    double temperature = tKelvin - 0.0065*0.3048*h; // [K]
+
+    double rho = pressure/(287.050*temperature); // [kg/m^3]
+
+    rho *= 0.00194032;
 
     return rho; // TODO get this from CFD ppl
 }
