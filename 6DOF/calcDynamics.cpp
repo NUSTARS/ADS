@@ -7,14 +7,12 @@
 #include <iostream>
 #include <Eigen/Core>
 #include <Eigen/Dense>
-#include <random>
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
 #include "aeroData.h"
 #include "cmath"
 
-using std::random_device;
 using Eigen::Matrix2d;
 using Eigen::Matrix3d;
 using Eigen::Vector3d;
@@ -137,30 +135,4 @@ Matrix3d getRinv(q curr_q){
     Matrix3d R = getR(curr_q).inverse();
     return R;
     
-}
-    
-//calculates pink wind noise signal and multiplies by wind direction vector to get wind noise vector (idk math so hopefully u understand what i mean)
-Eigen::Vector2d calcWindNoise(q curr_q, Eigen::Vector2d* old_w) {
-    //generate pseudorandom number (wind)
-    Eigen::Vector2d past_w = *old_w;
-    std::random_device rd;
-    double w = rd();
-    //calculate noise using pink noise formula, normalizing by wind std
-    double a0 = 0;
-    double a1 = a(1, a0);
-    double a2 = a(2, a1);
-    double pinkNoise = w - a1 * (past_w(0)) - a2* past_w(1);
-    double windNoise = wind_velocity + pinkNoise/wind_std;
-
-    past_w(1) = past_w(0);
-    past_w(0) = w;
-    old_w = &past_w;
-
-    Eigen::Vector2d ang(sin(wind_angle),cos(wind_angle)); //i am assuming wind is planar (max said this was ok)
-    return windNoise * ang;
-    // return Eigen::Vector3d(0,0,0);
 };
-
-double a(int k, double past_A) {
-    return (k - 1 - alpha/2) * (past_A/k);
-}

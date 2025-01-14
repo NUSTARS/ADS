@@ -30,9 +30,6 @@ q getqdot(q curr_q){
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
     Eigen::Vector3d F_grav = M*getRinv(curr_q)*G;
-    
-    //std::cout<<F_aero.cross(v)<<std::endl;
-    //std::cout<<F_aero<<std::endl;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
@@ -60,7 +57,7 @@ q getqdot(q curr_q){
 
 }
 
-q integrate(q curr_q, Eigen::Vector2d* old_w){
+q integrate(q curr_q, Eigen::Vector2d old_w){
 
     // Eigen::Vector3d windNoise = calcWindNoise(curr_q, old_w);
 
@@ -77,9 +74,9 @@ q integrate(q curr_q, Eigen::Vector2d* old_w){
         if (scaled_theta[i] < -M_PI) {
             scaled_theta[i] += 2*M_PI; // Ensure positivity
         }
-}
+    }
 
-q new_q_thetalimits (new_q.getV(), new_q.getOmega(), scaled_theta, new_q.getH(),new_q.getU());
+    q new_q_thetalimits (new_q.getV(), new_q.getOmega(), scaled_theta, new_q.getH(),new_q.getU());
 
     return new_q_thetalimits;
 }
@@ -92,6 +89,8 @@ bool atApogee(q curr_q){
 double getApogee(q curr_q, double b){
     q temp_q = curr_q;
     double t = 0.0;
+    Eigen::Vector2d old_w(0,0);
+
     std::vector<double> times;
 	std::vector<double> alts;
 	std::vector<double> velocx;
@@ -105,30 +104,13 @@ double getApogee(q curr_q, double b){
 	std::vector<double> thetaz;
     std::vector<double> windx;
     std::vector<double> windy;
-	times.push_back(t);
-    alts.push_back(temp_q.getH());
-    velocx.push_back(temp_q.getV()(0));
-    velocy.push_back(temp_q.getV()(1));
-    velocz.push_back(temp_q.getV()(2));
-    omegax.push_back(temp_q.getOmega()(0));
-    omegay.push_back(temp_q.getOmega()(1));
-    omegaz.push_back(temp_q.getOmega()(2));
-    thetax.push_back(temp_q.getTheta()(0));
-    thetay.push_back(temp_q.getTheta()(1));
-    thetaz.push_back(temp_q.getTheta()(2));
-
-    Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
-
-    windx.push_back((*old_w)(0)); 
-    windy.push_back((*old_w)(1));
-    
 
     while(!atApogee(temp_q)){
-        temp_q.setU(F(t-b)); 
-        // remove control for now
+        // temp_q.setU(F(t-b)); // remove control for now
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
-        t += DT;
+        Eigen::Vector2d windNoise = calcWindNoise(curr_q, old_w);
+
         times.push_back(t);
         alts.push_back(temp_q.getH());
         velocx.push_back(temp_q.getV()(0));
@@ -140,11 +122,10 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        Eigen::Vector2d windNoise = calcWindNoise(curr_q, old_w);
         windx.push_back((windNoise)(0)); 
         windy.push_back((windNoise)(1));
-        old_w = &windNoise;
-    
+
+        t += DT;
     }
     
     std::ofstream outfile("data.csv");
@@ -248,7 +229,7 @@ double getApogee_testing(q curr_q){
     q temp_q = curr_q;
     double t = 0.0;
     char dummy = 0;
-    Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
+    Eigen::Vector2d old_w(0,0);
     temp_q.setU(0);
 
     while(!atApogee(temp_q)){

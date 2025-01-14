@@ -40,10 +40,10 @@ const double DT = 0.05; // time step for integration
 //
 const double P0 = 988.227*100; // Gauge pressure on the ground [Pa]
 const double T0 = 13.613; // Temperature on the ground [C]
-const double wind_velocity = 20; //Average wind velocity
-const double wind_angle = 0; //Average wind angle
-const double alpha = 5/3; //Pink noise 1/f power
-const double wind_std = 1;
+const double WIND_VELOCITY = 20; //Average wind velocity [mph]
+const double WIND_ANGLE = 0; //Average wind angle
+const double WIND_STD = 1;
+const double ALPHA = 5/3; //Pink noise 1/f power
 
 //
 // Controls function: 

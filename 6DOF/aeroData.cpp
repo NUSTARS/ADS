@@ -56,7 +56,7 @@ double getRho(double h){
 
     double rho = pressure/(287.050*temperature); // [kg/m^3]
 
-    rho *= 0.00194032;
+    rho *= 0.00194032; // [slugs/ft^3]
 
     return rho; // TODO get this from CFD ppl
 }

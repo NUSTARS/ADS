@@ -26,7 +26,7 @@ q getqdot(q curr_q);
 //
 // given a q, returns q at the next timestep using qdot and dt (RK4)
 //
-q integrate(q curr_q, Eigen::Vector2d* old_w);
+q integrate(q curr_q, Eigen::Vector2d old_w);
 
 
 // atApogee
