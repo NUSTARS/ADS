@@ -35,8 +35,8 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
 axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
 axes[0, 0].set_title('Altitude')
-axes[0, 0].set_xlabel('time')
-axes[0, 0].set_ylabel('alt')
+axes[0, 0].set_xlabel('time (s)')
+axes[0, 0].set_ylabel('alt (ft)')
 axes[0, 0].legend()
 axes[0, 0].grid(True)
 

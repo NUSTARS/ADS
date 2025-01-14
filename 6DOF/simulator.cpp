@@ -117,7 +117,8 @@ double getApogee(q curr_q, double b){
     Eigen::Vector2d* old_w = new Eigen::Vector2d(0,0);
 
     while(!atApogee(temp_q)){
-        //temp_q.setU(F(t-b)); remove control for now
+        temp_q.setU(F(t-b)); 
+        // remove control for now
         temp_q.setU(0);
         temp_q = integrate(temp_q, old_w);
         t += DT;
