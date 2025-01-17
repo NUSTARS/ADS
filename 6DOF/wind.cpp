@@ -27,8 +27,8 @@ void Wind::calcWind(){
     // do the same for dir
     w = dist(generator);
     pinkNoise = w - a_values[1]*windSpeed[1] - a_values[2]*windDirection[1];
-    //double windDirVal = WIND_ANGLE + WIND_STD*(pinkNoise/2.252);
-    double windDirVal = WIND_ANGLE;
+    double windDirVal = WIND_ANGLE + WIND_STD*(pinkNoise/2.252);
+    //double windDirVal = WIND_ANGLE; // for testing
 
     updateWindArrays(windSpeedVal, windDirVal);
 
