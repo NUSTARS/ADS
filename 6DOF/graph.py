@@ -7,6 +7,7 @@ import numpy as np
 file_path = 'data.csv'
 
 names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz", "windx", "windy"]
+
 data = pd.DataFrame(columns=names)
 
 file_path_OR = 'OR_data.csv' 
@@ -20,8 +21,7 @@ if list(csv_data.columns) != names:
     csv_data.columns = names  # Assign names if CSV does not have headers or has mismatched headers
 
 data = pd.concat([data, csv_data], ignore_index=True)
-
-# print(data)
+print(data)
 
 # Step 2: Extract the x-axis data
 # Replace 'X' with the actual column name for the x-axis
@@ -38,6 +38,8 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 # axes[0, 0].set_xlabel('time (s)')
 # axes[0, 0].set_ylabel('alt (ft)')
 
+print(x)
+print(data['windx'])
 
 axes[0, 0].plot(x, data['windx'], color='b',label='windx')
 axes[0, 0].plot(x, data['windy'], color='g',label='windy')

@@ -25,8 +25,21 @@
 
 q getqdot(q curr_q, Wind& wind){
 
+
+    //The local wind velocity is added to the rocket velocity to get the airspeed velocity of the rocket. 
+    //By inverse rotation this quantity is obtained in rocket coordinates, from which the angle of
+    //attack and other flight parameters can be computed
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
+    Eigen::Vector3d wind_3d_body(wind.getWind()(0), wind.getWind()(1), 0.0);
+
+    Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_body;
+
+    //Add local wind to the rocket velocity 
+
+    Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0),curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
+    
+    q new_q_wind(v_new, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU());
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
@@ -87,7 +100,7 @@ bool atApogee(q curr_q){
 
 double getApogee(q curr_q, double b){
     q temp_q = curr_q;
-    double t = 0.0;
+    double time = 0.0;
     Wind wind;
 
     std::vector<double> times;
@@ -104,15 +117,20 @@ double getApogee(q curr_q, double b){
     std::vector<double> windx;
     std::vector<double> windy;
 
+    std::cout << "calling reset time" << std::endl;
+
+
     while(!atApogee(temp_q)){
         // temp_q.setU(F(t-b)); // remove control for now
+        // std::cout << time << std::endl;
+
         temp_q.setU(0);
         wind.updateWind();
         temp_q = integrate(temp_q, wind);
 
         Eigen::Vector2d currWind = wind.getWind();
 
-        times.push_back(t);
+        times.push_back(time);
         alts.push_back(temp_q.getH());
         velocx.push_back(temp_q.getV()(0));
         velocy.push_back(temp_q.getV()(1));
@@ -126,7 +144,11 @@ double getApogee(q curr_q, double b){
         windx.push_back(currWind(0)); 
         windy.push_back(currWind(1));
 
-        t += DT;
+        std::cout << time << std::endl;
+
+        time = time + 0.05;
+
+        // std::cout << time << std::endl;
     }
     
     std::ofstream outfile("data.csv");
