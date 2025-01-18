@@ -25,7 +25,7 @@
 
 q getqdot(q curr_q, Wind* wind){
 
-     std::cout << "function started !!" << std::endl;
+    //std::cout << "function started !!" << std::endl;
 
     //The local wind velocity is added to the rocket velocity to get the airspeed velocity of the rocket. 
     //By inverse rotation this quantity is obtained in rocket coordinates, from which the angle of
@@ -72,7 +72,7 @@ q getqdot(q curr_q, Wind* wind){
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v_new)(2);
 
-    std::cout << "function completed !!" << std::endl;
+    //std::cout << "function completed !!" << std::endl;
 
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
@@ -132,7 +132,7 @@ double getApogee(q curr_q, double b){
 
     while(!atApogee(temp_q)){
         // temp_q.setU(F(t-b)); // remove control for now
-        // std::cout << time << std::endl;
+        std::cout << "a" << std::endl;
 
         temp_q.setU(0);
         wind.updateWind();
@@ -151,14 +151,15 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        // windx.push_back(currWind(0)); 
-        // windy.push_back(currWind(1));
+        windx.push_back(currWind(0)); 
+        windy.push_back(currWind(1));
 
-        std::cout << time << std::endl;
+        //std::cout << time << std::endl;
 
         time = time + 0.05;
 
-        // std::cout << time << std::endl;
+        std::cout << time << std::endl;
+        std::cout << temp_q << std::endl;
     }
     
     std::ofstream outfile("data.csv");
