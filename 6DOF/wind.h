@@ -27,8 +27,8 @@ class Wind {
         //
         // Past and Current Wind (1st element = current, 2nd = prev, etc)
         //
-        double windSpeed[3] = {0,0,0};
-        double windDirection[3] = {0,0,0};
+        double windSpeed[3];
+        double windDirection[3];
 
         //
         // calcWind

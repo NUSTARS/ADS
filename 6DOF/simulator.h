@@ -21,13 +21,13 @@
 //
 // given a q, returns the time derivative based on the EOM
 //
-q getqdot(q curr_q, Wind& wind);
+q getqdot(q curr_q, Wind* wind);
 
 // integrate
 //
 // given a q, returns q at the next timestep using qdot and dt (RK4)
 //
-q integrate(q curr_q, Wind& wind);
+q integrate(q curr_q, Wind* wind);
 
 
 // atApogee

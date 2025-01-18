@@ -23,18 +23,24 @@
 
 
 
-q getqdot(q curr_q, Wind& wind){
+q getqdot(q curr_q, Wind* wind){
 
+     std::cout << "function started !!" << std::endl;
 
     //The local wind velocity is added to the rocket velocity to get the airspeed velocity of the rocket. 
     //By inverse rotation this quantity is obtained in rocket coordinates, from which the angle of
     //attack and other flight parameters can be computed
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
-    Eigen::Vector3d wind_3d_body(wind.getWind()(0), wind.getWind()(1), 0.0);
+    Eigen::Vector3d wind_3d_body(wind->getWind()(0), wind->getWind()(1), 0.0);
+    // Eigen::Vector3d wind_3d_body(1, 1,1);
 
     Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_body;
 
+    // std::cout << wind_3d_body << std::endl;
+    // std::cout << wind_body << std::endl;
+
+    // Eigen::Vector3d wind_body(1, 1,1);
     //Add local wind to the rocket velocity 
 
     Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0),curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
@@ -66,18 +72,22 @@ q getqdot(q curr_q, Wind& wind){
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v_new)(2);
 
+    std::cout << "function completed !!" << std::endl;
+
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
 
 }
 
-q integrate(q curr_q, Wind& wind){
+q integrate(q curr_q, Wind* wind){
 
     q k1 = getqdot(curr_q, wind) * DT;
     q k2 = getqdot(curr_q + k1/2.0, wind) * DT;
     q k3 = getqdot(curr_q + k2/2.0, wind) * DT;
     q k4 = getqdot(curr_q + k3, wind) * DT;
     q new_q = curr_q + (k1 + k2*2.0 + k3*2.0 + k4) * (1/6.0);
+    // q new_q = curr_q;
+
 
     Eigen::Vector3d scaled_theta;
     Eigen::Vector3d theta = new_q.getTheta();
@@ -126,7 +136,7 @@ double getApogee(q curr_q, double b){
 
         temp_q.setU(0);
         wind.updateWind();
-        temp_q = integrate(temp_q, wind);
+        temp_q = integrate(temp_q, &wind);
 
         Eigen::Vector2d currWind = wind.getWind();
 
@@ -141,8 +151,8 @@ double getApogee(q curr_q, double b){
         thetax.push_back(temp_q.getTheta()(0));
         thetay.push_back(temp_q.getTheta()(1));
         thetaz.push_back(temp_q.getTheta()(2));
-        windx.push_back(currWind(0)); 
-        windy.push_back(currWind(1));
+        // windx.push_back(currWind(0)); 
+        // windy.push_back(currWind(1));
 
         std::cout << time << std::endl;
 

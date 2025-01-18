@@ -40,10 +40,13 @@ void Wind::calcWind(){
 // Cascades wind arrays so old values are updated accordingly
 //
 void Wind::updateWindArrays(double newWindSpeed, double newWindDirection){
-    for(int i = sizeof(windSpeed)/sizeof(double)-1; i > 0; i--){
-        windSpeed[i+1] = windSpeed[i];
-        windDirection[i+1] = windDirection[i];
-    }
+
+    windSpeed[2] = windSpeed[1];
+    windSpeed[1] = windSpeed[0];
+
+    windDirection[2] = windDirection[1];
+    windDirection[1] = windDirection[0];
+  
     windSpeed[0] = newWindSpeed;
     windDirection[0] = newWindDirection;
 }
@@ -73,6 +76,15 @@ double* Wind::generateA(int numValues){
 Wind::Wind(){
     dist = std::normal_distribution<double>(0,1);
     a_values = generateA(3);
+    windDirection[0] = 0;
+    windDirection[1] = 0;
+    windDirection[2] = 0;
+    windSpeed[0] = 0;
+    windSpeed[1] = 0;
+    windSpeed[2] = 0;
+
+
+
 }
 
 //
