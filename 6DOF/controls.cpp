@@ -27,7 +27,7 @@ double binary_search(const std::vector<double>& b,
         int mid = left + (right - left) / 2;
         double bMid = b[mid];
         double calcApogee = getApogee(states, bMid); // forward project to find predicted apogee
-        //std::cout << calcApogee << std::endl;
+        //std::cout << bMid << std::endl;
 
         // Check if calculate apogee is within error margin
         if (std::fabs(calcApogee - apogee) <= err) {
@@ -72,7 +72,7 @@ std::vector<double> generateRampingFunction(double duration, double b, double f,
 double find_u(q states, double apogee, double err) {
 	double f = 0.5;	  
 	double timestep = DT;
-	std::vector<double> b_list = createRange(-100.0, 100.0, timestep);
+	std::vector<double> b_list = createRange(-100, 100, timestep);
 	double b_final = binary_search(b_list, apogee, err, states);
 	if (b_final < -1*f) { // if b is less than ramp time, prolly wanna get those flaps out
 		return 1.0;
