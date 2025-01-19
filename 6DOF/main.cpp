@@ -9,16 +9,28 @@
 #include "controls.h"
 #include "sensing.h"
 #include <cmath>
+#include <cstdlib> 
 
-int main() {
+int main(int argc, char* argv[]) {
+    if (argc < 8) {
+        std::cerr << "Usage: ./my_program <OR_LATERAL_VELOCITY> <OR_VERTICAL_VELOCITY> <OR_PITCH_RATE> <OR_YAW_RATE> <OR_AZIMUTH> <OR_ZENITH> <initial_h> \n";
+        return 1;
+    }
+    double OR_LATERAL_VELOCITY = std::atof(argv[1]); //[ft/s]
+    double OR_VERTICAL_VELOCITY = std::atof(argv[2]); //[ft/s]
+    double OR_PITCH_RATE = std::atof(argv[3]); // [r/s]
+    double OR_YAW_RATE = std::atof(argv[4]); // [r/s]
+    double OR_AZIMUTH = std::atof(argv[5]); // [deg]
+    double OR_ZENITH = std::atof(argv[6]); // [deg]
+    double initial_h = std::atof(argv[7]); // [ft]
 
-    double OR_LATERAL_VELOCITY = 71.354; //[ft/s]
-    double OR_VERTICAL_VELOCITY = 692.409; //[ft/s]
-    double OR_PITCH_RATE = 4.77E-04; // [r/s]
-    double OR_YAW_RATE = 2.25E-05; // [r/s]
-    double OR_AZIMUTH = 0.013; // [deg]
-    double OR_ZENITH = 84.109; // [deg]
-    double initial_h = 921.966; // [ft]
+    // double OR_LATERAL_VELOCITY = 71.354; //[ft/s]
+    // double OR_VERTICAL_VELOCITY = 692.409; //[ft/s]
+    // double OR_PITCH_RATE = 4.77E-04; // [r/s]
+    // double OR_YAW_RATE = 2.25E-05; // [r/s]
+    // double OR_AZIMUTH = 0.013; // [deg]
+    // double OR_ZENITH = 84.109; // [deg]
+    // double initial_h = 921.966; // [ft]
 
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
@@ -69,7 +81,7 @@ int main() {
         current_t += DT;
 
     }
-
+    
     
    //std::cout <<"complete" << std::endl;
    return 0;
