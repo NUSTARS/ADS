@@ -43,13 +43,13 @@ int main() {
     // post boost initial state
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
-    std::cout << currentState << std::endl;
-    std::cout << getApogee(currentState)<< std::endl;
+    //std::cout << currentState << std::endl;
+    // std::cout << getApogee(currentState)<< std::endl;
     //std::cout << getApogee_testing(currentState)<< std::endl;
 
-    /* MAIN FOR ONCE WE GET GETAPOGEE WORKING
+   //MAIN FOR ONCE WE GET GETAPOGEE WORKING
 
-    Eigen::Vector2d* old_wind = new Eigen::Vector2d(0,0);
+    Wind wind;
 
     double max_simTime = 30;
     double current_t = 0.0;
@@ -60,17 +60,17 @@ int main() {
         q SensorNoiseState = addSensorNoise(currentState);
 
         //call SHISHIR CODE to get b, set B in current state going forward
-        double signal = find_u(SensorNoiseState, 5150, 1000); //forward integrate is placeholder
-        std::cout<< signal << std::endl;
+        double signal = find_u(currentState, 5000, 10); //forward integrate is placeholder
+        //std::cout<< signal << std::endl;
 
         SensorNoiseState.setU(signal);
-        q currentState = integrate(SensorNoiseState, old_wind);
+        q currentState = integrate(SensorNoiseState, &wind);
 
         current_t += DT;
 
     }
 
-    */
+    
    //std::cout <<"complete" << std::endl;
    return 0;
 

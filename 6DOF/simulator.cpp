@@ -126,15 +126,15 @@ double getApogee(q curr_q, double b){
 	std::vector<double> thetaz;
     std::vector<double> windx;
     std::vector<double> windy;
+    std::vector<double> u;
 
-    std::cout << "calling reset time" << std::endl;
+    //std::cout << "calling reset time" << std::endl;
 
 
     while(!atApogee(temp_q)){
-        // temp_q.setU(F(t-b)); // remove control for now
-        std::cout << "a" << std::endl;
+        temp_q.setU(F(time-b)); // remove control for now
+        //std::cout << (F(time-b)) << std::endl;
 
-        temp_q.setU(0);
         wind.updateWind();
         temp_q = integrate(temp_q, &wind);
 
@@ -153,13 +153,14 @@ double getApogee(q curr_q, double b){
         thetaz.push_back(temp_q.getTheta()(2));
         windx.push_back(currWind(0)); 
         windy.push_back(currWind(1));
+        u.push_back(temp_q.getU());
 
         //std::cout << time << std::endl;
 
         time = time + 0.05;
 
-        std::cout << time << std::endl;
-        std::cout << temp_q << std::endl;
+        //std::cout << time << std::endl;
+        //std::cout << temp_q << std::endl;
     }
     
     std::ofstream outfile("data.csv");
@@ -168,7 +169,7 @@ double getApogee(q curr_q, double b){
 	
 	// Write data rows
     for (size_t i = 0; i < alts.size(); ++i) {
-        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "," << windx[i] << "," << windy[i] << "\n";
+        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "," << windx[i] << "," << windy[i] << "," << u[i] << "\n";
     }
 
     outfile.close();

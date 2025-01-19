@@ -6,7 +6,7 @@ import numpy as np
 # Replace 'your_file.csv' with the path to your CSV file
 file_path = 'data.csv'
 
-names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz", "windx", "windy"]
+names = ["time", "altitude", "vx", "vy", "vz", "wx", "wy", "wz", "thetax", "thetay", "thetaz", "windx", "windy", "u"]
 
 data = pd.DataFrame(columns=names)
 
@@ -32,17 +32,21 @@ fig.suptitle('Whole Lotta Data', fontsize=16)    # Add a main title
 
 # Plot on each subplot
 # Top-left
-# axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
-# axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
-# axes[0, 0].set_title('Altitude')
-# axes[0, 0].set_xlabel('time (s)')
-# axes[0, 0].set_ylabel('alt (ft)')
+#axes[0, 0].plot(x, data['altitude'], label='6DOF Simulation', color='b')
+#axes[0, 0].plot(data_OR['# Time (s)']-2.309, data_OR['Altitude (ft)'], label='OR', color='g')
+#axes[0, 0].set_title('Altitude')
+#axes[0, 0].set_xlabel('time (s)')
+#axes[0, 0].set_ylabel('alt (ft)')
 
 print(x)
 print(data['windx'])
 
-axes[0, 0].plot(x, data['windx'], color='b',label='windx')
-axes[0, 0].plot(x, data['windy'], color='g',label='windy')
+#axes[0, 0].plot(x, data['windx'], color='b',label='windx')
+#axes[0, 0].plot(x, data['windy'], color='g',label='windy')
+#axes[0, 0].legend()
+#axes[0, 0].grid(True)
+
+axes[0, 0].plot(x, data['u'], color='b',label='u')
 axes[0, 0].legend()
 axes[0, 0].grid(True)
 

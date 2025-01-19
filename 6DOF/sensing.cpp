@@ -51,9 +51,9 @@ Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double 
 q addSensorNoise(q currentState) {
 
     double IMU_noise_mean = 0.0;
-    double IMU_noise_stddev = 0.01;
+    double IMU_noise_stddev = 0.0;
     double BMP_noise_mean = 0.0;
-    double BMP_noise_stddev = 0.01;
+    double BMP_noise_stddev = 0.0;
 
     //add noise to the IMU and barometer (velocity)
 
