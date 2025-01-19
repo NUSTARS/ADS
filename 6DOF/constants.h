@@ -18,7 +18,7 @@
 //
 // Mechanical constants
 //
-const double BALLAST_MASS = 0.0/32.174; // Mass of the ballast [slugs]
+const double BALLAST_MASS = 0.11501398818775256; // Mass of the ballast [slugs]
 
 const double Ix = 4.48/32.174; // Moment of inertia about the X-axis [lbf*ft*s^2]
 const double Iy = 219.346/32.174; // Moment of inertia about the Y-axis [lbf*ft*s^2]
@@ -40,9 +40,9 @@ const double DT = 0.05; // time step for integration
 //
 const double P0 = 988.227*100; // Gauge pressure on the ground [Pa]
 const double T0 = 13.613; // Temperature on the ground [C]
-const double WIND_VELOCITY = 20; //Average wind velocity [mph]
-const double WIND_ANGLE = 0; //Average wind angle
-const double WIND_STD = 1;
+const double WIND_VELOCITY = 0.0; //Average wind velocity [mph]
+const double WIND_ANGLE = 0.0; //Average wind angle
+const double WIND_STD = 1.0;
 const double ALPHA = 5/3; //Pink noise 1/f power
 
 //

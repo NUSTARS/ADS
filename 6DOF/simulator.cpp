@@ -127,12 +127,9 @@ double getApogee(q curr_q, double b){
     std::vector<double> windx;
     std::vector<double> windy;
 
-    std::cout << "calling reset time" << std::endl;
-
 
     while(!atApogee(temp_q)){
         // temp_q.setU(F(t-b)); // remove control for now
-        std::cout << "a" << std::endl;
 
         temp_q.setU(0);
         wind.updateWind();
@@ -158,8 +155,8 @@ double getApogee(q curr_q, double b){
 
         time = time + 0.05;
 
-        std::cout << time << std::endl;
-        std::cout << temp_q << std::endl;
+        // std::cout << time << std::endl;
+        // std::cout << temp_q << std::endl;
     }
     
     std::ofstream outfile("data.csv");
