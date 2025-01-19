@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
     }
     
     
-   //std::cout <<"complete" << std::endl;
+   std::cout << currentState.getH() << std::endl;
    return 0;
 
 };
