@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
     
     // post boost initial state
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
+    std::cout << currentState << std::endl;
 
     //std::cout << currentState << std::endl;
     // std::cout << getApogee(currentState)<< std::endl;
@@ -74,11 +75,12 @@ int main(int argc, char* argv[]) {
         //call SHISHIR CODE to get b, set B in current state going forward
         double signal = find_u(currentState, 5000, 10); //forward integrate is placeholder
         std::cout<< current_t << std::endl;
-        std::cout << currentState.getH() << std::endl;
+        
 
         currentState.setU(signal);
-        q currentState = integrate(currentState, &wind);
-
+        std::cout << currentState << std::endl;
+        currentState = integrate(currentState, &wind);
+        std::cout << currentState << std::endl;
         current_t += DT;
 
     }

@@ -23,6 +23,7 @@ double binary_search(const std::vector<double>& b,
     int left = 0;
     int right = b.size() - 1;
 
+    double calcApogee = 0.0;
     while (left <= right) {
         int mid = left + (right - left) / 2;
         double bMid = b[mid];
@@ -43,7 +44,10 @@ double binary_search(const std::vector<double>& b,
         }
     }
 
-    throw std::runtime_error("We done fucked up");
+    if (calcApogee > apogee){
+        return -101;
+    }
+    
 }
 
 std::vector<double> generateRampingFunction(double duration, double b, double f, double timestep) {
@@ -76,7 +80,13 @@ double find_u(q states, double apogee, double err) {
 	double b_final = binary_search(b_list, apogee, err, states);
 	if (b_final < -1*f) { // if b is less than ramp time, prolly wanna get those flaps out
 		return 1.0;
-	}	
+	}
+    else if(b_final == -101){
+        return 1.0;
+    }
+    else if(b_final == 101){
+        return 0.0;
+    }	
 	
 	std::vector<double> ramp = generateRampingFunction(20.0, b_final, f, timestep);
 	return ramp[0]; 
