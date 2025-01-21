@@ -25,7 +25,7 @@
 
 q getqdot(q curr_q, Wind* wind){
 
-    //std::cout << "function started !!" << std::endl;
+    // std::cout << "function started !!" << std::endl;
 
     //The local wind velocity is added to the rocket velocity to get the airspeed velocity of the rocket. 
     //By inverse rotation this quantity is obtained in rocket coordinates, from which the angle of
@@ -155,12 +155,15 @@ double getApogee(q curr_q, double b){
         windy.push_back(currWind(1));
         u.push_back(temp_q.getU());
 
-        //std::cout << time << std::endl;
+        // std::cout << time << std::endl;
 
-        time = time + 0.05;
+        time = time + DT;
 
-        //std::cout << time << std::endl;
-        //std::cout << temp_q << std::endl;
+        if (time < 10) {
+            std::cout << time << std::endl;
+            std::cout << temp_q << std::endl;
+        };
+         
     }
     
     std::ofstream outfile("data.csv");
