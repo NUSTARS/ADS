@@ -8,8 +8,9 @@ import os
 
 sim_results = []
 OR_results = []
+desired_apogee = [] 
 
-csv_file_path = "IC_data.csv"  # Input CSV file
+csv_file_path = "wind_IC_data.csv"  # Input CSV file
 constants_file_path = "constants.h"  # Constants header file
 cpp_executable = "./build/my_program"  # Path to compiled C++ executable
 build_directory = "./build"
@@ -91,13 +92,19 @@ with open(csv_file_path, 'r') as csv_file:
         altitude = result.stdout
         sim_results.append(altitude)
         OR_results.append(OR_altitude)
+        desired_apogee.append(5000)
         print("Simulation output:", altitude)
         print("OR output:", OR_altitude)
+        # print(f"Difference: {round(float(altitude) - float(5000), 2)} ft")
         print(f"Difference: {round(float(altitude) - float(OR_altitude), 2)} ft")
 
-difference = np.array(sim_results, dtype=float) - np.array(OR_results, dtype=float)
+
+# difference = np.array(sim_results, dtype=float) - np.array(desired_apogee, dtype=float)
+difference = np.array(sim_results, dtype=float) - np.array(OR_altitude, dtype=float)
+
+
 plt.figure(figsize=(6, 4))
 plt.boxplot(difference, vert=False, patch_artist=True, boxprops=dict(facecolor='skyblue'))
 plt.scatter(difference, [1] * len(difference), color='black', alpha=0.6)
-plt.xlabel('Altitude Difference (ft)')
+plt.xlabel('Altitude Difference to goal (ft)')
 plt.show()

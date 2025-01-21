@@ -24,14 +24,16 @@ double binary_search(const std::vector<double>& b,
     int right = b.size() - 1;
 
     double calcApogee = 0.0;
+
     while (left <= right) {
         int mid = left + (right - left) / 2;
         double bMid = b[mid];
         double calcApogee = getApogee(states, bMid); // forward project to find predicted apogee
-        //std::cout << bMid << std::endl;
+        // std::cout << calcApogee << std::endl;
 
         // Check if calculate apogee is within error margin
         if (std::fabs(calcApogee - apogee) <= err) {
+            // std::cout << "returns a bmid" << std::endl;
             return bMid; 
         }
 
@@ -42,11 +44,17 @@ double binary_search(const std::vector<double>& b,
         else {
             right = mid - 1; // Use the smaller half
         }
-    }
 
-    if (calcApogee > apogee){
-        return -101;
     }
+    
+    // std::cout << "out of loop" << std::endl;
+    // std::cout << calcApogee << std::endl;
+
+
+    return -101;
+    // if (calcApogee > apogee){
+    //     return -101;
+    // }
     
 }
 
@@ -78,6 +86,7 @@ double find_u(q states, double apogee, double err) {
 	double timestep = DT;
 	std::vector<double> b_list = createRange(-100, 100, timestep);
 	double b_final = binary_search(b_list, apogee, err, states);
+    // std::cout << "b_final: " << b_final << std::endl;
 	if (b_final < -1*f) { // if b is less than ramp time, prolly wanna get those flaps out
 		return 1.0;
 	}
