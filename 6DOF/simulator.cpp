@@ -32,10 +32,10 @@ q getqdot(q curr_q, Wind* wind){
     //attack and other flight parameters can be computed
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
-    Eigen::Vector3d wind_3d_body(wind->getWind()(0), wind->getWind()(1), 0.0);
+    Eigen::Vector3d wind_3d_world(wind->getWind()(0), wind->getWind()(1), 0.0);
     // Eigen::Vector3d wind_3d_body(1, 1,1);
 
-    Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_body;
+    Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_world;
 
     // std::cout << wind_3d_body << std::endl;
     // std::cout << wind_body << std::endl;
@@ -47,8 +47,8 @@ q getqdot(q curr_q, Wind* wind){
     
     q new_q_wind(v_new, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU());
 
-    Eigen::Vector3d F_aero = getAeroForces(curr_q); 
-    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
+    Eigen::Vector3d F_aero = getAeroForces(new_q_wind); 
+    Eigen::Vector3d M_aero = getAeroMoments(new_q_wind);
     Eigen::Vector3d F_grav = M*getRinv(curr_q)*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v_new(2)-omega(2)*v_new(1));
