@@ -177,18 +177,37 @@ double getApogee(q curr_q){
     return getApogee(curr_q, 1000);// shifting 1000 seconds to the right is plenty for a 20s flight time to make sure we never hit
 }
 
-q  getqdot_testing(q curr_q){
+q  getqdot_testing(q curr_q, Wind* wind){
 
+    // std::cout << "function started !!" << std::endl;
+
+    //The local wind velocity is added to the rocket velocity to get the airspeed velocity of the rocket. 
+    //By inverse rotation this quantity is obtained in rocket coordinates, from which the angle of
+    //attack and other flight parameters can be computed
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
+    Eigen::Vector3d wind_3d_body(wind->getWind()(0), wind->getWind()(1), 0.0);
+    // Eigen::Vector3d wind_3d_body(1, 1,1);
+
+    Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_body;
+
+    // std::cout << wind_3d_body << std::endl;
+    // std::cout << wind_body << std::endl;
+
+    // Eigen::Vector3d wind_body(1, 1,1);
+    //Add local wind to the rocket velocity 
+
+    Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0),curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
+    
+    q new_q_wind(v_new, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU());
 
     Eigen::Vector3d F_aero = getAeroForces(curr_q); 
     Eigen::Vector3d M_aero = getAeroMoments(curr_q);
-    Eigen::Vector3d F_grav = M*getR(curr_q).inverse()*G;
+    Eigen::Vector3d F_grav = M*getRinv(curr_q)*G;
 
-    double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v(2)-omega(2)*v(1));
-    double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v(0)-omega(0)*v(2));
-    double vZdot = (1/M)*(F_aero(2) + F_grav(2)) - (omega(0)*v(1)-omega(1)*v(0));
+    double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v_new(2)-omega(2)*v_new(1));
+    double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v_new(0)-omega(0)*v_new(2));
+    double vZdot = (1/M)*(F_aero(2) + F_grav(2)) - (omega(0)*v_new(1)-omega(1)*v_new(0));
 
     double omegaXdot = (1/Ix)*(M_aero(0) - omega(1)*omega(2)*(Iz-Iy));
     double omegaYdot = (1/Iy)*(M_aero(1) - omega(0)*omega(2)*(Ix-Iz));
@@ -205,7 +224,9 @@ q  getqdot_testing(q curr_q){
     Eigen::Vector3d vdot(vXdot, vYdot, vZdot);
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
     Eigen::Vector3d thetadot = specialR*omega; 
-    double hdot = (getR(curr_q)*v)(2);
+    double hdot = (getR(curr_q)*v_new)(2);
+
+    
 
     //------------------------------------------------------------------
 
@@ -278,6 +299,7 @@ double getApogee_testing(q curr_q){
     while(!atApogee(temp_q) && !(input[0] == '!')){
         std::cout << "TIME: " << time << std::endl;
         std::cout << temp_q << std::endl;
+        getqdot_testing(temp_q, &wind);
         std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP. ! TO STOP" << std::endl; 
         std::cin.getline(input, 5);
 

@@ -41,8 +41,9 @@ const double DT = 0.05; // time step for integration
 //
 const double P0 = 988.227*100; // Gauge pressure on the ground [Pa]
 const double T0 = 13.613; // Temperature on the ground [C]
-const double WIND_VELOCITY = 20.0 * 1.46667; //Average wind velocity [ft/s]
-const double WIND_ANGLE = 0.0; //Average wind angle
+// const double WIND_VELOCITY = 20.0 * 1.46667; //Average wind velocity [ft/s]
+const double WIND_VELOCITY = 0.0;
+const double WIND_ANGLE = 90.0; //Average wind angle
 const double WIND_STD = 0.0;
 const double ALPHA = 5/3; //Pink noise 1/f power
 
@@ -50,6 +51,6 @@ const double ALPHA = 5/3; //Pink noise 1/f power
 // Controls function: 
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
 //
-double F(double t); 
+double F(double t);
 
 #endif 
