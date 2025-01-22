@@ -46,7 +46,7 @@ double getAlpha(q curr_q){
     // double sin = asin(vz/getV_Mag(curr_q));
 
     double alpha = atan2(sqrt(vy*vy + vz*vz), vx);
-    // return 0.19*M_PI/180;
+    
     return alpha;
 };
 

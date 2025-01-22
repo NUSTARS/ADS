@@ -102,6 +102,6 @@ void Wind::updateWind(){
 // Gets the current wind as a 2D vector
 //
 Eigen::Vector2d Wind::getWind(){
-    Eigen::Vector2d dir(sin(windDirection[0]),cos(windDirection[1]));
+    Eigen::Vector2d dir(sin(windDirection[0]* M_PI / 180.0),cos(windDirection[0]* M_PI / 180.0));
     return windSpeed[0]*dir;
 }

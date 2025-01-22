@@ -20,9 +20,10 @@
 //
 const double BALLAST_MASS = 0.0; // Mass of the ballast [slugs]
 
-const double Ix = 4.48/32.174; // Moment of inertia about the X-axis [lbf*ft*s^2]
-const double Iy = 219.346/32.174; // Moment of inertia about the Y-axis [lbf*ft*s^2]
-const double Iz = 219.346/32.174; // Moment of inertia about the Z-axis [lbf*ft*s^2]
+const double Ix = 0.04979; // Moment of inertia about the X-axis [lbf*ft*s^2]
+const double Iy = 6.81; // Moment of inertia about the Y-axis [lbf*ft*s^2]
+//const double Iy = 1;
+const double Iz = Iy; // Moment of inertia about the Z-axis [lbf*ft*s^2]
 const double BURNOUT_MASS = 36.727/32.174; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system [slug]
 const double CG = 68.093/12.0; // distance from the tip of the nosecone to the CG [ft]
@@ -33,14 +34,14 @@ const double PAD_ALT = 700; // [ft]
 //
 // Electronics constants
 //
-const double DT = 0.0005; // time step for integration
+const double DT = 0.05; // time step for integration
 
 //
 // Atmospheric constants
 //
 const double P0 = 988.227*100; // Gauge pressure on the ground [Pa]
 const double T0 = 13.613; // Temperature on the ground [C]
-const double WIND_VELOCITY = 0.0; //Average wind velocity [mph]
+const double WIND_VELOCITY = 20.0 * 1.46667; //Average wind velocity [ft/s]
 const double WIND_ANGLE = 0.0; //Average wind angle
 const double WIND_STD = 0.0;
 const double ALPHA = 5/3; //Pink noise 1/f power

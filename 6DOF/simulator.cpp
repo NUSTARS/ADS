@@ -72,8 +72,6 @@ q getqdot(q curr_q, Wind* wind){
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v_new)(2);
 
-    //std::cout << "function completed !!" << std::endl;
-
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
 
@@ -154,16 +152,9 @@ double getApogee(q curr_q, double b){
         windx.push_back(currWind(0)); 
         windy.push_back(currWind(1));
         u.push_back(temp_q.getU());
-
         // std::cout << time << std::endl;
 
-        time = time + DT;
-
-        if (time < 10) {
-            std::cout << time << std::endl;
-            std::cout << temp_q << std::endl;
-        };
-         
+        time = time + DT;         
     }
     
     std::ofstream outfile("data.csv");
@@ -265,22 +256,72 @@ q  getqdot_testing(q curr_q){
 
 double getApogee_testing(q curr_q){
     q temp_q = curr_q;
-    double t = 0.0;
-    char dummy = 0;
-    Eigen::Vector2d old_w(0,0);
-    temp_q.setU(0);
+    double time = 0.0;
+    Wind wind;
+    char input[5];
 
-    while(!atApogee(temp_q)){
-        /*
-        std::cout << "TIME: " << t << std::endl;
+    std::vector<double> times;
+	std::vector<double> alts;
+	std::vector<double> velocx;
+	std::vector<double> velocy;
+	std::vector<double> velocz;
+	std::vector<double> omegax;
+	std::vector<double> omegay;
+	std::vector<double> omegaz;
+	std::vector<double> thetax;
+	std::vector<double> thetay;
+	std::vector<double> thetaz;
+    std::vector<double> windx;
+    std::vector<double> windy;
+    std::vector<double> u;
+
+    while(!atApogee(temp_q) && !(input[0] == '!')){
+        std::cout << "TIME: " << time << std::endl;
         std::cout << temp_q << std::endl;
-        getqdot_testing(temp_q);
-        std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP." << std::endl; 
-        std::cin.get();
-        temp_q = integrate(temp_q, old_w);
-        t += DT;
-        */
+        std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP. ! TO STOP" << std::endl; 
+        std::cin.getline(input, 5);
+
+        temp_q.setU(0); 
+
+        wind.updateWind();
+        temp_q = integrate(temp_q, &wind);
+
+        Eigen::Vector2d currWind = wind.getWind();
+
+        times.push_back(time);
+        alts.push_back(temp_q.getH());
+        velocx.push_back(temp_q.getV()(0));
+        velocy.push_back(temp_q.getV()(1));
+        velocz.push_back(temp_q.getV()(2));
+        omegax.push_back(temp_q.getOmega()(0));
+        omegay.push_back(temp_q.getOmega()(1));
+        omegaz.push_back(temp_q.getOmega()(2));
+        thetax.push_back(temp_q.getTheta()(0));
+        thetay.push_back(temp_q.getTheta()(1));
+        thetaz.push_back(temp_q.getTheta()(2));
+        windx.push_back(currWind(0)); 
+        windy.push_back(currWind(1));
+        u.push_back(temp_q.getU());
+
+        std::cout << currWind(0) << " " << currWind(1) << std::endl;
+
+
+        //std::cout << time << std::endl;
+
+        time = time + DT;
     }
+    
+    std::ofstream outfile("data.csv");
+	
+
+	
+	// Write data rows
+    for (size_t i = 0; i < alts.size(); ++i) {
+        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "," << windx[i] << "," << windy[i] << "," << u[i] << "\n";
+    }
+
+    outfile.close();
+
 
     return temp_q.getH();
 
