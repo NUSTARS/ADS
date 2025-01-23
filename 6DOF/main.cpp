@@ -56,8 +56,8 @@ int main(int argc, char* argv[]) {
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
     // std::cout << currentState << std::endl;
-    //std::cout << getApogee(currentState)<< std::endl;
-    std::cout << getApogee_testing(currentState)<< std::endl;
+    std::cout << getApogee(currentState)<< std::endl;
+    // std::cout << getApogee_testing(currentState)<< std::endl;
 
    //MAIN FOR ONCE WE GET GETAPOGEE WORKING
 

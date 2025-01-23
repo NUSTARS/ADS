@@ -60,8 +60,8 @@ Vector3d getAeroForces(q curr_q) {
     double h = curr_q.getH();
     double u = curr_q.getU();
     double v_squared = vx*vx+vy*vy+vz*vz;
-    //maybe add a new function here that says calc wind --> need to look @ pink noise model
-
+    double v_mag = sqrt(vy*vy+vz*vz);
+ 
     double FAx = 0.0;
     double FAy = 0.0;
     double FAz = 0.0;
@@ -72,15 +72,17 @@ Vector3d getAeroForces(q curr_q) {
         FAx = -0.5*A*getRho(h)*getCD(v_squared, alpha, u, h)*v_squared;
         double FAn = 0.5*A*getRho(h)*getCN(v_squared, alpha, u, h)*v_squared;
 
-        if(sqrt(vy*vy+vz*vz) > 0){ // should already by true if FAn > 0
-            FAy = FAn*vy / sqrt(vy*vy+vz*vz);
-            FAz = -FAn*vz / sqrt(vy*vy+vz*vz);
+        if(v_mag > 0){ // should already by true if FAn > 0
+            FAy = FAn*vy / v_mag;
+            FAz = -FAn*vz / v_mag;
         }
     }
 
     Vector3d v(FAx,FAy,FAz);
+    // Vector3d v(FAx,0,0);
     return v;
 };
+
 
 Vector3d getAeroMoments(q curr_q) {
     double vx = curr_q.getV()(0);
@@ -90,7 +92,12 @@ Vector3d getAeroMoments(q curr_q) {
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
-    Vector3d v(0, dist * forces(2), dist * forces(1));
+    if (dist <= 0) {
+        std::cout << "NEGATIVE dist" << std::endl;
+    }
+
+    Vector3d v(0, -dist * forces(2), dist * forces(1));
+    // Vector3d v(0,0,0);
     return v;
 };
 

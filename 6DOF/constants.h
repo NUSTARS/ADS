@@ -34,7 +34,7 @@ const double PAD_ALT = 700; // [ft]
 //
 // Electronics constants
 //
-const double DT = 0.05; // time step for integration
+const double DT = 0.0005; // time step for integration
 
 //
 // Atmospheric constants
