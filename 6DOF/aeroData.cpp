@@ -39,7 +39,7 @@ double getCN(double vSquared, double alpha, double u, double h){
 //
 double getCP(double vSquared, double alpha, double u, double h){
 
-    // double x = sqrt(vSquared); // x is the square root of vsquared
+    double x = sqrt(vSquared); // x is the square root of vsquared
 
     return 63.5 + 0.526 * x + (-5.28E-03) * pow(x, 2) + 2.95E-05 * pow(x, 3) + (-9.95E-08) * pow(x, 4) + 
            2.08E-10 * pow(x, 5) + (-2.63E-13) * pow(x, 6) + 1.84E-16 * pow(x, 7) + (-5.49E-20) * pow(x, 8);
