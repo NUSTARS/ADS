@@ -38,7 +38,13 @@ double getCN(double vSquared, double alpha, double u, double h){
 // the current distance [ft] from the CP to tip of the nosecone
 //
 double getCP(double vSquared, double alpha, double u, double h){
-    return (pow(vSquared,1.27/2.0)*0.00025 + 85.7)/12.0; // TEMP
+
+    // double x = sqrt(vSquared); // x is the square root of vsquared
+
+    return 63.5 + 0.526 * x + (-5.28E-03) * pow(x, 2) + 2.95E-05 * pow(x, 3) + (-9.95E-08) * pow(x, 4) + 
+           2.08E-10 * pow(x, 5) + (-2.63E-13) * pow(x, 6) + 1.84E-16 * pow(x, 7) + (-5.49E-20) * pow(x, 8);
+
+    // return (pow(vSquared,1.27/2.0)*0.00025 + 85.7)/12.0; // TEMP
 }
 
 //

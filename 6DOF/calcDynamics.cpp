@@ -93,10 +93,10 @@ Vector3d getAeroMoments(q curr_q) {
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
     if (dist <= 0) {
-        std::cout << "NEGATIVE dist" << std::endl;
+        std::cout << "NEGATIVE dist: " << getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) << "VELCOITY:" << vx*vx +vy*vy +vz*vz << std::endl;
     }
 
-    Vector3d v(0, -dist * forces(2), dist * forces(1));
+    Vector3d v(0, dist * forces(2), dist * forces(1));
     // Vector3d v(0,0,0);
     return v;
 };
