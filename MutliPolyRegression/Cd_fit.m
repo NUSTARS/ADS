@@ -10,11 +10,11 @@
 data = readtable('data.csv'); % Assuming the file is named 'data.csv'
 
 % Extract columns into individual variables
-v = data.v;  % Velocity
-a = data.a;  % angle of attach
-p = data.p;  % Pressure
-T = data.T;  % Temperature
-Y = data.Y;  % Dependent variable
+v = data.v(363:2000);  % Velocity
+a = data.a(363:2000);  % angle of attach
+p = data.p(363:2000);  % Pressure
+T = data.T(363:2000);  % Temperature
+Y = data.Y(363:2000);  % Dependent variable
 
 save('data.mat', 'v', 'a', 'p');
 
