@@ -1,0 +1,36 @@
+#include <Servo.h>
+
+Servo myservo;  // create servo object to control a servo
+
+// Define the angle boundaries
+const float minAngle = 8.756;
+const float maxAngle = 56.422;
+
+void setup() {
+  myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+  Serial.begin(9600); // starts serial communication at 9600 bps
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n'); // read the input from serial monitor until newline
+    input.trim(); // trim any whitespace
+
+    if (input.length() > 0) {
+      int percentage = input.toInt(); // convert input string to integer
+      if (percentage >= 0 && percentage <= 100) {
+        float angle = mapPercentageToAngle(percentage); // map the percentage to the corresponding angle
+        myservo.write(angle); // set the servo position according to the mapped angle
+        Serial.print("Servo set to ");
+        Serial.print(angle);
+        Serial.println(" degrees.");
+      } else {
+        Serial.println("Error: Please enter a value between 0 and 100.");
+      }
+    }
+  }
+}
+
+float mapPercentageToAngle(int percentage) {
+  return minAngle + (maxAngle - minAngle) * percentage / 100.0;
+}
