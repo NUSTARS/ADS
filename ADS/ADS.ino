@@ -34,6 +34,9 @@
 #include <SdFat.h>
 #include <SPI.h>
 #include <EEPROM.h>
+#include <MatrixMath.h>
+#include <math.h> 
+
 
 #define BUZZER 5
 #define SERVO_PIN 24
@@ -41,7 +44,7 @@
 
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
-#define THRESH_ACCEL 30 // in ft/s^2  (PUT TO 50)
+#define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
 #define FILE_NAME "data.csv" // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
 #define BNO055_SAMPLERATE_DELAY_MS (100)
 #define BURNOUT_HEIGHT 400 //ft
@@ -49,7 +52,7 @@
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define RECALIB 1 // 1 = recalibrate, 0 = dont
+#define RECALIB 0 // 1 = recalibrate, 0 = dont
 
 
 // IMU vars  ---------------------------------
@@ -118,6 +121,9 @@ void displaySensorStatus(void);
 void displayCalStatus(void);
 void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
 
+
+void computeRotationMatrix(double phi, double theta, double psi, double R[9]);
+void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long* previousTime, double v_world[3], double v_body[3]);
 
 
 

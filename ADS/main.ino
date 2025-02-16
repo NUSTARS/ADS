@@ -1,57 +1,3 @@
-#include <MatrixMath.h>
-#include <math.h> 
-
-void computeRotationMatrix(float phi, float theta, float psi, float R[9]) {
-  // Fill the 3x3 rotation matrix R in row-major order
-  R[0] = 1;
-  R[1] = sin(phi) * sin(theta);
-  R[2] = cos(phi) * tan(theta);
-  
-  R[3] = 0;
-  R[4] = cos(phi);
-  R[5] = -sin(phi);
-  
-  R[6] = 0;
-  R[7] = sin(phi) / cos(theta);
-  R[8] = cos(phi) / cos(theta);
-}
-
-void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long* previousTime, float* v_world[3], float* v_body[3]){
-  unsigned long currentTime = millis();
-
-  float deltaTime = (currentTime - previousTime) / 1000.0; // Delta time in seconds
-  
-  //we have euler x euler y euler z 
-  double phi = orientationData.orientation.x * M_PI / 180.0; //x
-  double theta = orientationData.orientation.y;  // y
-  double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
-
-  // Initialize the rotation matrix R (3x3)
-  float R[9];
-  computeRotationMatrix(phi, theta, psi, R);
-
-  float R_inv[9];
-  Matrix.inv(R, 3, R_inv);
-
-  float a_body[3] = {linearAccelData.acceleration.x, linearAccelData.acceleration.y, linearAccelData.acceleration.z};
-
-  // Resultant acceleration in the world frame
-  float a_world[3];
-  Matrix.Multiply(R_inv, a_body, a_world, 3, 3, 1);
-
-  
-  // fwd integrate in world frame frame
-  v_world[0] += a_world[0] * deltaTime;
-  v_world[1] += a_world[1] * deltaTime;
-  v_world[2] += a_world[2] * deltaTime;
-
-  Matrix.Multiply(R, v_world, v_body, 3, 3, 1);
-
-  previousTime = currentTime;
-
-}
-
-
 void loop() {
 
   sensors_event_t orientationData, angVelocityData, linearAccelData;
@@ -59,8 +5,8 @@ void loop() {
   float magnitude;
   unsigned long previousTime = 0;
   float altitude_offset = 0.0;
-  float v_body[3] = {0.0,0.0,0.0};
-  float v_world[3] = {0.0,0.0,0.0};
+  double v_body[3] = {0.0,0.0,0.0};
+  double v_world[3] = {0.0,0.0,0.0};
   float dt;
   double u = 0.0;
 
@@ -78,22 +24,8 @@ void loop() {
     getIMUData(&orientationData, &angVelocityData, &linearAccelData);
     getBarometerData(&baro, altitude_offset);
 
-    double phi = orientationData.orientation.x * M_PI / 180.0; //x
-    double theta = orientationData.orientation.y;  // y
-    double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
-
-
-    magnitude = sqrt(pow(linearAccelData.acceleration.x, 2) + pow(linearAccelData.acceleration.y, 2) + pow(linearAccelData.acceleration.z, 2));
-
-    integrate(&orientationData, &linearAccelData, &previousTime, &v_world, &v_body)
-    
-
-
-    double wx, wy, wz = angVelocityData.gyro.x, angVelocityData.gyro.z, angVelocityData.gyro.z;
-    double vx, vy, vz = v_body[0], v_body[1], v_body[2]
-    double thetax, thetay, thetaz = phi, theta, psi
-    double initial_h = baro.alt
-    u = SPARC_main_loop(vx, vy, vz, wx, wy, wz, theta_x, theta_y, theta_z, initial_h, u);
+  
+    // u = SPARC_main_loop(vx, vy, vz, wx, wy, wz, theta_x, theta_y, theta_z, initial_h, u);
 
     //calibration_setup(bno, sys, gyro, accel, mag);
     
@@ -114,6 +46,8 @@ void loop() {
     // printBarometerData(&baro);
     
     delay(BNO055_SAMPLERATE_DELAY_MS);
+    magnitude = sqrt(pow(linearAccelData.acceleration.x, 2) + pow(linearAccelData.acceleration.y, 2) + pow(linearAccelData.acceleration.z, 2));
+
 
 
     Serial.print("\t\tNOT LAUNCHED YET\t\t");
@@ -122,7 +56,8 @@ void loop() {
     printBarometerData(&baro);
   } while (magnitude < THRESH_ACCEL);
   Serial.println("LAUNCHED!");
-  tone(BUZZER, 1500);
+  // tone(BUZZER, 1500);
+
 
 
   // LOGGING
@@ -132,15 +67,16 @@ void loop() {
 
 
 
-  while (!openFlaps(&linearAccelData, &baro)) {
+  //while (!openFlaps(&linearAccelData, &baro)) {
+    while (1) {
     unsigned long timeStarted = millis();
-    Serial.println("Burnout not reached.");
+    // Serial.println("Burnout not reached.");
     getIMUData(&orientationData, &angVelocityData, &linearAccelData);
     getBarometerData(&baro, altitude_offset);
-    printEvent(&linearAccelData);
+    // printEvent(&linearAccelData);
     // printEvent(&orientationData);
     // printEvent(&angVelocityData);
-    printBarometerData(&baro);
+    // printBarometerData(&baro);
 
 
     dataArr[currentPoint].pressure = baro.press;
@@ -165,17 +101,71 @@ void loop() {
     dataArr[currentPoint].time = millis();
 
     logData2(dataArr);
+
+    //integration code
+    double phi = orientationData.orientation.x * M_PI / 180.0; //x
+    double theta = orientationData.orientation.y;  // y
+    double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
+
+    // Serial.println("before integrate.");
+    integrate(&orientationData, &linearAccelData, &previousTime, v_world, v_body);
+    // Serial.println("after integrate.");
+    double wx = angVelocityData.gyro.x;
+    double wy = angVelocityData.gyro.y;  
+    double wz = angVelocityData.gyro.z;
+
+    double vx = v_body[0];
+    double vy = v_body[1];
+    double vz = v_body[2];
+
+    double thetax = phi;
+    double thetay = theta;
+    double thetaz = psi;
+    double initial_h = baro.alt;
+
+    Serial.print("Vx: ");
+    Serial.print(vx);
+    Serial.print(" Vy: ");
+    Serial.print(vy);
+    Serial.print(" Vz: ");
+    Serial.println(vz);
   
   }
 
-  Serial.println("Burnout reached!!.");
-  tone(BUZZER, 600);
+  // Serial.println("Burnout reached!!.");
+  // tone(BUZZER, 600);
 
   for (int i = 0; i < LOG_TIME * LOG_FREQ; i++) {  // 6000 originally, making it less for testing
     unsigned long timeStarted = millis();
 
     getIMUData(&orientationData, &angVelocityData, &linearAccelData);
     getBarometerData(&baro, altitude_offset);
+
+    double phi = orientationData.orientation.x * M_PI / 180.0; //x
+    double theta = orientationData.orientation.y;  // y
+    double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
+
+    integrate(&orientationData, &linearAccelData, &previousTime, v_world, v_body);
+    
+    double wx = angVelocityData.gyro.x;
+    double wy = angVelocityData.gyro.y;  
+    double wz = angVelocityData.gyro.z;
+
+    double vx = v_body[0];
+    double vy = v_body[1];
+    double vz = v_body[2];
+
+    double thetax = phi;
+    double thetay = theta;
+    double thetaz = psi;
+    double initial_h = baro.alt;
+
+    Serial.print("Vx: ");
+    Serial.print(vx);
+    Serial.print(" Vy: ");
+    Serial.print(vy);
+    Serial.print(" Vz: ");
+    Serial.println(vz);
 
     // CHANGING CURERNT POINT TO i
     dataArr[currentPoint].pressure = baro.press;

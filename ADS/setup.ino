@@ -77,35 +77,36 @@ void setup() {
   delay(1000);
 
   for(int i = 200; i < 1500; i++){
-    tone(BUZZER, i);
+    // tone(BUZZER, i);
     delay(1);
   }
-  tone(BUZZER, 0);
+  // tone(BUZZER, 0);
 
   if(!bno.begin(OPERATION_MODE_NDOF)){
     Serial.println("BNO Failed");
-    tone(BUZZER, 200);
+    // tone(BUZZER, 200);
     while(1);
   }
-  if(setupBarometer() != 0){
-    Serial.println("BMP Failed");
-    tone(BUZZER, 200);
-    while(1);
-  }
+  // if(setupBarometer() != 0){
+  //   Serial.println("BMP Failed");
+  //   tone(BUZZER, 200);
+  //   while(1);
+  // }
 
-  if (setupSD() != 0) {
-    Serial.println("SD not inserted");
-    tone(BUZZER, 200);
-    while(1);
-  };
+  // if (setupSD() != 0) {
+  //   Serial.println("SD not inserted");
+  //   tone(BUZZER, 200);
+  //   while(1);
+  // };
 
   Wire.setClock(400000UL);
 
   Adafruit_BNO055 bno = Adafruit_BNO055(55);
   if(!cal_setup()){
-    tone(BUZZER, 200);
+    // tone(BUZZER, 200);
+    Serial.println("Cal setup stuck");
     delay(2000);
-    tone(BUZZER,0);
+  //   tone(BUZZER,0);
   }
 
   ServoSetup();
@@ -173,14 +174,14 @@ void setup() {
 
   
   for(int i = 200; i < 1500; i++){
-    tone(BUZZER, i);
+    // tone(BUZZER, i);
     delay(1);
   }
   for(int i = 1500; i > 200; i--){
-    tone(BUZZER, i);
+    // tone(BUZZER, i);
     delay(1);
   }
-  tone(BUZZER, 450); // CHANGING THIS FROM 1000 DOWN TO 450 BC ANNOYING WHEN TESTING
+  // tone(BUZZER, 450); // CHANGING THIS FROM 1000 DOWN TO 450 BC ANNOYING WHEN TESTING
 
   // TESTING DOWN HERE FOR PRINT STATEMENTS
   linspace = 0;

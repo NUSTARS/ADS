@@ -29,7 +29,8 @@ bool openFlapsHeight(barometerData* baro)
 
 bool openFlaps(sensors_event_t* event, barometerData* baro)
 {
-  if (openFlapsHeight(baro) && openFlapsAccel(event)) {
+  // if (openFlapsHeight(baro) && openFlapsAccel(event)) {
+  if (openFlapsAccel(event)) {
       SetDesiredAreaPercent(100);
       Serial.println("SETTING FLAPS TO 100!");
 
