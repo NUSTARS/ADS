@@ -1,5 +1,6 @@
 #include "wind.h"
 #include "constants.h"
+#include <iostream>
 
 /*wind.cpp*/
 
@@ -74,6 +75,8 @@ double* Wind::generateA(int numValues){
 // constructor
 //
 Wind::Wind(){
+    std::random_device rd;  // Non-deterministic random seed
+    generator.seed(rd());
     dist = std::normal_distribution<double>(0,1);
     a_values = generateA(3);
     windDirection[0] = 0;

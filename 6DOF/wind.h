@@ -20,7 +20,7 @@ class Wind {
         //
         // White gaussian noise generation 
         //
-        std::default_random_engine generator;
+        std::mt19937 generator; // Mersenne Twister engine seeded with rd()
         std::normal_distribution<double> dist;
         double* a_values;
 
