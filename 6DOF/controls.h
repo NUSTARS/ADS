@@ -33,10 +33,10 @@ double binary_search(const std::vector<double>& b,
 std::vector<double> generateRampingFunction(double duration, double b, double f, double timestep);
 
 //
-// find_u
+// findU
 //
 // generates control signal based on current state, desired apogee and acceptable error
 //  
-double find_u(q states, double apogee, double err);
+double findU(q states, double apogee, double err);
 
 #endif 

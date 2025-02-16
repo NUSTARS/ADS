@@ -23,7 +23,7 @@ double getCD(double vSquared, double alpha, double u, double h){
     double alphaDeg = alpha * 3.1415/180.0;
     double v = sqrt(vSquared);
     
-    return -0.0021716*alphaDeg - 6.4358e-06*v + 1.8701e-06*v*alpha + 1.2254e-07*vSquared + 0.0020791*pow(alpha,2) + 0.48279;
+    return (-0.0021716*alphaDeg - 6.4358e-06*v + 1.8701e-06*v*alpha + 1.2254e-07*vSquared + 0.0020791*pow(alpha,2) + 0.48279) + u/5.0;
 }
 
 //

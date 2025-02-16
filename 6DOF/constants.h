@@ -34,7 +34,7 @@ const double PAD_ALT = 700; // [ft]
 //
 // Electronics constants
 //
-const double DT = 0.0005; // time step for integration
+const double DT = 0.05; // time step for integration
 
 //
 // Atmospheric constants
@@ -52,5 +52,6 @@ const double ALPHA = 5/3; //Pink noise 1/f power
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
 //
 double F(double t);
+const double RAMP_TIME = 1.0; // how long the function takes to ramp 0 to full actuation [s]
 
-#endif 
+#endif

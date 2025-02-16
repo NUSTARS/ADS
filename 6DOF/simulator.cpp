@@ -112,24 +112,6 @@ double getApogee(q curr_q, double b){
     double time = 0.0;
     Wind wind;
 
-    std::vector<double> times;
-	std::vector<double> alts;
-	std::vector<double> velocx;
-	std::vector<double> velocy;
-	std::vector<double> velocz;
-	std::vector<double> omegax;
-	std::vector<double> omegay;
-	std::vector<double> omegaz;
-	std::vector<double> thetax;
-	std::vector<double> thetay;
-	std::vector<double> thetaz;
-    std::vector<double> windx;
-    std::vector<double> windy;
-    std::vector<double> u;
-
-    //std::cout << "calling reset time" << std::endl;
-
-
     while(!atApogee(temp_q)){
         temp_q.setU(F(time-b)); 
         //std::cout << (F(time-b)) << std::endl;
@@ -139,43 +121,17 @@ double getApogee(q curr_q, double b){
 
         Eigen::Vector2d currWind = wind.getWind();
 
-        times.push_back(time);
-        alts.push_back(temp_q.getH());
-        velocx.push_back(temp_q.getV()(0));
-        velocy.push_back(temp_q.getV()(1));
-        velocz.push_back(temp_q.getV()(2));
-        omegax.push_back(temp_q.getOmega()(0));
-        omegay.push_back(temp_q.getOmega()(1));
-        omegaz.push_back(temp_q.getOmega()(2));
-        thetax.push_back(temp_q.getTheta()(0));
-        thetay.push_back(temp_q.getTheta()(1));
-        thetaz.push_back(temp_q.getTheta()(2));
-        windx.push_back(currWind(0)); 
-        windy.push_back(currWind(1));
-        u.push_back(temp_q.getU());
         // std::cout << time << std::endl;
 
         time = time + DT;         
     }
-    
-    std::ofstream outfile("data.csv");
-	
-
-	
-	// Write data rows
-    for (size_t i = 0; i < alts.size(); ++i) {
-        outfile << times[i] << "," << alts[i] << "," << velocx[i] << "," << velocy[i] << "," << velocz[i] << "," << omegax[i] << "," << omegay[i] << "," << omegaz[i] << "," << thetax[i] << "," << thetay[i] << "," << thetaz[i] << "," << windx[i] << "," << windy[i] << "," << u[i] << "\n";
-    }
-
-    outfile.close();
-
 
     return temp_q.getH();
 
 }
 
 double getApogee(q curr_q){
-    return getApogee(curr_q, 1000);// shifting 1000 seconds to the right is plenty for a 20s flight time to make sure we never hit
+    return getApogee(curr_q, 100);// shifting 100 seconds to the right is plenty for a 20s flight time to make sure we never hit
 }
 
 q  getqdot_testing(q curr_q, Wind* wind){

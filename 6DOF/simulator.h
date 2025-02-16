@@ -39,7 +39,7 @@ bool atApogee(q curr_q);
 
 // getApogee
 //
-// returns the apogee reached given an IC and a b value. Overloaded to take a b or no b
+// returns the apogee reached given an IC and a b value. Overloaded to take a b or no b (the time you start actuating)
 //
 double getApogee(q curr_q, double b);
 double getApogee(q curr_q);
