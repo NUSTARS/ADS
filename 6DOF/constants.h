@@ -47,7 +47,13 @@ const double WIND_ANGLE = 0.0; //Average wind angle
 const double WIND_STD = 4.0;
 const double ALPHA = 5/3; //Pink noise 1/f power
 
-//
+const double IMU_NOISE_MEAN = 0.0;
+const double IMU_NOISE_STDDEV = 0.01;
+const double BMP_NOISE_MEAN = 0.0;
+const double BMP_NOISE_STDDEV = 1.0;
+
+const unsigned int SEED = 2;
+
 // Controls function: 
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
 //
