@@ -114,7 +114,7 @@ double getApogee(q curr_q, double b){
 
     while(!atApogee(temp_q)){
         temp_q.setU(F(time-b)); 
-        //std::cout << (F(time-b)) << std::endl;
+        // std::cout << (F(time-b)) << std::endl;
 
         wind.updateWind();
         temp_q = integrate(temp_q, &wind);
