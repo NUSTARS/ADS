@@ -33,6 +33,7 @@ q getqdot(q curr_q, Wind* wind){
     Eigen::Vector3d v = curr_q.getV();
     Eigen::Vector3d omega = curr_q.getOmega();
     Eigen::Vector3d wind_3d_world(wind->getWind()(0), wind->getWind()(1), 0.0);
+    // std::cout << wind_3d_world << std::endl;
     // Eigen::Vector3d wind_3d_body(1, 1,1);
 
     Eigen::Vector3d wind_body = getRinv(q(v, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU()))*wind_3d_world;
@@ -43,8 +44,11 @@ q getqdot(q curr_q, Wind* wind){
     // Eigen::Vector3d wind_body(1, 1,1);
     //Add local wind to the rocket velocity 
 
-    Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0),curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
+    Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0), curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
     
+    // std::cout << v_new << std::endl;
+
+
     q new_q_wind(v_new, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU());
 
 

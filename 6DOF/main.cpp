@@ -57,34 +57,34 @@ int main(int argc, char* argv[]) {
 
     // std::cout << currentState << std::endl;
     std::cout << findU(currentState, 5560, 1)<< std::endl;
-    // std::cout << getApogee_testing(currentState)<< std::endl;
+    std::cout << getApogee(currentState)<< std::endl;
 
    //MAIN FOR ONCE WE GET GETAPOGEE WORKING
 
-    Wind wind;
+//     Wind wind;
 
-    double max_simTime = 30;
-    double current_t = 0.0;
+//     double max_simTime = 30;
+//     double current_t = 0.0;
 
-    // run while the sim is less than 30 seconds and havent reached apogee 
-    while ((current_t < max_simTime) && !(atApogee(currentState))) {
+//     // run while the sim is less than 30 seconds and havent reached apogee 
+//     while ((current_t < max_simTime) && !(atApogee(currentState))) {
 
-        q SensorNoiseState = addSensorNoise(currentState, &wind);
+//         q SensorNoiseState = addSensorNoise(currentState, &wind);
 
-        //call SHISHIR CODE to get b, set B in current state going forward
-        double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
-        // std::cout<< current_t << std::endl;
+//         //call SHISHIR CODE to get b, set B in current state going forward
+//         double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
+//         // std::cout<< current_t << std::endl;
 
-        currentState.setU(signal);
-        // std::cout << currentState << std::endl;
-        currentState = integrate(currentState, &wind);
-        // std::cout << currentState << std::endl;
-        current_t += DT;
+//         currentState.setU(signal);
+//         // std::cout << currentState << std::endl;
+//         currentState = integrate(currentState, &wind);
+//         // std::cout << currentState << std::endl;
+//         current_t += DT;
 
-    }
+//     }
     
     
-   std::cout << currentState.getH() << std::endl;
+//    std::cout << currentState.getH() << std::endl;
    return 0;
 
 };

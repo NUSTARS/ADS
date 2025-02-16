@@ -31,6 +31,9 @@ void Wind::calcWind(){
     double windDirVal = WIND_ANGLE + WIND_STD*(pinkNoise/2.252);
     //double windDirVal = WIND_ANGLE; // for testing
 
+    // std::cout << windSpeedVal << std::endl;
+
+
     updateWindArrays(windSpeedVal, windDirVal);
 
 }
@@ -50,6 +53,9 @@ void Wind::updateWindArrays(double newWindSpeed, double newWindDirection){
   
     windSpeed[0] = newWindSpeed;
     windDirection[0] = newWindDirection;
+
+    // std::cout << windSpeed[0] << std::endl;
+
 }
 
 //
@@ -106,5 +112,6 @@ void Wind::updateWind(){
 //
 Eigen::Vector2d Wind::getWind(){
     Eigen::Vector2d dir(sin(windDirection[0]* M_PI / 180.0),cos(windDirection[0]* M_PI / 180.0));
+    // std::cout << windSpeed[0]*dir << std::endl;
     return windSpeed[0]*dir;
 }
