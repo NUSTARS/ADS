@@ -69,10 +69,10 @@ int main(int argc, char* argv[]) {
     // run while the sim is less than 30 seconds and havent reached apogee 
     while ((current_t < max_simTime) && !(atApogee(currentState))) {
 
-        //q SensorNoiseState = addSensorNoise(currentState);
+        q SensorNoiseState = addSensorNoise(currentState, &wind);
 
         //call SHISHIR CODE to get b, set B in current state going forward
-        double signal = findU(currentState, 5560, 1); //forward integrate is placeholder
+        double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
         // std::cout<< current_t << std::endl;
         
 

@@ -13,9 +13,9 @@ double addGaussianNoise(double value, double mean, double stddev);
 
 q addGaussianNoise(q currentState, double IMUmean, double IMUstddev, double BMPmean, double BMPstddev);
 
-Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double BMPmean, double BMPstddev);
+Eigen::Vector3d calcVelocity(q curr_q, double IMUmean, double IMUstddev, double BMPmean, double BMPstddev, Wind* wind);
 
-q addSensorNoise(q currentState);
+q addSensorNoise(q currentState, Wind* wind);
 
 #endif
 

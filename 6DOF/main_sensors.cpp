@@ -17,7 +17,6 @@
 int main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double theta_x, double theta_y, double theta_z, double initial_h, double u) {
 
 
-
     // From OpenRocket
     Eigen::Vector3d initial_v_body(vx,vy,vz); 
     Eigen::Vector3d initial_omega(wx,wy,wz);  
