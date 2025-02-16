@@ -74,7 +74,6 @@ int main(int argc, char* argv[]) {
         //call SHISHIR CODE to get b, set B in current state going forward
         double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
         // std::cout<< current_t << std::endl;
-        
 
         currentState.setU(signal);
         // std::cout << currentState << std::endl;
