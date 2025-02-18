@@ -7,7 +7,7 @@
 #include "sensing.h"
 
 Eigen::Vector3d addGaussianNoise(Eigen::Vector3d value, double mean, double stddev) {
-    static std::default_random_engine generator(SEED);
+    static std::default_random_engine generator;
     std::normal_distribution<double> distribution(mean, stddev);
 
     Eigen::Vector3d noiseVector;
@@ -19,7 +19,7 @@ Eigen::Vector3d addGaussianNoise(Eigen::Vector3d value, double mean, double stdd
 }
 
 double addGaussianNoise(double value, double mean, double stddev) {
-    static std::default_random_engine generator(SEED);
+    static std::default_random_engine generator;
     std::normal_distribution<double> distribution(mean, stddev);
     return value + distribution(generator);
 }

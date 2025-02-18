@@ -158,17 +158,21 @@ q  getqdot_testing(q curr_q, Wind* wind){
     // Eigen::Vector3d wind_body(1, 1,1);
     //Add local wind to the rocket velocity 
 
+
     Eigen::Vector3d v_new(curr_q.getV()(0) + wind_body(0),curr_q.getV()(1) + wind_body(1),curr_q.getV()(2) + wind_body(2));
     
+
+
     q new_q_wind(v_new, omega, curr_q.getTheta(), curr_q.getH(), curr_q.getU());
 
-    Eigen::Vector3d F_aero = getAeroForces(curr_q); 
-    Eigen::Vector3d M_aero = getAeroMoments(curr_q);
+    Eigen::Vector3d F_aero = getAeroForces(new_q_wind); 
+    Eigen::Vector3d M_aero = getAeroMoments(new_q_wind);
     Eigen::Vector3d F_grav = M*getRinv(curr_q)*G;
 
     double vXdot = (1/M)*(F_aero(0) + F_grav(0)) - (omega(1)*v_new(2)-omega(2)*v_new(1));
     double vYdot = (1/M)*(F_aero(1) + F_grav(1)) - (omega(2)*v_new(0)-omega(0)*v_new(2));
     double vZdot = (1/M)*(F_aero(2) + F_grav(2)) - (omega(0)*v_new(1)-omega(1)*v_new(0));
+
 
     double omegaXdot = (1/Ix)*(M_aero(0) - omega(1)*omega(2)*(Iz-Iy));
     double omegaYdot = (1/Iy)*(M_aero(1) - omega(0)*omega(2)*(Ix-Iz));
@@ -186,46 +190,49 @@ q  getqdot_testing(q curr_q, Wind* wind){
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v_new)(2);
+    double hdot_old = (getR(curr_q)*v)(2);
+    std::cout << "difference hdot:" << hdot - hdot_old << std::endl;
+
 
     
 
     //------------------------------------------------------------------
 
-    Eigen::Vector3d world_v_vec = getR(curr_q)*v;
-    Eigen::Vector3d world_a_vec = getR(curr_q)*vdot;
-    Eigen::Vector3d world_lat_v_vec(world_v_vec(0), world_v_vec(1), 0);
-    Eigen::Vector3d world_lat_a_vec(world_a_vec(0), world_a_vec(1), 0);
+    // Eigen::Vector3d world_v_vec = getR(curr_q)*v;
+    // Eigen::Vector3d world_a_vec = getR(curr_q)*vdot;
+    // Eigen::Vector3d world_lat_v_vec(world_v_vec(0), world_v_vec(1), 0);
+    // Eigen::Vector3d world_lat_a_vec(world_a_vec(0), world_a_vec(1), 0);
 
-    double vert_v = world_v_vec(2);
-    double vert_a = world_a_vec(2);
-    double lat_v = world_lat_v_vec.norm();
-    double lat_a = world_lat_a_vec.norm();
-    double total_v = v.norm();
-    double total_a = vdot.norm();
-    double aoa = getAlpha(curr_q);
-    //double drag = F_aero.norm();
-    double drag = (F_aero)(0);
+    // double vert_v = world_v_vec(2);
+    // double vert_a = world_a_vec(2);
+    // double lat_v = world_lat_v_vec.norm();
+    // double lat_a = world_lat_a_vec.norm();
+    // double total_v = v.norm();
+    // double total_a = vdot.norm();
+    // double aoa = getAlpha(curr_q);
+    // //double drag = F_aero.norm();
+    // double drag = (F_aero)(0);
     //double drag = F_aero.dot(v)/v.norm(); // drag projected onto v 
 
-    std::cout<< "grav:" << F_grav << std::endl;
-    std::cout<< "aero:" << F_aero << std::endl;
+    // std::cout<< "grav:" << F_grav << std::endl;
+    // std::cout<< "aero:" << F_aero << std::endl;
 
-    std::cout << "| alt: " << curr_q.getH();
-    std::cout << "| vert_v: " << vert_v;
-    std::cout << "| vert_a: " << vert_a;
-    std::cout << "| tot_v: " << total_v;
-    std::cout << "| tot_a: " << total_a;
-    std::cout << "| lat_v: " << lat_v;
-    std::cout << "| lat_a: " << lat_a;
-    std::cout << std::endl;
-    std::cout << "| aoa: " << (180.0/M_PI)*aoa; // deg
-    std::cout << "| roll rate: " << omega(0)/(2.0*M_PI); // r/s
-    std::cout << "| pitch rate: " << omega(1)/(2.0*M_PI); // r/s
-    std::cout << "| yaw rate: " << omega(2)/(2.0*M_PI); // r/s
-    std::cout << "| drag: " << 4.448*drag; // N
-    std::cout << "| zenith: " << 90 - (180.0/M_PI)*euler(2); // deg
-    std::cout << "| azimuth: " << (180.0/M_PI)*euler(0); // deg
-    std::cout << std::endl;
+    // std::cout << "| alt: " << curr_q.getH();
+    // std::cout << "| vert_v: " << vert_v;
+    // std::cout << "| vert_a: " << vert_a;
+    // std::cout << "| tot_v: " << total_v;
+    // std::cout << "| tot_a: " << total_a;
+    // std::cout << "| lat_v: " << lat_v;
+    // std::cout << "| lat_a: " << lat_a;
+    // std::cout << std::endl;
+    // std::cout << "| aoa: " << (180.0/M_PI)*aoa; // deg
+    // std::cout << "| roll rate: " << omega(0)/(2.0*M_PI); // r/s
+    // std::cout << "| pitch rate: " << omega(1)/(2.0*M_PI); // r/s
+    // std::cout << "| yaw rate: " << omega(2)/(2.0*M_PI); // r/s
+    // std::cout << "| drag: " << 4.448*drag; // N
+    // std::cout << "| zenith: " << 90 - (180.0/M_PI)*euler(2); // deg
+    // std::cout << "| azimuth: " << (180.0/M_PI)*euler(0); // deg
+    // std::cout << std::endl;
 
 
 
@@ -261,8 +268,8 @@ double getApogee_testing(q curr_q){
         std::cout << "TIME: " << time << std::endl;
         std::cout << temp_q << std::endl;
         getqdot_testing(temp_q, &wind);
-        std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP. ! TO STOP" << std::endl; 
-        std::cin.getline(input, 5);
+        // std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP. ! TO STOP" << std::endl; 
+        // std::cin.getline(input, 5);
 
         temp_q.setU(0); 
 
