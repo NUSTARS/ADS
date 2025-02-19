@@ -5,7 +5,7 @@ from pathlib import Path
 
 project_root = Path(__file__).parent 
 
-file_path = project_root / "cleaned_data_with_ads_drag.csv"
+file_path = project_root / "final_static_data.csv"
 df = pd.read_csv(file_path)
 
 # Filter data for Yaw = 0 and Actuation States 0, 50, and 100

@@ -40,7 +40,7 @@ for file in csv_files:
 merged_data = pd.concat(dataframes, ignore_index=True)
 
 output_file = project_root / "merged_data.csv"
-merged_data.to_csv(output_file, index=False)
+# merged_data.to_csv(output_file, index=False)
 
 loads_df = merged_data[merged_data["Is Image"] == False].copy()
 image_df = merged_data[merged_data["Is Image"] == True].copy()
@@ -113,7 +113,7 @@ drag_df = pd.DataFrame(additional_cols)
 cleaned_data = pd.concat([loads_df.reset_index(drop=True), drag_df], axis=1)
 
 # Save cleaned data with the additional ADS Drag calculations
-output_file = project_root / "cleaned_data_with_ads_drag.csv"
+output_file = project_root / "final_static_data.csv"
 cleaned_data.to_csv(output_file, index=False)
 
 # plot the drag values
