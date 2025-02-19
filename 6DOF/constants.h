@@ -52,7 +52,7 @@ const double IMU_NOISE_STDDEV = 0.00;
 const double BMP_NOISE_MEAN = 0.0;
 const double BMP_NOISE_STDDEV = 0.0;
 
-const unsigned int SEED = 2;
+// const unsigned int SEED = 2;
 
 // Controls function: 
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
