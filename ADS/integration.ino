@@ -26,10 +26,10 @@ void multiplyMatrix(double A[9], double B[3], double result[3]) {
     result[2] = A[6] * B[0] + A[7] * B[1] + A[8] * B[2];
 }
 
-void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long* previousTime, double v_world[3], double v_body[3]){
+void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long previousTime, double v_world[3], double v_body[3]){
   unsigned long currentTime = millis();
 
-  float deltaTime = (currentTime - *previousTime) / 1000.0; // Delta time in seconds
+  float deltaTime = (currentTime - previousTime) / 1000.0; // Delta time in seconds
   
   //we have euler x euler y euler z 
   double phi = orientationData->orientation.x * M_PI / 180.0;
@@ -68,6 +68,4 @@ void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelDat
   // Serial.println("m mutliply x2."); 
 
   multiplyMatrix(R, v_world, v_body);
-
-  *previousTime = currentTime;
 }
