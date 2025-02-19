@@ -3,6 +3,8 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Clean and categorize the static load data
+
 project_root = Path(__file__).parent 
 data_dir = project_root / "data/static"
 
@@ -95,6 +97,13 @@ for _, row in loads_df.iterrows():
         ads_drag = 0
     else:
         ads_drag = load_cell_drag - bottom_mount_drag - base_model_drag
+
+    # Add nondimensional Re and Cd
+    total_vehicle_drag = load_cell_drag - bottom_mount_drag
+    q = row["Dynamic Pressure"]
+    Cd = total_vehicle_drag / (144 * q * 1/4 * (5.15/12)**2 * 3.1415)
+
+    reynolds_number = row["Reynolds Number per ft"] * 5.15/12
     
     # Append drag values to the list
     additional_cols.append({
@@ -104,7 +113,9 @@ for _, row in loads_df.iterrows():
         "Top Mount Drag": top_mount_drag,
         "Bottom Mount Drag": bottom_mount_drag,
         "ADS Drag": ads_drag,
-        "Total Vehicle Drag": load_cell_drag - bottom_mount_drag
+        "Total Vehicle Drag": total_vehicle_drag,
+        "Reynolds Number": reynolds_number,
+        "Cd": Cd
     })
 
 drag_df = pd.DataFrame(additional_cols)
@@ -113,7 +124,7 @@ drag_df = pd.DataFrame(additional_cols)
 cleaned_data = pd.concat([loads_df.reset_index(drop=True), drag_df], axis=1)
 
 # Save cleaned data with the additional ADS Drag calculations
-output_file = project_root / "final_static_data.csv"
+output_file = project_root / "static_clean.csv"
 cleaned_data.to_csv(output_file, index=False)
 
 # plot the drag values
