@@ -11,11 +11,6 @@ int getIMUData(sensors_event_t* orientationData, sensors_event_t* angVelocityDat
 
 void printEvent(sensors_event_t* event) {
 
-  if (linspace > 2) {
-    Serial.println();
-    linspace = 0;
-  }
-
   double x = -1000000, y = -1000000, z = -1000000;  //dumb values, easy to spot problem
   if (event->type == SENSOR_TYPE_ACCELEROMETER) {
     Serial.print(" Accl:");

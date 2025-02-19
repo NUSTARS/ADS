@@ -34,13 +34,12 @@
 #include <SdFat.h>
 #include <SPI.h>
 #include <EEPROM.h>
-#include <MatrixMath.h>
+//#include <MatrixMath.h>
 #include <math.h> 
 
 
-#define BUZZER 5
+#define BUZZER 6 // actually 5 
 #define SERVO_PIN 24
-
 
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
@@ -92,6 +91,8 @@ struct data {
   float accel_z;
 };
 
+double tare;
+
 // Functions -------------------------------------------------------------------------
 // Declaring IMU functions
 int getIMUData(sensors_event_t* orientationData, sensors_event_t* angVelocityData, sensors_event_t* linearAccelData);
@@ -123,8 +124,11 @@ void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
 
 
 void computeRotationMatrix(double phi, double theta, double psi, double R[9]);
-void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long* previousTime, double v_world[3], double v_body[3]);
+void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long previousTime, double v_world[3], double v_body[3]);
 
+double calcAvg(double* vals);
+
+void addValue(double* oldVals, double newVal);
 
 
 
