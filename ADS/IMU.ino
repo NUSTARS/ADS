@@ -329,9 +329,9 @@ Eigen::Matrix3f IMU::getR(){
   // heading roll pitch
   // Max: Heading x, Pitch y, Roll z?
   // Alr this should be good 
-  float phi = orient[2] * 0.01745329; //x 
-  float theta = orient[1]* 0.01745329; //y
-  float psi = (orient[0]) * 0.01745329; //z MUST BE
+  float phi = -orient[2] * 0.01745329; //x 
+  float theta = -orient[1]* 0.01745329; //y
+  float psi = orient[0] * 0.01745329; //z MUST BE
   interrupts();
 
   float cos_psi = cos(psi);
@@ -358,7 +358,7 @@ Eigen::Matrix3f IMU::getR(){
     Eigen::Matrix3f Rz {{cos(psi) , -sin(psi), 0},
                  {sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
-    Eigen::Matrix3f R = Rz*Rx*Ry; // Rz MUST come last
+    Eigen::Matrix3f R = Ry*Rx; // Rz MUST come last
 
   return R;
 }

@@ -1,4 +1,4 @@
-
+#include <ArduinoEigenDense.h>
 
 
 void loop() {
@@ -7,13 +7,14 @@ void loop() {
   float gyro[3];
 
   while(millis()-lastTime < 5000){
-    imu_var.getOrient(gyro);
+    imu_var.getAccel(gyro);
     Serial.print(" ");
     Serial.print(gyro[0]);
     Serial.print("\t");
     Serial.print(gyro[1]);
     Serial.print("\t");
     Serial.println(gyro[2]);
+    Serial.print("\t");
     delay(50);
   }
   imu_var.tare();
