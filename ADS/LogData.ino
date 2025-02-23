@@ -5,11 +5,6 @@ int setupSD() {
   return 0;
 }
 
-
-
-
-
-
 void logData2(data* dataArr) {
   dataFile = SD.open(FILE_NAME, O_RDWR | O_CREAT | O_AT_END);
 

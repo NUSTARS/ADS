@@ -1,5 +1,3 @@
-#
-
 bool openFlapsAccel(sensors_event_t* event)
 {
   if(event->type == SENSOR_TYPE_LINEAR_ACCELERATION)

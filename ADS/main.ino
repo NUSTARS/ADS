@@ -1,33 +1,22 @@
-double calcAvg(double* vals){
-  double sum = 0.0;
-  for(int i = 0; i < 10; i++){
-    sum += vals[i];
-  }
-  return sum/10.0;
-}
 
-void addValue(double* oldVals, double newVal){
-  for(int i = 0; i < 10 - 1; i++){
-    oldVals[i] = oldVals[i+1];
-  }
-  oldVals[10-1] = newVal;
-}
 
 
 void loop() {
 
-    static sensors_event_t orientationData, angVelocityData, linearAccelData;
-    static double v_body[3] = {0.0,0.0,0.0};
-    static double v_world[3] = {0.0,0.0,0.0};
-    static unsigned long previousTime = millis();
-    double oldValues[10];
+  long lastTime = millis();  
+  float gyro[3];
 
-    //getIMUData(&orientationData, &angVelocityData, &linearAccelData);
-    //delay(10);
-
-    //integrate(&orientationData, &linearAccelData, previousTime, v_world, v_body);
-    //previousTime = millis();
-
+  while(millis()-lastTime < 5000){
+    imu_var.getOrient(gyro);
+    Serial.print(" ");
+    Serial.print(gyro[0]);
+    Serial.print("\t");
+    Serial.print(gyro[1]);
+    Serial.print("\t");
+    Serial.println(gyro[2]);
+    delay(50);
+  }
+  imu_var.tare();
 /*
     printEvent(&linearAccelData);
     Serial.println();
@@ -43,16 +32,6 @@ void loop() {
     Serial.println(v_body[2]);
     Serial.println();
 */
-
-    double avg = 0.0;
-
-    for(int i = 0; i < 5; i++){
-      getIMUData(&orientationData, &angVelocityData, &linearAccelData);
-      avg += linearAccelData.acceleration.x;
-      delay(3);
-    }
-
-    avg /= 5.0;
 
     //double avg = calcAvg(oldValues);
     //addValue(oldValues, linearAccelData.acceleration.x);

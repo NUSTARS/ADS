@@ -34,9 +34,8 @@
 #include <SdFat.h>
 #include <SPI.h>
 #include <EEPROM.h>
-//#include <MatrixMath.h>
 #include <math.h> 
-
+#include <ArduinoEigenDense.h>
 
 #define BUZZER 6 // actually 5 
 #define SERVO_PIN 24
@@ -45,28 +44,53 @@
 #define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
 #define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
 #define FILE_NAME "data.csv" // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
-#define BNO055_SAMPLERATE_DELAY_MS (100)
 #define BURNOUT_HEIGHT 400 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define RECALIB 0 // 1 = recalibrate, 0 = dont
+#define AVG_WINDOW 2
+#define IMU_COUNTER 1
+#define BNO055_SAMPLERATE_DELAY_MS 10
 
+class IMU{
 
-// IMU vars  ---------------------------------
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire);
-#define BNO055_SAMPLERATE_DELAY_MS (100)
-bool calibrated;
-int altitude_offset;
+  private:
 
-// Barometer vars ---------------------------------
-Adafruit_BMP3XX bmp; // default adress set to 0x77 (I2C address)
+    const uint8_t ADDR = BNO055_ADDRESS_A;
+    Adafruit_BNO055 bno = Adafruit_BNO055(55, ADDR);
 
-// SD Stuff ---------------------------------------------------
-SdFat SD;
-FsFile dataFile;
-int linspace; // fixes printing for imu to make it easier to see 
+    volatile float accel[AVG_WINDOW][3];
+    volatile float orient[3] = {0.0, 0.0, 0.0};
+    volatile float gyro[3] = {0.0, 0.0, 0.0};
+
+    volatile Eigen::Vector3f accel_tare;
+    volatile Eigen::Vector3f v_world;
+    volatile long lastIntegrate;
+
+    IntervalTimer timer;
+
+    static void updateReadings(IMU* instance);
+    void displaySensorDetails(void);
+    void displaySensorStatus(void);
+    void displayCalStatus(void);
+    void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
+    bool calibrate(void);
+    void printEvent(sensors_event_t* event);
+    void integrate();
+
+    Eigen::Matrix3f getR();
+    Eigen::Matrix3f getRinv();
+
+  public:
+    bool begin(int freq);
+    void tare();
+    void getGyro(float* gyro_vals);
+    void getOrient(float* orient_vals);
+    void getAccel(float* accel_vals);
+    void getVel(float* vel_vals);
+
+};
 
 // Structs -----------------------------------------------------
 struct barometerData {
@@ -91,13 +115,6 @@ struct data {
   float accel_z;
 };
 
-double tare;
-
-// Functions -------------------------------------------------------------------------
-// Declaring IMU functions
-int getIMUData(sensors_event_t* orientationData, sensors_event_t* angVelocityData, sensors_event_t* linearAccelData);
-void printEvent(sensors_event_t* event);
-
 // Barometer Functions
 int setupBarometer();
 int getBarometerData(barometerData* baro, float altitude_offset);
@@ -108,27 +125,19 @@ int setupSD();
 void logData(data* dataArr, int arrLen);
 void logData2(data* dataArr);
 
-void displayCalStatus(void);
-bool cal_setup(void);
-
-void calibration_setup(Adafruit_BNO055& bno, uint8_t& sys, uint8_t& gyro, uint8_t& accel, uint8_t& mag);
-
 bool openFlapsAccel(sensors_event_t* event);
 bool openFlapsHeight(barometerData* baro);
 bool openFlaps(sensors_event_t* event, barometerData* baro);
 
+// IMU vars  ---------------------------------
+IMU imu_var;
 
-void displaySensorStatus(void);
-void displayCalStatus(void);
-void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
+// Barometer vars ---------------------------------
+Adafruit_BMP3XX bmp; // default adress set to 0x77 (I2C address)
 
-
-void computeRotationMatrix(double phi, double theta, double psi, double R[9]);
-void integrate(sensors_event_t* orientationData, sensors_event_t* linearAccelData, unsigned long previousTime, double v_world[3], double v_body[3]);
-
-double calcAvg(double* vals);
-
-void addValue(double* oldVals, double newVal);
+// SD Stuff ---------------------------------------------------
+SdFat SD;
+FsFile dataFile;
 
 
 

@@ -1,4 +1,3 @@
-
 // returns -1 if failed, 0 if success
 int setupBarometer() {
   if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
