@@ -76,6 +76,7 @@ for velocity in loads_df["Velocity (fps)"].unique():
             else:
                 continue
 
+l_tip_to_mount = 41.50/12 # ft
 
 additional_cols = []
 for _, row in loads_df.iterrows():
@@ -102,8 +103,13 @@ for _, row in loads_df.iterrows():
     total_vehicle_drag = load_cell_drag - bottom_mount_drag
     q = row["Dynamic Pressure"]
     Cd = total_vehicle_drag / (144 * q * 1/4 * (5.15/12)**2 * 3.1415)
-
+    
     reynolds_number = row["Reynolds Number per ft"] * 5.15/12
+
+    yaw_moment = row["WAFBC Yaw"] # ft-lbf
+    side_force = -1 * row["WAFBC Side"] # lbf
+    l_mount_to_cp = yaw_moment / side_force
+    l_tip_to_cp = l_tip_to_mount + l_mount_to_cp
     
     # Append drag values to the list
     additional_cols.append({
@@ -115,7 +121,8 @@ for _, row in loads_df.iterrows():
         "ADS Drag": ads_drag,
         "Total Vehicle Drag": total_vehicle_drag,
         "Reynolds Number": reynolds_number,
-        "Cd": Cd
+        "Cd": Cd,
+        "Cp from Tip": l_tip_to_cp # this value is in ft
     })
 
 drag_df = pd.DataFrame(additional_cols)
