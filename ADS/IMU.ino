@@ -358,7 +358,7 @@ Eigen::Matrix3f IMU::getR(){
     Eigen::Matrix3f Rz {{cos(psi) , -sin(psi), 0},
                  {sin(psi), cos(psi), 0},
                  {        0,        0, 1}};
-    Eigen::Matrix3f R = Ry*Rx; // Rz MUST come last
+    Eigen::Matrix3f R = Rz*Ry*Rx; // Rz MUST come last
 
   return R;
 }
