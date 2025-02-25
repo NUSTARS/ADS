@@ -7,7 +7,7 @@ void loop() {
   float gyro[3];
 
   while(millis()-lastTime < 5000){
-    imu_var.getAccel(gyro);
+    imu_var.getVel(gyro);
     Serial.print(" ");
     Serial.print(gyro[0]);
     Serial.print("\t");

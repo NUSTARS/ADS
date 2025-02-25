@@ -12,7 +12,7 @@ static void IMU::updateReadings(IMU* instance){
   static int counter = 0;
 
 
-  instance->bno.getEvent(&data, Adafruit_BNO055::VECTOR_ACCELEROMETER);
+  instance->bno.getEvent(&data, Adafruit_BNO055::VECTOR_LINEARACCEL);
   instance->accel[counter][0] = data.acceleration.x;
   instance->accel[counter][1] = data.acceleration.y;
   instance->accel[counter][2] = data.acceleration.z;
@@ -316,8 +316,8 @@ void IMU::integrate(){
   Eigen::Vector3f a_body(accel[0], accel[1], accel[2]); 
 
   Eigen::Matrix3f R = getR();
-  Eigen::Vector3f a_world = R*a_body - const_cast<Eigen::Vector3f&>(accel_tare);
-  const_cast<Eigen::Vector3f&>(v_world)+= ((millis() - (long)(lastIntegrate))/1000.0)*a_world;
+  Eigen::Vector3f a_world = R*(a_body - const_cast<Eigen::Vector3f&>(accel_tare));
+  const_cast<Eigen::Vector3f&>(v_world)+= ((millis() - (long)(lastIntegrate))/1000.0)*(a_world);
   lastIntegrate = millis();
   
 
@@ -422,13 +422,8 @@ void IMU::tare(){
   Eigen::Matrix3f R = getR();
   
   noInterrupts();
-  const_cast<Eigen::Vector3f&>(accel_tare) = R*a_body;
+  const_cast<Eigen::Vector3f&>(accel_tare) = a_body;
   v_world.setZero();
-  Serial.print(const_cast<Eigen::Vector3f&>(accel_tare)(0));
-  Serial.print(" ");  
-  Serial.print(const_cast<Eigen::Vector3f&>(accel_tare)(1));
-  Serial.print(" ");  
-  Serial.println(const_cast<Eigen::Vector3f&>(accel_tare)(2));
   interrupts();
   delay(1000);
 }
@@ -468,14 +463,10 @@ void IMU::getAccel(float* accel_vals){
 }
 
 void IMU::getVel(float* vel_vals){
-
-  Eigen::Matrix3f R_inv = getRinv();
-
   noInterrupts();
-  Eigen::Vector3f v_body = R_inv*const_cast<Eigen::Vector3f&>(v_world);
-  interrupts();
-
+  Eigen::Vector3f v_body = getRinv()*const_cast<Eigen::Vector3f&>(v_world);
   vel_vals[0] = v_body(0);
   vel_vals[1] = v_body(1);
   vel_vals[2] = v_body(2);
+  interrupts();
 }
