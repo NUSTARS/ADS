@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Read in all static load files
+# Read all static load files
 project_root = Path(__file__).parent 
 data_dir = project_root / "data/static"
 csv_files = [f for f in os.listdir(data_dir) if f.endswith(".csv")]
@@ -11,7 +11,7 @@ df_list = [pd.read_csv(os.path.join(data_dir, file)) for file in csv_files]
 
 dataframes = []
 
-# Identify meta data and save as a new data frame
+# Extract metadata from file name and add to combined data frame
 for file in csv_files:
     parts = file.replace(".csv", "").split("_")
     velocity = int(parts[2].replace("ftps", ""))
@@ -22,13 +22,14 @@ for file in csv_files:
     
     df = pd.read_csv(data_dir / file)
 
-    # Save the first three cols
+    # Keep the first three columns and convert the rest to numeric
     columns_to_convert = df.columns.difference(["Type", "Units", "Time"])
     df[columns_to_convert] = df[columns_to_convert].apply(pd.to_numeric, errors='coerce')
 
     # Remove the units header from every df
     df = df[df["Units"] != "USC / SI"]
 
+    # Add metadata columns
     df["Velocity (fps)"] = velocity
     df["Actuation State"] = actuation
     df["Is Image"] = is_image
@@ -37,24 +38,23 @@ for file in csv_files:
 
     dataframes.append(df)
 
+# Combine all dataframes
 merged_data = pd.concat(dataframes, ignore_index=True)
 
-output_file = project_root / "merged_data.csv"
-
+# Separate image and load cell data
 loads_df = merged_data[merged_data["Is Image"] == False].copy()
 image_df = merged_data[merged_data["Is Image"] == True].copy()
 
-# Compute base vehicle drag using loops
+# Produce a dictionary with image mount drag values
 drag_dict = {}
 for velocity in loads_df["Velocity (fps)"].unique():
     for yaw in loads_df["Yaw"].unique():
         for actuation in loads_df["Actuation State"].unique():
             if actuation == 0:
                 if velocity == 350 and yaw != 0:
-                    # print(f"Skipping {velocity} ft/s at {yaw} degrees")
+                    # Skip yaw angles for 350 fps since we dont have data
                     continue
 
-                # Base drag calculation when actuation state is 0
                 loads_subset = loads_df[(loads_df["Velocity (fps)"] == velocity) & 
                                          (loads_df["Yaw"] == yaw) & 
                                          (loads_df["Actuation State"] == actuation)]
@@ -68,6 +68,7 @@ for velocity in loads_df["Velocity (fps)"].unique():
                 bottom_mount_drag = top_mount_drag
                 base_model_drag = load_cell_drag - bottom_mount_drag
 
+                # Save data to the dictionary
                 drag_dict[(velocity, yaw)] = {
                     "Image Drag": image_drag,
                     "Top Mount Drag": top_mount_drag,
@@ -87,14 +88,14 @@ for _, row in loads_df.iterrows():
     actuation = row["Actuation State"]
     drag_data = drag_dict[key]
 
-    # Initialize drag values
+    # Extract drag values
     load_cell_drag = row["WAFBC Drag"]
     image_drag = drag_data["Image Drag"]
     top_mount_drag = drag_data["Top Mount Drag"]
     bottom_mount_drag = drag_data["Bottom Mount Drag"]
     base_model_drag = drag_data["Base Model Drag"]
     
-    # Compute for Actuation State == 0 (base drag)
+    # Compute drag added by ADS
     if actuation == 0:
         ads_drag = 0
     else:
@@ -104,9 +105,9 @@ for _, row in loads_df.iterrows():
     total_vehicle_drag = load_cell_drag - bottom_mount_drag
     q = row["Dynamic Pressure"]
     Cd = total_vehicle_drag / (144 * q * 1/4 * (5.15/12)**2 * 3.1415)
-    
     reynolds_number = row["Reynolds Number per ft"] * 5.15/12
 
+    # Compute for Cp from Tip
     yaw_moment = row["WAFBC Yaw"] # ft-lbf
     side_force = -1 * row["WAFBC Side"] # lbf
     l_mount_to_cp = yaw_moment / side_force
@@ -123,12 +124,13 @@ for _, row in loads_df.iterrows():
         "Total Vehicle Drag": total_vehicle_drag,
         "Reynolds Number": reynolds_number,
         "Cd": Cd,
-        "Cp from Tip": l_tip_to_cp # this value is in ft
+        "Cp from Tip": l_tip_to_cp
     })
 
+# Create a new dataframe with the additional columns
 drag_df = pd.DataFrame(additional_cols)
 
-# Merge
+# Merge the cleaned data with the loads df
 cleaned_data = pd.concat([loads_df.reset_index(drop=True), drag_df], axis=1)
 
 # Save cleaned data as a new csv

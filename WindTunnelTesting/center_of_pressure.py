@@ -27,10 +27,4 @@ df = pd.read_csv(file_path)
 filtered_df = df[(df["Yaw"].isin([6])) & (df["Actuation State"].isin([0, 50, 100]))]
 plot_data(filtered_df, "Reynolds Number", "Cp from Tip", "Actuation State", False, "Cp Distance vs. Reynolds Number for Yaw=6 and Selected Actuation States", "Reynolds Number", "CP Distance [in]")
 
-# filtered_df = df[(df["Yaw"] == 0) & (df["Actuation State"].isin([0, 20, 50, 70, 100]))]
-# plot_data(filtered_df, "Reynolds Number", "Cd", "Actuation State", False, "Cd vs. Reynolds Number for Yaw=0 and Selected Actuation States", "Reynolds Number", "Cd")
-
-# filtered_df = df
-# plot_data(filtered_df, "Reynolds Number", "WAFBC Yaw", "Yaw", True, "Yaw vs Re for Selected Yaw Angles", "Re", "Yaw Moment [lbf-ft]")
-
 plt.show()
