@@ -3,17 +3,15 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Clean and categorize the static load data
-
+# Read in all static load files
 project_root = Path(__file__).parent 
 data_dir = project_root / "data/static"
-
 csv_files = [f for f in os.listdir(data_dir) if f.endswith(".csv")]
-
 df_list = [pd.read_csv(os.path.join(data_dir, file)) for file in csv_files]
 
 dataframes = []
 
+# Identify meta data and save as a new data frame
 for file in csv_files:
     parts = file.replace(".csv", "").split("_")
     velocity = int(parts[2].replace("ftps", ""))
@@ -42,7 +40,6 @@ for file in csv_files:
 merged_data = pd.concat(dataframes, ignore_index=True)
 
 output_file = project_root / "merged_data.csv"
-# merged_data.to_csv(output_file, index=False)
 
 loads_df = merged_data[merged_data["Is Image"] == False].copy()
 image_df = merged_data[merged_data["Is Image"] == True].copy()
@@ -53,6 +50,10 @@ for velocity in loads_df["Velocity (fps)"].unique():
     for yaw in loads_df["Yaw"].unique():
         for actuation in loads_df["Actuation State"].unique():
             if actuation == 0:
+                if velocity == 350 and yaw != 0:
+                    # print(f"Skipping {velocity} ft/s at {yaw} degrees")
+                    continue
+
                 # Base drag calculation when actuation state is 0
                 loads_subset = loads_df[(loads_df["Velocity (fps)"] == velocity) & 
                                          (loads_df["Yaw"] == yaw) & 
@@ -127,11 +128,9 @@ for _, row in loads_df.iterrows():
 
 drag_df = pd.DataFrame(additional_cols)
 
-# Merge the drag_df with the loads_df to include the new 'ADS Drag' column
+# Merge
 cleaned_data = pd.concat([loads_df.reset_index(drop=True), drag_df], axis=1)
 
-# Save cleaned data with the additional ADS Drag calculations
+# Save cleaned data as a new csv
 output_file = project_root / "static_clean.csv"
 cleaned_data.to_csv(output_file, index=False)
-
-# plot the drag values
