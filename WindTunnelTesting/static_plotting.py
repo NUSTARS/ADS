@@ -24,13 +24,16 @@ project_root = Path(__file__).parent
 file_path = project_root / "static_clean.csv"
 df = pd.read_csv(file_path)
 
-filtered_df = df[(df["Yaw"] == 0) & (df["Actuation State"].isin([0, 20, 50, 70, 100]))]
-plot_data(filtered_df, "Reynolds Number", "ADS Drag", "Actuation State", False, "Drag Force vs. Reynolds Number for Yaw=0 and Selected Actuation States", "Reynolds Number", "Drag Force (ADS)")
+# filtered_df = df[(df["Yaw"] == 0) & (df["Actuation State"].isin([0, 20, 50, 70, 100]))]
+# plot_data(filtered_df, "Reynolds Number", "ADS Drag", "Actuation State", False, "Drag Force vs. Reynolds Number for Yaw=0 and Selected Actuation States", "Reynolds Number", "Drag Force (ADS)")
+
+# filtered_df = df[(df["Yaw"] == 0) & (df["Actuation State"].isin([0, 20, 50, 70, 100]))]
+# plot_data(filtered_df, "Reynolds Number", "Cd", "Actuation State", False, "Cd vs. Reynolds Number for Yaw=0 and Selected Actuation States", "Reynolds Number", "Cd")
+
+# filtered_df = df
+# plot_data(filtered_df, "Reynolds Number", "WAFBC Yaw", "Yaw", True, "Yaw vs Re for Selected Yaw Angles", "Re", "Yaw Moment [lbf-ft]")
 
 filtered_df = df[(df["Yaw"] == 0) & (df["Actuation State"].isin([0, 20, 50, 70, 100]))]
 plot_data(filtered_df, "Reynolds Number", "Cd", "Actuation State", False, "Cd vs. Reynolds Number for Yaw=0 and Selected Actuation States", "Reynolds Number", "Cd")
-
-filtered_df = df
-plot_data(filtered_df, "Reynolds Number", "WAFBC Yaw", "Yaw", True, "Yaw vs Re for Selected Yaw Angles", "Re", "Yaw Moment [lbf-ft]")
 
 plt.show()
