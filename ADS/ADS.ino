@@ -49,35 +49,42 @@
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define AVG_WINDOW 2
-#define IMU_COUNTER 1
+#define ACCEL_AVG_WINDOW 5
+#define HEIGHT_AVG_WINDOW 10
+#define VEL_AVG_WINDOW 2
 #define BNO055_SAMPLERATE_DELAY_MS 10
 
-class IMU{
+class Sensing{
 
   private:
 
-    const uint8_t ADDR = BNO055_ADDRESS_A;
-    Adafruit_BNO055 bno = Adafruit_BNO055(55, ADDR);
+    const uint8_t IMU_ADDR = BNO055_ADDRESS_A;
+    Adafruit_BNO055 bno = Adafruit_BNO055(55, IMU_ADDR);
 
-    volatile float accel[AVG_WINDOW][3];
+    Adafruit_BMP3XX bmp; // default adress set to 0x77 (I2C address)
+
+    volatile float accel[ACCEL_AVG_WINDOW][3];
     volatile float orient[3] = {0.0, 0.0, 0.0};
     volatile float gyro[3] = {0.0, 0.0, 0.0};
 
-    volatile Eigen::Vector3f accel_tare;
-    volatile Eigen::Vector3f v_world;
-    volatile long lastIntegrate;
+    volatile float baro_height[HEIGHT_AVG_WINDOW];
+    volatile float v_world_baro[VEL_AVG_WINDOW];
+    volatile float baro_temp;
 
+    volatile Eigen::Vector3f accel_tare;
+    volatile float baro_tare;
+    volatile Eigen::Vector3f v_world;
+  
     IntervalTimer timer;
 
-    static void updateReadings(IMU* instance);
+    static void updateReadings(Sensing* instance);
+    void updateReadingsHelper(void);
     void displaySensorDetails(void);
     void displaySensorStatus(void);
     void displayCalStatus(void);
     void displaySensorOffsets(const adafruit_bno055_offsets_t &calibData);
     bool calibrate(void);
     void printEvent(sensors_event_t* event);
-    void integrate();
 
     Eigen::Matrix3f getR();
     Eigen::Matrix3f getRinv();
@@ -89,6 +96,8 @@ class IMU{
     void getOrient(float* orient_vals);
     void getAccel(float* accel_vals);
     void getVel(float* vel_vals);
+    float getHeight();
+    float getVel_baro();
 
 };
 
@@ -130,10 +139,7 @@ bool openFlapsHeight(barometerData* baro);
 bool openFlaps(sensors_event_t* event, barometerData* baro);
 
 // IMU vars  ---------------------------------
-IMU imu_var;
-
-// Barometer vars ---------------------------------
-Adafruit_BMP3XX bmp; // default adress set to 0x77 (I2C address)
+Sensing sensing;
 
 // SD Stuff ---------------------------------------------------
 SdFat SD;

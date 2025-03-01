@@ -4,38 +4,81 @@
 #include <utility/imumaths.h>
 #include <ArduinoEigenDense.h>
 #include <EEPROM.h>
-#include <functional>  // For std::bind
 
-static void IMU::updateReadings(IMU* instance){
+void Sensing::updateReadings(Sensing* instance){
 
-  sensors_event_t data;
-  static int counter = 0;
+  instance->updateReadingsHelper();
 
-
-  instance->bno.getEvent(&data, Adafruit_BNO055::VECTOR_LINEARACCEL);
-  instance->accel[counter][0] = data.acceleration.x;
-  instance->accel[counter][1] = data.acceleration.y;
-  instance->accel[counter][2] = data.acceleration.z;
-
-  counter++;
-  if(counter == AVG_WINDOW){
-    instance->integrate();
-    counter = 0;
-  }
-
-  instance->bno.getEvent(&data, Adafruit_BNO055::VECTOR_GYROSCOPE);
-  instance->gyro[0] = data.gyro.x;
-  instance->gyro[1] = data.gyro.y;
-  instance->gyro[2] = data.gyro.z;
-
-  instance->bno.getEvent(&data, Adafruit_BNO055::VECTOR_EULER);
-  instance->orient[0] = data.orientation.x;
-  instance->orient[1] = data.orientation.y;
-  instance->orient[2] = data.orientation.z;
-  
 }
 
-void IMU::displaySensorDetails(void){
+void Sensing::updateReadingsHelper(void){
+
+  sensors_event_t data;
+  static int vel_window_index = 0;
+  static int accel_window_index = 0;
+  static int height_window_index = 0;
+  static long last_time_imu = millis();
+  static long last_time_baro = millis();
+  static float last_height = 0.0;
+
+  bno.getEvent(&data, Adafruit_BNO055::VECTOR_LINEARACCEL);
+  accel[accel_window_index][0] = data.acceleration.x;
+  accel[accel_window_index][1] = data.acceleration.y;
+  accel[accel_window_index][2] = data.acceleration.z;
+
+  baro_height[height_window_index] = bmp.readAltitude(1013.25) * 3.28084;
+
+  if(accel_window_index == ACCEL_AVG_WINDOW-1){
+
+    // get gyro data
+    bno.getEvent(&data, Adafruit_BNO055::VECTOR_GYROSCOPE);
+    gyro[0] = data.gyro.x;
+    gyro[1] = data.gyro.y;
+    gyro[2] = data.gyro.z;
+
+    // get orientation data
+    bno.getEvent(&data, Adafruit_BNO055::VECTOR_EULER);
+    orient[0] = data.orientation.x;
+    orient[1] = data.orientation.y;
+    orient[2] = data.orientation.z;
+
+    // compute V from imu
+    float accel[3];
+    getAccel(accel);
+    Eigen::Vector3f a_body(accel[0], accel[1], accel[2]); 
+    long current_time = millis();
+    Eigen::Matrix3f R = getR();
+    Eigen::Vector3f a_world = R*(a_body - const_cast<Eigen::Vector3f&>(accel_tare));
+    Eigen::Vector3f v_world_imu = ((current_time - last_time_imu)/1000.0)*(a_world) + const_cast<Eigen::Vector3f&>(v_world);
+
+    // filter the two Vs
+    const_cast<Eigen::Vector3f&>(v_world) = (getVel_baro()/v_world_imu(2))*v_world_imu;
+
+  }
+  if(height_window_index == HEIGHT_AVG_WINDOW-1){
+    // baro temp
+    baro_temp = bmp.temperature * 9/5 + 32; // to Fahrenheit
+
+    // compute V from baro
+    float curr_height = getHeight();
+    long current_time = millis();
+    v_world_baro[vel_window_index] = (curr_height-last_height)/((current_time - last_time_baro)/1000.0);
+    last_height = curr_height;
+    last_time_baro = current_time;
+
+    vel_window_index++;
+    vel_window_index %= VEL_AVG_WINDOW;  
+  }
+  
+
+  accel_window_index++;
+  height_window_index++;
+
+  accel_window_index %= ACCEL_AVG_WINDOW;
+  height_window_index %= HEIGHT_AVG_WINDOW;
+}
+
+void Sensing::displaySensorDetails(void){
   sensor_t sensor;
   bno.getSensor(&sensor);
   Serial.println("------------------------------------");
@@ -50,7 +93,7 @@ void IMU::displaySensorDetails(void){
   delay(500);
 }
 
-void IMU::displaySensorStatus(void){
+void Sensing::displaySensorStatus(void){
   /* Get the system status values (mostly for debugging purposes) */
   uint8_t system_status, self_test_results, system_error;
   system_status = self_test_results = system_error = 0;
@@ -68,7 +111,7 @@ void IMU::displaySensorStatus(void){
   delay(500);
 }
 
-void IMU::displayCalStatus(void){
+void Sensing::displayCalStatus(void){
   /* Get the four calibration values (0..3) */
   /* Any sensor data reporting 0 should be ignored, */
   /* 3 means 'fully calibrated" */
@@ -94,7 +137,7 @@ void IMU::displayCalStatus(void){
   Serial.print(mag, DEC);
 }
 
-void IMU::displaySensorOffsets(const adafruit_bno055_offsets_t &calibData){
+void Sensing::displaySensorOffsets(const adafruit_bno055_offsets_t &calibData){
   Serial.print("Accelerometer: ");
   Serial.print(calibData.accel_offset_x); Serial.print(" ");
   Serial.print(calibData.accel_offset_y); Serial.print(" ");
@@ -117,7 +160,7 @@ void IMU::displaySensorOffsets(const adafruit_bno055_offsets_t &calibData){
   Serial.print(calibData.mag_radius);
 }
 
-bool IMU::calibrate(void){
+bool Sensing::calibrate(void){
   bool zero = true;
   bool calibrate = true;
   double degToRad = 57.295779513;
@@ -255,11 +298,11 @@ bool IMU::calibrate(void){
   }
   
   bno.setMode(0x0C);
-  delay(500);
+  Serial.println("Calibration Complete");
   return true;
 }
 
-void IMU::printEvent(sensors_event_t* event) {
+void Sensing::printEvent(sensors_event_t* event) {
 
   double x = -1000000, y = -1000000, z = -1000000;  //dumb values, easy to spot problem
   if (event->type == SENSOR_TYPE_ACCELEROMETER) {
@@ -309,21 +352,8 @@ void IMU::printEvent(sensors_event_t* event) {
   Serial.print(z);
 }
 
-void IMU::integrate(){
-
-  float accel[3];
-  getAccel(accel);
-  Eigen::Vector3f a_body(accel[0], accel[1], accel[2]); 
-
-  Eigen::Matrix3f R = getR();
-  Eigen::Vector3f a_world = R*(a_body - const_cast<Eigen::Vector3f&>(accel_tare));
-  const_cast<Eigen::Vector3f&>(v_world)+= ((millis() - (long)(lastIntegrate))/1000.0)*(a_world);
-  lastIntegrate = millis();
-  
-
-}
-
-Eigen::Matrix3f IMU::getR(){
+// gets body to earth rotation based on current orientation
+Eigen::Matrix3f Sensing::getR(){
   noInterrupts();
   // Bosch: heading z, pitch x, roll y 
   // heading roll pitch
@@ -363,7 +393,8 @@ Eigen::Matrix3f IMU::getR(){
   return R;
 }
 
-Eigen::Matrix3f IMU::getRinv(){
+// gets earth to body rotation based on current orientation
+Eigen::Matrix3f Sensing::getRinv(){
   /*
   noInterrupts();
   float phi = orient[0] * 0.01745329; // pi / 180.0
@@ -388,7 +419,8 @@ Eigen::Matrix3f IMU::getRinv(){
   return getR().transpose();
 }
 
-bool IMU::begin(int freq){
+// turns on all stuff
+bool Sensing::begin(int freq){
 
   bool status = true;
 
@@ -401,34 +433,44 @@ bool IMU::begin(int freq){
 
   memset(accel, 0, sizeof(accel));
 
-  Wire.beginTransmission(ADDR);
+  Wire.beginTransmission(IMU_ADDR);
   Wire.write(0x08); // accel config register
   Wire.write(0x0F); // 16G
   Wire.endTransmission(true); 
 
-  std::function<void()> boundFunction = std::bind(&IMU::updateReadings, this);
-  lastIntegrate = millis();
+  if (!bmp.begin_I2C()) {   // hardware I2C mode, can pass in address & alt Wire
+    status = false;
+  }
+  else{
+  // Set up oversampling and filter initialization
+    bmp.setTemperatureOversampling(BMP3_OVERSAMPLING_8X); // Can change these oversampling rates by powers of 2 from none to 16 (higher means more precise but less speed)
+    bmp.setPressureOversampling(BMP3_OVERSAMPLING_8X);
+    bmp.setIIRFilterCoeff(BMP3_IIR_FILTER_COEFF_15); // Smooths sensor outputs with the options: BMP3_IIR_FILTER_DISABLE, BMP3_IIR_FILTER_COEFF_1, BMP3_IIR_FILTER_COEFF_3, BMP3_IIR_FILTER_COEFF_7, BMP3_IIR_FILTER_COEFF_15, BMP3_IIR_FILTER_COEFF_31.
+    bmp.setOutputDataRate(BMP3_ODR_100_HZ); // determines how fast new data is made available: Options: BMP3_ODR_200_HZ, BMP3_ODR_100_HZ, BMP3_ODR_50_HZ, BMP3_ODR_25_HZ, BMP3_ODR_12_5_HZ, BMP3_ODR_6_25_HZ, etc.
+  }
 
-  timer.begin([this]() { updateReadings(this); },  1000000l/freq);
+  timer.begin([this]() {updateReadings(this); },  1000000l/(freq));
+  delay(1000);
+  Serial.println("Sensing Setup Complete");
 
   return status;
 }
 
-void IMU::tare(){
+// tares accelrometer and height based on current readings
+void Sensing::tare(){
   float currAccel[3];
   getAccel(currAccel);
-
   Eigen::Vector3f a_body {currAccel[0], currAccel[1], currAccel[2]};
-  Eigen::Matrix3f R = getR();
   
   noInterrupts();
   const_cast<Eigen::Vector3f&>(accel_tare) = a_body;
   v_world.setZero();
+  baro_tare += getHeight();
   interrupts();
-  delay(1000);
 }
 
-void IMU::getGyro(float* gyro_vals){
+// gets gyro from the imu, unfiltered
+void Sensing::getGyro(float* gyro_vals){
   noInterrupts();
   gyro_vals[0] = gyro[0];
   gyro_vals[1] = gyro[1];
@@ -436,7 +478,8 @@ void IMU::getGyro(float* gyro_vals){
   interrupts();
 }
 
-void IMU::getOrient(float* orient_vals){
+// gets orientation from the imu, unfiltered
+void Sensing::getOrient(float* orient_vals){
   noInterrupts();
   orient_vals[0] = orient[0];
   orient_vals[1] = orient[1];
@@ -444,29 +487,56 @@ void IMU::getOrient(float* orient_vals){
   interrupts();
 }
 
-void IMU::getAccel(float* accel_vals){
+// gets tared acceleration from the imu, filtered
+void Sensing::getAccel(float* accel_vals){
 
   float sums[3] = {0,0,0};
 
   noInterrupts();
-  for(int i = 0; i < AVG_WINDOW; i++){
+  for(int i = 0; i < ACCEL_AVG_WINDOW; i++){
     sums[0] += accel[i][0];
     sums[1] += accel[i][1];
     sums[2] += accel[i][2];
   }
   interrupts();
 
-  accel_vals[0] = sums[0]/AVG_WINDOW;
-  accel_vals[1] = sums[1]/AVG_WINDOW;
-  accel_vals[2] = sums[2]/AVG_WINDOW;
+  accel_vals[0] = sums[0]/ACCEL_AVG_WINDOW;
+  accel_vals[1] = sums[1]/ACCEL_AVG_WINDOW;
+  accel_vals[2] = sums[2]/ACCEL_AVG_WINDOW;
 
 }
 
-void IMU::getVel(float* vel_vals){
+// gets velocity filtered from the two sensors 
+void Sensing::getVel(float* vel_vals){
   noInterrupts();
   Eigen::Vector3f v_body = getRinv()*const_cast<Eigen::Vector3f&>(v_world);
   vel_vals[0] = v_body(0);
   vel_vals[1] = v_body(1);
   vel_vals[2] = v_body(2);
   interrupts();
+}
+
+// gets tared height from the barometer, unfiltered
+float Sensing::getHeight(){
+  float sum = 0.0;
+
+  noInterrupts();
+  for(int i = 0; i < HEIGHT_AVG_WINDOW; i++){
+    sum += baro_height[i];
+  }
+  interrupts();
+  return sum/HEIGHT_AVG_WINDOW - baro_tare;
+}
+
+float Sensing::getVel_baro(){
+
+  float sum = 0.0;
+
+  noInterrupts();
+  for(int i = 0; i < VEL_AVG_WINDOW; i++){
+    sum += v_world_baro[i];
+  }
+  interrupts();
+
+  return sum/VEL_AVG_WINDOW;
 }

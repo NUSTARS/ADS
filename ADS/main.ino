@@ -7,17 +7,26 @@ void loop() {
   float gyro[3];
 
   while(millis()-lastTime < 5000){
-    imu_var.getVel(gyro);
-    Serial.print(" ");
+    Serial.print("\t");
+    sensing.getVel(gyro);
+    Serial.print("\t");
     Serial.print(gyro[0]);
     Serial.print("\t");
     Serial.print(gyro[1]);
     Serial.print("\t");
-    Serial.println(gyro[2]);
+    Serial.print(sensing.getVel_baro());
     Serial.print("\t");
+    Serial.println(gyro[2]);
+
+    
+    /*
+    Serial.print(sensing.getHeight());
+    Serial.print(" ");
+    Serial.println(sensing.getVel_baro());
+    */
     delay(50);
   }
-  imu_var.tare();
+  //sensing.tare();
 /*
     printEvent(&linearAccelData);
     Serial.println();
