@@ -26,7 +26,7 @@ void loop() {
     */
     delay(50);
   }
-  //sensing.tare();
+  sensing.tare();
 /*
     printEvent(&linearAccelData);
     Serial.println();
