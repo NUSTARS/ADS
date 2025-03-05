@@ -8,6 +8,7 @@
 #include <random>
 #include "controls.h"
 #include "sensing.h"
+#include "main_sensors.h"
 #include <cmath>
 #include <cstdlib> 
 
@@ -57,35 +58,46 @@ int main(int argc, char* argv[]) {
 
     // std::cout << currentState << std::endl;
    //  std::cout << findU(currentState, 5560, 1)<< std::endl; 
-    std::cout << getApogee(currentState)<< std::endl; 
+   //  std::cout << getApogee(currentState)<< std::endl; 
    //  std::cout << getApogee_testing(currentState) << std::endl;
 
    //MAIN FOR ONCE WE GET GETAPOGEE WORKING
 
-//     Wind wind;
+    Wind wind;
 
-//     double max_simTime = 30;
-//     double current_t = 0.0;
+    double max_simTime = 30;
+    double current_t = 0.0;
+    float vx = initial_v_body[0];
+    float vy = initial_v_body[1];
+    float vz = initial_v_body[2];
+    float wx = initial_omega[0];
+    float wy = initial_omega[1];
+    float wz = initial_omega[2];
+    float theta_x = initial_theta[0];
+    float theta_y = initial_theta[1];
+    float theta_z = initial_theta[2];
+    float u = 0;
 
-//     // run while the sim is less than 30 seconds and havent reached apogee 
-//     while ((current_t < max_simTime) && !(atApogee(currentState))) {
+    // run while the sim is less than 30 seconds and havent reached apogee 
+    while ((current_t < max_simTime) && !(atApogee(currentState))) {
 
-//         q SensorNoiseState = addSensorNoise(currentState, &wind);
 
-//         //call SHISHIR CODE to get b, set B in current state going forward
-//         double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
-//         // std::cout<< current_t << std::endl;
+      u = main_loop_dt(vx, vy, vz, wx, wy, wz, theta_x, theta_y, theta_z, initial_h, u, wind);      //   q SensorNoiseState = addSensorNoise(currentState, &wind);
 
-//         currentState.setU(signal);
-//         // std::cout << currentState << std::endl;
-//         currentState = integrate(currentState, &wind);
-//         // std::cout << currentState << std::endl;
-//         current_t += DT;
+      //   //call SHISHIR CODE to get b, set B in current state going forward
+      //   double signal = findU(SensorNoiseState, 5560, 1); //forward integrate is placeholder
+      //   // std::cout<< current_t << std::endl;
 
-//     }
+      //   currentState.setU(signal);
+      //   // std::cout << currentState << std::endl;
+      //   currentState = integrate(currentState, &wind);
+        std::cout << u << std::endl;
+        current_t += DT;
+
+    }
     
     
-//    std::cout << currentState.getH() << std::endl;
+   std::cout << currentState.getH() << std::endl;
    return 0;
 
 };
