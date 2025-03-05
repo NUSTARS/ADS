@@ -3,20 +3,32 @@
 
 void loop() {
 
-  long lastTime = millis();  
+  
   float gyro[3];
+  Wind wind;
 
-  while(millis()-lastTime < 5000){
-    Serial.print("\t");
-    sensing.getVel(gyro);
-    Serial.print("\t");
-    Serial.print(gyro[0]);
-    Serial.print("\t");
-    Serial.print(gyro[1]);
-    Serial.print("\t");
-    Serial.print(sensing.getVel_baro());
-    Serial.print("\t");
-    Serial.println(gyro[2]);
+  double height = 10*sensing.getHeight() + 4970;
+
+  long lastTime = millis();  
+  double u = main_loop_dt(20.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0, 0.0, height, 0, wind);
+  Serial.println(millis()-lastTime);
+  Serial.print(height);
+  Serial.print(" ");
+  Serial.println(u);
+  
+
+
+  // while(millis()-lastTime < 5000){
+  //   Serial.print("\t");
+  //   sensing.getVel(gyro);
+  //   Serial.print("\t");
+  //   Serial.print(gyro[0]);
+  //   Serial.print("\t");
+  //   Serial.print(gyro[1]);
+  //   Serial.print("\t");
+  //   Serial.print(sensing.getVel_baro());
+  //   Serial.print("\t");
+  //   Serial.println(gyro[2]);
 
     
     /*
@@ -24,9 +36,9 @@ void loop() {
     Serial.print(" ");
     Serial.println(sensing.getVel_baro());
     */
-    delay(50);
-  }
-  sensing.tare();
+    // delay(50);
+  // }
+  //sensing.tare();
 /*
     printEvent(&linearAccelData);
     Serial.println();

@@ -36,6 +36,9 @@
 #include <EEPROM.h>
 #include <math.h> 
 #include <ArduinoEigenDense.h>
+// #include <Simple_library.h>
+#include <main_sensors.h>
+
 
 #define BUZZER 6 // actually 5 
 #define SERVO_PIN 24
