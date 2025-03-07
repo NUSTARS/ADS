@@ -1,8 +1,6 @@
 #include "controls.h"
 #include <iostream>
-#include <vector>
 #include <cmath>
-#include <functional>
 #include "simulator.h"
 #include <Eigen/Core>
 #include "q.h"
@@ -12,8 +10,6 @@ double findU(q states, double apogee, double err) {
 
     double b = 0.0;
 
-    // std::cout << getApogee(states) << std::endl;
-    // std::cout << getApogee(states, -RAMP_TIME) << std::endl;
     if(getApogee(states, -RAMP_TIME) > apogee - err){ // check the bounds first
         b = -RAMP_TIME;
     }
@@ -42,9 +38,5 @@ double findU(q states, double apogee, double err) {
 
 
     }
-
-    //std::cout << getApogee(states, b) << std::endl;
-
     return F(-b);
-
 }

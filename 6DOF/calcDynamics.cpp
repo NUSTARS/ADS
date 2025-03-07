@@ -11,7 +11,7 @@
 #include "calcDynamics.h"
 #include "constants.h"
 #include "aeroData.h"
-#include "cmath"
+#include <cmath>
 
 using Eigen::Matrix2d;
 using Eigen::Matrix3d;

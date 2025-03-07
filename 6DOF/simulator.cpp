@@ -190,11 +190,7 @@ q  getqdot_testing(q curr_q, Wind* wind){
     Eigen::Vector3d omegadot(omegaXdot, omegaYdot, omegaZdot); 
     Eigen::Vector3d thetadot = specialR*omega; 
     double hdot = (getR(curr_q)*v_new)(2);
-    double hdot_old = (getR(curr_q)*v)(2);
-    std::cout << "difference hdot:" << hdot - hdot_old << std::endl;
-
-
-    
+    double hdot_old = (getR(curr_q)*v)(2);   
 
     //------------------------------------------------------------------
 
@@ -240,7 +236,6 @@ q  getqdot_testing(q curr_q, Wind* wind){
 
     //udot always 0 since we control it so the dynamics don't update it
     return q(vdot, omegadot, thetadot, hdot, 0.0);
-
 }
 
 double getApogee_testing(q curr_q){

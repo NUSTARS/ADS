@@ -18,6 +18,7 @@ add_executable(my_program
   main.cpp
   q.cpp
   wind.cpp
+  main_sensors.cpp
 )
 # Add the test directory if it exists
 message(STATUS "Source directory: ${CMAKE_SOURCE_DIR}")
