@@ -36,17 +36,6 @@ double getAlpha(q curr_q){
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
 
-
-    // double v_mag = getV_Mag(curr_q);
-    // double v_mag = sqrt(vx*vx + vz*vz);
-    // if(v_mag == 0){
-    //     return 0;
-    // }
-  
-
-    // double alpha = acos(vx/v_mag);
-    // double sin = asin(vz/getV_Mag(curr_q));
-
     double alpha = atan2(sqrt(vy*vy + vz*vz), vx);
     
     return alpha;
@@ -86,62 +75,42 @@ Vector3d getAeroForces(q curr_q) {
 };
 
 
-Vector3d getAeroMoments(q curr_q) {
+Vector3d getAeroMoments(q curr_q, Vector3d forces) {
     double vx = curr_q.getV()(0);
     double vy = curr_q.getV()(1);
     double vz = curr_q.getV()(2);
-    Vector3d forces = getAeroForces(curr_q);
+    // Vector3d forces = getAeroForces(curr_q);
     //just gonna assume roll = 0
     double dist; //this is the axial distance between Cg and Cp - the moment arm
     dist = getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) - CG;
-    if (dist <= 0) {
-        // std::cout << "NEGATIVE dist: " << getCP(vx*vx +vy*vy +vz*vz, getAlpha(curr_q), curr_q.getU(), curr_q.getH()) << "VELCOITY:" << vx*vx +vy*vy +vz*vz << std::endl;
-    }
-
     Vector3d v(0, dist * forces(2), dist * forces(1));
     // Vector3d v(0,0,0);
     return v;
 };
 
-// given coords in body frame, converts to earth frame
 Matrix3d getR(q curr_q) { 
-    Matrix3d m(3,3);
     double phi = curr_q.getTheta()(0);
     double theta = curr_q.getTheta()(1);
     double psi = curr_q.getTheta()(2);
-    
-    Matrix3d Rx {{1,         0,         0},
-                 {0,  cos(phi),  -sin(phi)},
-                 {0, sin(phi), cos(phi)}};
 
-    Matrix3d Ry {{cos(theta), 0, sin(theta)},
-                 {0         , 1,           0},
-                 {-sin(theta), 0,  cos(theta)}};
-    Matrix3d Rz {{cos(psi) , -sin(psi), 0},
-                 {sin(psi), cos(psi), 0},
-                 {        0,        0, 1}};
-    Matrix3d R_SB {{0, 0, 1}, {0, -1, 0}, {1, 0, 0}};
-    
-    m = R_SB * Rz * Ry * Rx;
-    //m = Rx * Ry * Rz;
+    Matrix3d m {{-sin(theta) , sin(phi)*cos(theta), cos(phi)*cos(theta)},
+                 {-sin(psi)*cos(theta), -sin(phi)*sin(psi)*sin(theta)-cos(phi)*cos(psi), sin(phi)*cos(psi)-sin(psi)*sin(theta)*cos(phi)},
+                 {cos(psi)*cos(theta), sin(phi)*sin(theta)*cos(psi)-sin(psi)*cos(phi), sin(phi)*sin(psi)+sin(theta)*cos(phi)*cos(psi)}};
 
     return m;
-};
+}
 
 // given coords in earth frame, converts to body frame 
 Matrix3d getRinv(q curr_q){
-
-    /*
     double phi = curr_q.getTheta()(0);
     double theta = curr_q.getTheta()(1);
     double psi = curr_q.getTheta()(2);
 
-    //My brain tells me this won't work but this is what matlab says
-    Matrix3d R   {{1, sin(phi)*tan(theta), cos(phi)*tan(theta)}, 
-                  {0, cos(phi), -sin(phi)},
-                  {0, sin(phi)/cos(theta), cos(phi)/cos(theta)}};
-    */
-    Matrix3d R = getR(curr_q).inverse();
-    return R;
+
+    Matrix3d R_inv {{-sin(theta), -sin(psi)*cos(theta), cos(psi)*cos(theta)},
+                  {sin(phi)*cos(theta), -sin(phi)*sin(psi)*sin(theta)-cos(phi)*cos(psi), sin(phi)*sin(theta)*cos(psi)-sin(psi)*cos(phi)},
+                  {cos(phi)*cos(theta), sin(phi)*cos(psi) - sin(psi)*sin(theta)*cos(phi), sin(psi)*sin(phi) + sin(theta)*cos(psi)*cos(phi)}};
+
+    return R_inv;
     
 };

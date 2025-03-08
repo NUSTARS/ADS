@@ -34,7 +34,7 @@ Eigen::Vector3d getAeroForces(q);
 //
 // Takes in .... 
 //
-Eigen::Vector3d getAeroMoments(q);
+Eigen::Vector3d getAeroMoments(q, Eigen::Vector3d);
 
 
 // getR
