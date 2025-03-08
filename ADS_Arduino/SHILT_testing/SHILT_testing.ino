@@ -355,13 +355,14 @@ void loop() {
   double u = 0;
   Wind wind;
 
-  for(int i = 0: i < NUM_ROWS; i++){
-    Serial.print("Data point ")
+  for (int i = 0; i < NUM_ROWS; i++) {
+    Serial.print("\n Data point ");
     Serial.print(i);
     Serial.print(": - Altitude: ");
     Serial.print(shitl_data[i][1]);
-    double u = main_loop_dt(shitl_data[i][2], shitl_data[i][3], shitl_data[i][4], shitl_data[i][5], shitl_data[i][6], shitl_data[i][7], shitl_data[i][8], shitl_data[i][9], shitl_data[i][10], shitl_data[i][0], u, wind);
-    Serial.print(" - u: ");
+    u = main_loop_dt(shitl_data[i][2], shitl_data[i][3], shitl_data[i][4], shitl_data[i][5], shitl_data[i][6], shitl_data[i][7], shitl_data[i][8], shitl_data[i][9], shitl_data[i][10], shitl_data[i][1], u, wind);
+    Serial.print(" - u:");
+    Serial.print(u);
 
 
   }

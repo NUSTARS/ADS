@@ -22,11 +22,12 @@ double main_loop_dt(double vx, double vy, double vz, double wx, double wy, doubl
 
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, u);
 
-    double signal = findU(currentState, 5000, 1); //forward integrate is placeholder
+    double signal = findU(currentState, 5700, u); //forward integrate is placeholder
  
     currentState.setU(signal);
     
     currentState = integrate(currentState, &wind);
+    signal = 1.0;
 
     return signal;
 };
