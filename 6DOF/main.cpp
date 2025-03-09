@@ -55,9 +55,9 @@ int main(int argc, char* argv[]) {
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, 0);
 
     // std::cout << currentState << std::endl;
-   //  std::cout << findU(currentState, 5560, 1)<< std::endl; 
+   //std::cout << findU(currentState, 5560, 1)<< std::endl; 
    //  std::cout << getApogee(currentState)<< std::endl; 
-   std::cout << getApogee_testing(currentState) << std::endl;  
+   std::cout << getApogee_testing(currentState, 6500, 1) << std::endl;  
     
    std::cout << currentState.getH() << std::endl;
    return 0;

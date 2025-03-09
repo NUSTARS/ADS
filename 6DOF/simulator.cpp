@@ -18,6 +18,7 @@
 #include "constants.h"
 #include "simulator.h"
 #include "wind.h"
+#include "controls.h"
 #include <cmath>
 
 
@@ -238,7 +239,7 @@ q  getqdot_testing(q curr_q, Wind* wind){
     return q(vdot, omegadot, thetadot, hdot, 0.0);
 }
 
-double getApogee_testing(q curr_q){
+double getApogee_testing(q curr_q, double target_apogee, double err){
     q temp_q = curr_q;
     double time = 0.0;
     Wind wind;
@@ -260,13 +261,11 @@ double getApogee_testing(q curr_q){
     std::vector<double> u;
 
     while(!atApogee(temp_q) && !(input[0] == '!')){
-        std::cout << "TIME: " << time << std::endl;
-        std::cout << temp_q << std::endl;
-        getqdot_testing(temp_q, &wind);
-        // std::cout << "PRESS ENTER TO ADVANCE TO THE NEXT TIME STEP. ! TO STOP" << std::endl; 
-        // std::cin.getline(input, 5);
+        //std::cout<< "TIME: " << time << std::endl;
+        //std::cout << temp_q << std::endl;
+        getqdot(temp_q, &wind);
 
-        temp_q.setU(0); 
+        temp_q.setU(findU(temp_q, target_apogee, err)); 
 
         wind.updateWind();
         temp_q = integrate(temp_q, &wind);
@@ -288,17 +287,12 @@ double getApogee_testing(q curr_q){
         windy.push_back(currWind(1));
         u.push_back(temp_q.getU());
 
-        std::cout << currWind(0) << " " << currWind(1) << std::endl;
-
-
-        //std::cout << time << std::endl;
+        std::cout << "h: " << temp_q.getH() << "u: " << temp_q.getU() << std::endl;
 
         time = time + DT;
     }
     
     std::ofstream outfile("data.csv");
-	
-
 	
 	// Write data rows
     for (size_t i = 0; i < alts.size(); ++i) {
@@ -307,7 +301,5 @@ double getApogee_testing(q curr_q){
 
     outfile.close();
 
-
     return temp_q.getH();
-
 }
