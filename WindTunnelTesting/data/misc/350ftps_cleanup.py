@@ -11,7 +11,7 @@ df = pd.read_csv("WindTunnelTesting/data/misc/021725_100423_350ftps_sweep.csv", 
 df_header = df.iloc[:2].copy()
 df_data = df.iloc[2:].copy()
 
-actuation_states = [100, 88, 80, 70, 60, 50, 40, 30, 20, 10, 0, 0] 
+actuation_states = [100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 0, 0] 
 
 for i, (_, row) in enumerate(df_data.iterrows()):
     expected_actuation_state = actuation_states[i]  # Safer than pop()
