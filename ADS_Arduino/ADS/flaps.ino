@@ -1,36 +1,26 @@
-bool openFlapsAccel(sensors_event_t* event)
+bool openFlapsAccel(float* accel_vals)
 {
-  if(event->type == SENSOR_TYPE_LINEAR_ACCELERATION)
+  if (accel_vals[2] < 0) //z
   {
-    double accel = event->acceleration.z;
-    if (accel < 0)
-    {
-      Serial.println("Burnout reached!");
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    return false;
+    Serial.println("Burnout reached!");
+    return true;
   }
+  return false;
 }
 
-bool openFlapsHeight(barometerData* baro)
+bool openFlapsHeight(float height)
 {
-   if ((baro->alt) > BURNOUT_HEIGHT) {
+   if (height > BURNOUT_HEIGHT) {
       Serial.println("Burnout height reached!");
       return true;
-    } else {
+    } 
       return false;
-    }
 }
 
-bool openFlaps(sensors_event_t* event, barometerData* baro)
+bool burnoutReached(float* accel_vals, float height)
 {
-  // if (openFlapsHeight(baro) && openFlapsAccel(event)) {
-  if (openFlapsAccel(event)) {
-      SetDesiredAreaPercent(100);
-      Serial.println("SETTING FLAPS TO 100!");
+  if (openFlapsHeight(height) && openFlapsAccel(accel_vals)) {
+      Serial.println("BURNOUT REACHED!");
 
       return true;
   }

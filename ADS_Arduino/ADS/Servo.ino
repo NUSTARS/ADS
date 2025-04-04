@@ -15,9 +15,9 @@ void ServoSetup() {
 
 void SetDesiredAreaPercent(double desiredAreaPercent)
 {
-  // double flapAreaPercent = desiredAreaPercent;
-  // servoAngle = PercentToAngle(PercentConversion(flapAreaPercent));
-  actuationServo.write(SERVO_MAX_ANGLE);
+  double flapAreaPercent = desiredAreaPercent;
+  servoAngle = PercentToAngle(PercentConversion(flapAreaPercent));
+  actuationServo.write(servoAngle);
   return;
 }
 

@@ -113,8 +113,8 @@ struct barometerData {
 
 struct data {
   float time;
-  float temp;
-  float pressure;
+  // float temp;
+  // float pressure;
   float altitude;
   float euler_x;
   float euler_y;
@@ -125,7 +125,13 @@ struct data {
   float accel_x;
   float accel_y;
   float accel_z;
+  float vel_x;
+  float vel_y;
+  float vel_z;
+  float u;
 };
+
+void printEvent(sensors_event_t* event);
 
 // Barometer Functions
 int setupBarometer();
@@ -137,9 +143,12 @@ int setupSD();
 void logData(data* dataArr, int arrLen);
 void logData2(data* dataArr);
 
-bool openFlapsAccel(sensors_event_t* event);
-bool openFlapsHeight(barometerData* baro);
-bool openFlaps(sensors_event_t* event, barometerData* baro);
+bool openFlapsAccel(float* accel_vals);
+bool openFlapsHeight(float height);
+bool burnoutReached(float* accel_vals, float height);
+
+double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, int h, double u, Wind* wind);
+
 
 // IMU vars  ---------------------------------
 Sensing sensing;

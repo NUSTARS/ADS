@@ -1,155 +1,66 @@
 void loop() {
-
   
-  float gyro[3];
+  float gyro_vals[3];
+  float orient_vals[3];
+  float accel_vals[3];
+  float vel_vals[3];
   Wind wind;
+  double u = 0;
+  sensing.tare();
+  float magnitude = 0;
 
-  double height = 10*sensing.getHeight() + 4970;
-
-  long lastTime = millis();  
-  double u = main_loop_dt(20.0, 0.0, 0.0, 0.0,0.0,0.0, 0.0, 0.0, 0.0, height, 0, wind);
-  Serial.println(millis()-lastTime);
-  Serial.print(height);
-  Serial.print(" ");
-  Serial.println(u);
-  
-
-
-  // while(millis()-lastTime < 5000){
-  //   Serial.print("\t");
-  //   sensing.getVel(gyro);
-  //   Serial.print("\t");
-  //   Serial.print(gyro[0]);
-  //   Serial.print("\t");
-  //   Serial.print(gyro[1]);
-  //   Serial.print("\t");
-  //   Serial.print(sensing.getVel_baro());
-  //   Serial.print("\t");
-  //   Serial.println(gyro[2]);
-
-    
-    /*
-    Serial.print(sensing.getHeight());
-    Serial.print(" ");
-    Serial.println(sensing.getVel_baro());
-    */
-    // delay(50);
-  // }
-  //sensing.tare();
-/*
-    printEvent(&linearAccelData);
-    Serial.println();
-    printEvent(&orientationData);
-    Serial.println();
-
-    Serial.print(" Velocity:");
-    Serial.print("\tx = ");
-    Serial.print(v_body[0]);
-    Serial.print(" \ty = ");
-    Serial.print(v_body[1]);
-    Serial.print(" \tz = ");
-    Serial.println(v_body[2]);
-    Serial.println();
-*/
-
-    //double avg = calcAvg(oldValues);
-    //addValue(oldValues, linearAccelData.acceleration.x);
-
-    /*
-
-  sensors_event_t orientationData, angVelocityData, linearAccelData;
-  barometerData baro;
-  float magnitude;
-  unsigned long previousTime = 0;
-  float altitude_offset = 0.0;
-  double v_body[3] = {0.0,0.0,0.0};
-  double v_world[3] = {0.0,0.0,0.0};
-  float dt;
-  double u = 0.0;
-
-  getBarometerData(&baro, altitude_offset);
-  delay(BNO055_SAMPLERATE_DELAY_MS);
-  getBarometerData(&baro, altitude_offset);
-  Serial.print(altitude_offset);
-  altitude_offset = (&baro)->alt; 
-  Serial.print(altitude_offset);
-  printBarometerData(&baro);
-
-
-  // STARTUP WAITING
+  //WAITING TO LAUNCH
   do {
-    getIMUData(&orientationData, &angVelocityData, &linearAccelData);
-    getBarometerData(&baro, altitude_offset);
-
-  
-    // u = SPARC_main_loop(vx, vy, vz, wx, wy, wz, theta_x, theta_y, theta_z, initial_h, u);
-    
-    // Serial.print(F("Calibration: "));
-    // Serial.print(sys, DEC);
-    // Serial.print(F(", "));
-    // Serial.print(gyro, DEC);
-    // Serial.print(F(", "));
-    // Serial.print(accel, DEC);
-    // Serial.print(F(", "));
-    // Serial.print(mag, DEC);
-    // Serial.println(F(""));
-    // Serial.println(calibrated);
-
-    // printEvent(&orientationData);
-    // printEvent(&angVelocityData);
-    // printEvent(&linearAccelData);
-    // printBarometerData(&baro);
+    sensing.getGyro(gyro_vals);
+    sensing.getOrient(orient_vals);
+    sensing.getAccel(accel_vals);
+    sensing.getVel(vel_vals);
     
     delay(BNO055_SAMPLERATE_DELAY_MS);
-    magnitude = sqrt(pow(linearAccelData.acceleration.x, 2) + pow(linearAccelData.acceleration.y, 2) + pow(linearAccelData.acceleration.z, 2));
-
-
+    magnitude = sqrt(pow(accel_vals[0], 2) + pow(accel_vals[1], 2) + pow(accel_vals[2], 2));
 
     Serial.print("\t\tNOT LAUNCHED YET\t\t");
     Serial.println(magnitude);
-    printEvent(&linearAccelData);
-    printBarometerData(&baro);
+    Serial.println(sensing.getHeight());
   } while (magnitude < THRESH_ACCEL);
   Serial.println("LAUNCHED!");
-  // tone(BUZZER, 1500);
+  tone(BUZZER, 1500);
 
-
-
-  // LOGGING
+  //LAUNCHED
+  // START LOGGING
   data dataArr[2*LOG_TIME * LOG_FREQ];
   int currentPoint = 0;
   unsigned long loggingStartTime = millis();  // Capture start time
 
-
-
-  //while (!openFlaps(&linearAccelData, &baro)) {
-    while (1) {
+  //Checking for burnout
+  while (!burnoutReached(accel_vals, sensing.getHeight())) {
+    sensing.getGyro(gyro_vals);
+    sensing.getOrient(orient_vals);
+    sensing.getAccel(accel_vals);
+    sensing.getVel(vel_vals);
+    
     unsigned long timeStarted = millis();
     // Serial.println("Burnout not reached.");
-    getIMUData(&orientationData, &angVelocityData, &linearAccelData);
-    getBarometerData(&baro, altitude_offset);
-    // printEvent(&linearAccelData);
-    // printEvent(&orientationData);
-    // printEvent(&angVelocityData);
-    // printBarometerData(&baro);
 
+    dataArr[currentPoint].altitude = sensing.getHeight();
 
-    dataArr[currentPoint].pressure = baro.press;
-    dataArr[currentPoint].temp = baro.temp;
-    dataArr[currentPoint].altitude = baro.alt;
+    dataArr[currentPoint].euler_x = orient_vals[0];
+    dataArr[currentPoint].euler_y = orient_vals[1];
+    dataArr[currentPoint].euler_z = orient_vals[2];
 
-    dataArr[currentPoint].euler_x = orientationData.orientation.x;
-    dataArr[currentPoint].euler_y = orientationData.orientation.y;
-    dataArr[currentPoint].euler_z = orientationData.orientation.z;
+    dataArr[currentPoint].accel_x = accel_vals[0];
+    dataArr[currentPoint].accel_y = accel_vals[1];
+    dataArr[currentPoint].accel_z = accel_vals[2];
 
-    dataArr[currentPoint].accel_x = linearAccelData.acceleration.x;
-    dataArr[currentPoint].accel_y = linearAccelData.acceleration.y;
-    dataArr[currentPoint].accel_z = linearAccelData.acceleration.z;
+    dataArr[currentPoint].ang_x = gyro_vals[0];
+    dataArr[currentPoint].ang_y = gyro_vals[1];
+    dataArr[currentPoint].ang_z = gyro_vals[2];
 
-    dataArr[currentPoint].ang_x = angVelocityData.gyro.x;
-    dataArr[currentPoint].ang_y = angVelocityData.gyro.y;
-    dataArr[currentPoint].ang_z = angVelocityData.gyro.z;
+    dataArr[currentPoint].vel_x = vel_vals[0];
+    dataArr[currentPoint].vel_y = vel_vals[1];
+    dataArr[currentPoint].vel_z = vel_vals[2];
 
+    dataArr[currentPoint].u = u;
 
     while (millis() - timeStarted < 1000.0 / LOG_FREQ) {}
 
@@ -157,110 +68,53 @@ void loop() {
 
     logData2(dataArr);
 
-    //integration code
-    double phi = orientationData.orientation.x * M_PI / 180.0; //x
-    double theta = orientationData.orientation.y;  // y
-    double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
-
-    // Serial.println("before integrate.");
-    integrate(&orientationData, &linearAccelData, &previousTime, v_world, v_body);
-    // Serial.println("after integrate.");
-    double wx = angVelocityData.gyro.x;
-    double wy = angVelocityData.gyro.y;  
-    double wz = angVelocityData.gyro.z;
-
-    double vx = v_body[0];
-    double vy = v_body[1];
-    double vz = v_body[2];
-
-    double thetax = phi;
-    double thetay = theta;
-    double thetaz = psi;
-    double initial_h = baro.alt;
-
-    Serial.print("Vx: ");
-    Serial.print(vx);
-    Serial.print(" Vy: ");
-    Serial.print(vy);
-    Serial.print(" Vz: ");
-    Serial.println(vz);
-  
   }
 
-  // Serial.println("Burnout reached!!.");
-  // tone(BUZZER, 600);
+    Serial.println("Burnout reached!!.");
+    tone(BUZZER, 600);
 
+  //BURNOUT REACHED, NOW CONTROLS CAN START
   for (int i = 0; i < LOG_TIME * LOG_FREQ; i++) {  // 6000 originally, making it less for testing
+
     unsigned long timeStarted = millis();
 
-    getIMUData(&orientationData, &angVelocityData, &linearAccelData);
-    getBarometerData(&baro, altitude_offset);
+    sensing.getGyro(gyro_vals);
+    sensing.getOrient(orient_vals);
+    sensing.getAccel(accel_vals);
+    sensing.getVel(vel_vals);
 
-    double phi = orientationData.orientation.x * M_PI / 180.0; //x
-    double theta = orientationData.orientation.y;  // y
-    double psi = (90 - orientationData.orientation.z) * M_PI / 180.0; //z, **NEED TO CHECK THIS
+    u = main_loop_dt(vel_vals[0], vel_vals[1], vel_vals[2], gyro_vals[0], gyro_vals[1], gyro_vals[2], orient_vals[0], orient_vals[1], orient_vals[2], sensing.getHeight(), u, wind);
+    SetDesiredAreaPercent(100*u);
 
-    integrate(&orientationData, &linearAccelData, &previousTime, v_world, v_body);
-    
-    double wx = angVelocityData.gyro.x;
-    double wy = angVelocityData.gyro.y;  
-    double wz = angVelocityData.gyro.z;
+    dataArr[currentPoint].altitude = sensing.getHeight();
 
-    double vx = v_body[0];
-    double vy = v_body[1];
-    double vz = v_body[2];
+    dataArr[currentPoint].euler_x = orient_vals[0];
+    dataArr[currentPoint].euler_y = orient_vals[1];
+    dataArr[currentPoint].euler_z = orient_vals[2];
 
-    double thetax = phi;
-    double thetay = theta;
-    double thetaz = psi;
-    double initial_h = baro.alt;
+    dataArr[currentPoint].accel_x = accel_vals[0];
+    dataArr[currentPoint].accel_y = accel_vals[1];
+    dataArr[currentPoint].accel_z = accel_vals[2];
 
-    Serial.print("Vx: ");
-    Serial.print(vx);
-    Serial.print(" Vy: ");
-    Serial.print(vy);
-    Serial.print(" Vz: ");
-    Serial.println(vz);
+    dataArr[currentPoint].ang_x = gyro_vals[0];
+    dataArr[currentPoint].ang_y = gyro_vals[1];
+    dataArr[currentPoint].ang_z = gyro_vals[2];
 
-    // CHANGING CURERNT POINT TO i
-    dataArr[currentPoint].pressure = baro.press;
-    dataArr[currentPoint].temp = baro.temp;
-    dataArr[currentPoint].altitude = baro.alt;
+    dataArr[currentPoint].vel_x = vel_vals[0];
+    dataArr[currentPoint].vel_y = vel_vals[1];
+    dataArr[currentPoint].vel_z = vel_vals[2];
 
-    dataArr[currentPoint].euler_x = orientationData.orientation.x;
-    dataArr[currentPoint].euler_y = orientationData.orientation.y;
-    dataArr[currentPoint].euler_z = orientationData.orientation.z;
-
-    dataArr[currentPoint].accel_x = linearAccelData.acceleration.x;
-    dataArr[currentPoint].accel_y = linearAccelData.acceleration.y;
-    dataArr[currentPoint].accel_z = linearAccelData.acceleration.z;
-
-    dataArr[currentPoint].ang_x = angVelocityData.gyro.x;
-    dataArr[currentPoint].ang_y = angVelocityData.gyro.y;
-    dataArr[currentPoint].ang_z = angVelocityData.gyro.z;
-
-    // printEvent(&orientationData);
-    // printEvent(&angVelocityData);
-    // printEvent(&linearAccelData);
-    // printBarometerData(&baro);
+    dataArr[currentPoint].u = u;
 
     while (millis() - timeStarted < 1000.0 / LOG_FREQ) {}
 
     dataArr[currentPoint].time = millis();
 
-    //unsigned long loggingStartTime = millis();  // Capture start time
     logData2(dataArr);
-    //Serial.println(millis() - loggingStartTime);
-
-
-    //Serial.println(dataArr[currentPoint].time); //TESTING
   }
-
-  //SD WRITE
 
   Serial.println("DONE LOGGING");
   actuationServo.write(SERVO_MIN_ANGLE);
-
 
   // END
 
@@ -272,7 +126,6 @@ void loop() {
       delay(50);
     }
   }
-  */
 }
 
 

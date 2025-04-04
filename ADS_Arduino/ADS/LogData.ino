@@ -15,8 +15,8 @@ void logData2(data* dataArr) {
     int i = 0;
     String line = "";
     line += String(dataArr[i].time) + ",";
-    line += String(dataArr[i].temp) + ",";
-    line += String(dataArr[i].pressure) + ",";
+    // line += String(dataArr[i].temp) + ",";
+    // line += String(dataArr[i].pressure) + ",";
     line += String(dataArr[i].altitude) + ",";
     line += String(dataArr[i].euler_x) + ",";
     line += String(dataArr[i].euler_y) + ",";
@@ -26,7 +26,12 @@ void logData2(data* dataArr) {
     line += String(dataArr[i].ang_z) + ",";
     line += String(dataArr[i].accel_x) + ",";
     line += String(dataArr[i].accel_y) + ",";
-    line += String(dataArr[i].accel_z) + "\n";
+    line += String(dataArr[i].accel_z) + ",";
+    line += String(dataArr[i].vel_x) + ",";
+    line += String(dataArr[i].vel_y) + ",";
+    line += String(dataArr[i].vel_z) + ",";
+    line += String(dataArr[i].u) + "\n";
+
 
     // Serial.print(line);
     
