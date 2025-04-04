@@ -80,6 +80,20 @@ for velocity in loads_df["Velocity (fps)"].unique():
 
 l_tip_to_mount = 41.50/12 # ft
 
+actuation_state_kluge = {
+    0: 0.00,
+    10: 3.76,
+    20: 7.21,
+    30: 11.96,
+    40: 17.76,
+    50: 33.37,
+    60: 38.12,
+    70: 58.37,
+    80: 72.79,
+    90: 93.89,
+    100: 100.00
+}
+
 additional_cols = []
 for _, row in loads_df.iterrows():
     velocity = row["Velocity (fps)"]
@@ -112,6 +126,10 @@ for _, row in loads_df.iterrows():
     side_force = -1 * row["WAFBC Side"] # lbf
     l_mount_to_cp = yaw_moment / side_force
     l_tip_to_cp = l_tip_to_mount + l_mount_to_cp
+
+    # print(f"Velocity: {velocity}, Yaw: {yaw}, Actuation: {actuation}, Cp from Tip: {l_tip_to_cp}")
+
+    real_actuation_state = actuation_state_kluge[actuation]
     
     # Append drag values to the list
     additional_cols.append({
@@ -124,7 +142,8 @@ for _, row in loads_df.iterrows():
         "Total Vehicle Drag": total_vehicle_drag,
         "Reynolds Number": reynolds_number,
         "Cd": Cd,
-        "Cp from Tip": l_tip_to_cp
+        "Cp from Tip": l_tip_to_cp,
+        "Real Actuation State": real_actuation_state
     })
 
 # Create a new dataframe with the additional columns
