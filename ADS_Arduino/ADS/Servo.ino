@@ -1,8 +1,6 @@
 // add any other libraries needed for SPARC
 
 double desiredAreaPercent; //double from 0 to 1 given by funciton f from SPARC
-const int SERVO_MIN_ANGLE = 115; //min servo angle corresponding to 0% actuation
-const int SERVO_MAX_ANGLE = 70; //max servo angle corresponding to 100% actuation
 int servoAngle;  
 Servo actuationServo;  // will be used for testing servo until SPARC function complete
 

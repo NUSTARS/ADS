@@ -6,31 +6,34 @@ void loop() {
   float vel_vals[3];
   Wind wind;
   double u = 0;
-  sensing.tare();
   float magnitude = 0;
+  int currentPoint = 0;
+  data dataArr[2*LOG_TIME * LOG_FREQ];
 
   //WAITING TO LAUNCH
   do {
+
+    sensing.tare();
+
     sensing.getGyro(gyro_vals);
     sensing.getOrient(orient_vals);
     sensing.getAccel(accel_vals);
     sensing.getVel(vel_vals);
-    
-    delay(BNO055_SAMPLERATE_DELAY_MS);
+  
     magnitude = sqrt(pow(accel_vals[0], 2) + pow(accel_vals[1], 2) + pow(accel_vals[2], 2));
 
     Serial.print("\t\tNOT LAUNCHED YET\t\t");
     Serial.println(magnitude);
     Serial.println(sensing.getHeight());
+
+
+    //delay(BNO055_SAMPLERATE_DELAY_MS);
+
   } while (magnitude < THRESH_ACCEL);
   Serial.println("LAUNCHED!");
   tone(BUZZER, 1500);
 
   //LAUNCHED
-  // START LOGGING
-  data dataArr[2*LOG_TIME * LOG_FREQ];
-  int currentPoint = 0;
-  unsigned long loggingStartTime = millis();  // Capture start time
 
   //Checking for burnout
   while (!burnoutReached(accel_vals, sensing.getHeight())) {

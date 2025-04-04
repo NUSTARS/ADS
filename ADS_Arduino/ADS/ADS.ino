@@ -36,7 +36,6 @@
 #include <EEPROM.h>
 #include <math.h> 
 #include <ArduinoEigenDense.h>
-// #include <Simple_library.h>
 #include <main_sensors.h>
 
 
@@ -46,7 +45,6 @@
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
 #define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
-#define FILE_NAME "data.csv" // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
 #define BURNOUT_HEIGHT 400 //ft
 
 // Barometer
@@ -56,6 +54,10 @@
 #define HEIGHT_AVG_WINDOW 10
 #define VEL_AVG_WINDOW 2
 #define BNO055_SAMPLERATE_DELAY_MS 10
+
+// Servo
+#define SERVO_MIN_ANGLE 115 //min servo angle corresponding to 0% actuation
+#define SERVO_MAX_ANGLE 70 //max servo angle corresponding to 100% actuation
 
 class Sensing{
 
@@ -104,13 +106,6 @@ class Sensing{
 
 };
 
-// Structs -----------------------------------------------------
-struct barometerData {
-  float temp;
-  float press;
-  float alt;
-};
-
 struct data {
   float time;
   // float temp;
@@ -131,23 +126,17 @@ struct data {
   float u;
 };
 
-void printEvent(sensors_event_t* event);
-
-// Barometer Functions
-int setupBarometer();
-int getBarometerData(barometerData* baro, float altitude_offset);
-void printBarometerData(barometerData* baro);
-
 // SD Functions
 int setupSD();
 void logData(data* dataArr, int arrLen);
 void logData2(data* dataArr);
 
+// Flap Functions
 bool openFlapsAccel(float* accel_vals);
 bool openFlapsHeight(float height);
 bool burnoutReached(float* accel_vals, float height);
 
-double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, int h, double u, Wind* wind);
+//double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, int h, double u, Wind* wind);
 
 
 // IMU vars  ---------------------------------
@@ -156,6 +145,7 @@ Sensing sensing;
 // SD Stuff ---------------------------------------------------
 SdFat SD;
 FsFile dataFile;
+const String FILE_NAME  = sprintf("data%d.csv", random(0,10000)); // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
 
 
 

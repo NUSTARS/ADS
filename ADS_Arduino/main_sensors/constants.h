@@ -23,14 +23,14 @@ const double BALLAST_MASS = 0.0; // Mass of the ballast [slugs]
 
 const double Ix = 0.04979; // Moment of inertia about the X-axis [lbf*ft*s^2]
 const double Iy = 6.81; // Moment of inertia about the Y-axis [lbf*ft*s^2]
-//const double Iy = 1;
 const double Iz = Iy; // Moment of inertia about the Z-axis [lbf*ft*s^2]
 const double BURNOUT_MASS = 36.727/32.174; // Mass of the rocket with burned out motor [slugs]
 const double M = BURNOUT_MASS + BALLAST_MASS; // Total mass of the system [slug]
 const double CG = 68.093/12.0; // distance from the tip of the nosecone to the CG [ft]
 const double A = 20.831/144.0; // Cross sectional area of the rocket airframe [ft^2]
 const Eigen::Vector3d G(0,0,-32.155); // [ft/s^2]
-const double PAD_ALT = 700; // [ft] 
+const double PAD_ALT = 700; // [ft]
+const double TARGET_APO = 5000; // [ft] 
 
 //
 // Electronics constants

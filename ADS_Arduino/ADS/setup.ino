@@ -18,11 +18,11 @@ void setup() {
     while(1);
   }
   
-   if (setupSD() != 0) {
+  if (setupSD() != 0) {
      Serial.println("SD not inserted");
      tone(BUZZER, 200);
     while(1);
-   };
+  }
 
   ServoSetup();
   
@@ -34,7 +34,7 @@ void setup() {
     tone(BUZZER, i);
     delay(1);
   }
-  tone(BUZZER, 0); // CHANGING THIS FROM 1000 DOWN TO 450 BC ANNOYING WHEN TESTING
+  tone(BUZZER, 1000); // CHANGING THIS FROM 1000 DOWN TO 450 BC ANNOYING WHEN TESTING
   
   sensing.tare();
   Serial.println("Setup Complete");
