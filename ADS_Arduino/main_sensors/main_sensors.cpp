@@ -24,4 +24,5 @@ double main_loop_dt(double vx, double vy, double vz, double wx, double wy, doubl
     double signal = findU(currentState, TARGET_APO, 5); //forward integrate is placeholder
 
     return signal;
+    // return 0.0;
 };

@@ -5,7 +5,7 @@ int setupSD() {
   return 0;
 }
 
-void logData2(data* dataArr) {/*
+void logData2(data* dataArr) {
   dataFile = SD.open(FILE_NAME, O_RDWR | O_CREAT | O_AT_END);
 
   
@@ -75,7 +75,7 @@ void logData(data* dataArr, int arrLen) {
     dataFile.write(line.c_str());
   }
   dataFile.close(); 
-  */ 
+   
 }
-
+*/
 

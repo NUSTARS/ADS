@@ -40,8 +40,8 @@ void loop() {
     sensing.getOrient(orient_vals);
     sensing.getAccel(accel_vals);
     sensing.getVel(vel_vals);
-    // Serial.println(accel_vals[2]);
-    // Serial.println(sensing.getHeight());
+    Serial.println(accel_vals[2]);
+    Serial.println(sensing.getHeight());
     // Serial.print("\t x:");
     // Serial.println(vel_vals[0]);
     // Serial.print("\t y:");

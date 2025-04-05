@@ -39,7 +39,7 @@
 #include <main_sensors.h>
 
 
-#define BUZZER 6 // actually 5 
+#define BUZZER 5 // actually 5 
 #define SERVO_PIN 24
 
 #define LOG_FREQ 50 // in Hz
@@ -56,8 +56,8 @@
 #define BNO055_SAMPLERATE_DELAY_MS 10
 
 // Servo
-#define SERVO_MIN_ANGLE 115 //min servo angle corresponding to 0% actuation
-#define SERVO_MAX_ANGLE 70 //max servo angle corresponding to 100% actuation
+#define SERVO_MIN_ANGLE 70 //min servo angle corresponding to 0% actuation
+#define SERVO_MAX_ANGLE 20 //max servo angle corresponding to 100% actuation
 
 class Sensing{
 

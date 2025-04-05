@@ -19,7 +19,7 @@
 //
 // Mechanical constants
 //
-const double BALLAST_MASS = 0.0; // Mass of the ballast [slugs]
+const double BALLAST_MASS = 3.74/32.174; // Mass of the ballast [slugs]
 
 const double Ix = 0.04979; // Moment of inertia about the X-axis [lbf*ft*s^2]
 const double Iy = 6.81; // Moment of inertia about the Y-axis [lbf*ft*s^2]
