@@ -30,7 +30,7 @@ const double CG = 68.093/12.0; // distance from the tip of the nosecone to the C
 const double A = 20.831/144.0; // Cross sectional area of the rocket airframe [ft^2]
 const Eigen::Vector3d G(0,0,-32.155); // [ft/s^2]
 const double PAD_ALT = 700; // [ft]
-const double TARGET_APO = 5000; // [ft] 
+const double TARGET_APO = 3; // [ft] 
 
 //
 // Electronics constants
