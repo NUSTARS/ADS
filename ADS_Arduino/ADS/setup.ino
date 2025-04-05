@@ -13,10 +13,11 @@ void setup() {
    tone(BUZZER, 0);
 
   if(!sensing.begin(50)){
-    Serial.println("Sensing Failed");
-    tone(BUZZER, 200);
-    while(1);
+   Serial.println("Sensing Failed");
+   tone(BUZZER, 200);
+   while(1);
   }
+
   
   if (setupSD() != 0) {
      Serial.println("SD not inserted");
@@ -25,7 +26,6 @@ void setup() {
   }
 
   ServoSetup();
-  
   for(int i = 200; i < 1500; i++){
     tone(BUZZER, i);
     delay(1);
@@ -35,8 +35,9 @@ void setup() {
     delay(1);
   }
   tone(BUZZER, 1000); // CHANGING THIS FROM 1000 DOWN TO 450 BC ANNOYING WHEN TESTING
-  
-  sensing.tare();
+
   Serial.println("Setup Complete");
+
+  delay (5000);
 
 }

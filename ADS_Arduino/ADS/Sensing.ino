@@ -27,6 +27,7 @@ void Sensing::updateReadingsHelper(void){
   accel[accel_window_index][2] = data.acceleration.z;
 
   baro_height[height_window_index] = bmp.readAltitude(1013.25) * 3.28084;
+  // baro_height[height_window_index] = 5;
 
   if(accel_window_index == ACCEL_AVG_WINDOW-1){
 
@@ -53,7 +54,6 @@ void Sensing::updateReadingsHelper(void){
 
     // filter the two Vs
     const_cast<Eigen::Vector3f&>(v_world) = (getVel_baro()/v_world_imu(2))*v_world_imu;
-
   }
   if(height_window_index == HEIGHT_AVG_WINDOW-1){
     // baro temp

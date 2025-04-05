@@ -4,8 +4,7 @@ void loop() {
   float orient_vals[3];
   float accel_vals[3];
   float vel_vals[3];
-  Wind wind;
-  double u = 0;
+  double u = 0.0;
   float magnitude = 0;
   int currentPoint = 0;
   data dataArr[2*LOG_TIME * LOG_FREQ];
@@ -41,6 +40,15 @@ void loop() {
     sensing.getOrient(orient_vals);
     sensing.getAccel(accel_vals);
     sensing.getVel(vel_vals);
+    // Serial.println(accel_vals[2]);
+    // Serial.println(sensing.getHeight());
+    // Serial.print("\t x:");
+    // Serial.println(vel_vals[0]);
+    // Serial.print("\t y:");
+    // Serial.println(vel_vals[1]);
+    // Serial.print("\t z:");
+    // Serial.println(vel_vals[2]);
+
     
     unsigned long timeStarted = millis();
     // Serial.println("Burnout not reached.");
@@ -48,7 +56,7 @@ void loop() {
     dataArr[currentPoint].altitude = sensing.getHeight();
 
     dataArr[currentPoint].euler_x = orient_vals[0];
-    dataArr[currentPoint].euler_y = orient_vals[1];
+    dataArr[currentPoint].euler_y = orient_vals[1]; 
     dataArr[currentPoint].euler_z = orient_vals[2];
 
     dataArr[currentPoint].accel_x = accel_vals[0];
@@ -60,7 +68,7 @@ void loop() {
     dataArr[currentPoint].ang_z = gyro_vals[2];
 
     dataArr[currentPoint].vel_x = vel_vals[0];
-    dataArr[currentPoint].vel_y = vel_vals[1];
+    dataArr[currentPoint].vel_y = vel_vals[1]; 
     dataArr[currentPoint].vel_z = vel_vals[2];
 
     dataArr[currentPoint].u = u;
@@ -70,6 +78,8 @@ void loop() {
     dataArr[currentPoint].time = millis();
 
     logData2(dataArr);
+
+
 
   }
 
@@ -86,7 +96,11 @@ void loop() {
     sensing.getAccel(accel_vals);
     sensing.getVel(vel_vals);
 
-    u = main_loop_dt(vel_vals[0], vel_vals[1], vel_vals[2], gyro_vals[0], gyro_vals[1], gyro_vals[2], orient_vals[0], orient_vals[1], orient_vals[2], sensing.getHeight(), u, wind);
+
+    u = main_loop_dt(vel_vals[2], vel_vals[1], vel_vals[0], gyro_vals[2], gyro_vals[1], gyro_vals[0], orient_vals[0], orient_vals[1], orient_vals[2], sensing.getHeight(), u);
+
+    Serial.println(u);
+
     SetDesiredAreaPercent(100*u);
 
     dataArr[currentPoint].altitude = sensing.getHeight();

@@ -45,7 +45,7 @@
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
 #define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
-#define BURNOUT_HEIGHT 400 //ft
+#define BURNOUT_HEIGHT 2 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
@@ -136,7 +136,7 @@ bool openFlapsAccel(float* accel_vals);
 bool openFlapsHeight(float height);
 bool burnoutReached(float* accel_vals, float height);
 
-//double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, int h, double u, Wind* wind);
+double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, double h, double u);
 
 
 // IMU vars  ---------------------------------

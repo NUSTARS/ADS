@@ -2,7 +2,7 @@ bool openFlapsAccel(float* accel_vals)
 {
   if (accel_vals[2] < 0) //z
   {
-    Serial.println("Burnout reached!");
+    Serial.println("Burnout accel reached!");
     return true;
   }
   return false;
