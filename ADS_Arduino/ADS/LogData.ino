@@ -6,9 +6,9 @@ int setupSD() {
 }
 
 void logData2(data* dataArr) {
+  
   dataFile = SD.open(FILE_NAME, O_RDWR | O_CREAT | O_AT_END);
 
-  
   //dataFile.write("-----time-temp-pressure-altitude-euler_x-euler_y-euler_z-ang_x-ang_y-ang_z-accel_x-accel_y-accel_z-----\n");
     // Serial.println("Logging the data");
 
@@ -38,7 +38,7 @@ void logData2(data* dataArr) {
     
   //Serial.println(line);
   dataFile.write(line.c_str());
-  dataFile.close();  
+  dataFile.close();    
 }
 
 /*

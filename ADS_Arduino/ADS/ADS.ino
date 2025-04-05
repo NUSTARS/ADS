@@ -43,7 +43,8 @@
 #define SERVO_PIN 24
 
 #define LOG_FREQ 50 // in Hz
-#define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
+#define LOG_TIME 40 // in s (CHANGE THIS BACK) to 60
+//#define FILE_NAME "data.csv"
 #define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
 #define BURNOUT_HEIGHT 2 //ft
 
@@ -56,7 +57,7 @@
 #define BNO055_SAMPLERATE_DELAY_MS 10
 
 // Servo
-#define SERVO_MIN_ANGLE 70 //min servo angle corresponding to 0% actuation
+#define SERVO_MIN_ANGLE 70 //min servo angle corresponding to 0% actuation 70
 #define SERVO_MAX_ANGLE 20 //max servo angle corresponding to 100% actuation
 
 class Sensing{
@@ -145,7 +146,7 @@ Sensing sensing;
 // SD Stuff ---------------------------------------------------
 SdFat SD;
 FsFile dataFile;
-const String FILE_NAME  = sprintf("data%d.csv", random(0,10000)); // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
+const String FILE_NAME  = "data" + String(random(0,1000)) + ".csv";
 
 
 

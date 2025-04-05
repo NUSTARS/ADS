@@ -7,7 +7,7 @@ void loop() {
   double u = 0.0;
   float magnitude = 0;
   int currentPoint = 0;
-  data dataArr[2*LOG_TIME * LOG_FREQ];
+  data dataArr[int(1.5*LOG_TIME * LOG_FREQ)];
 
   //WAITING TO LAUNCH
   do {

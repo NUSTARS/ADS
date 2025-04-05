@@ -287,7 +287,7 @@ double getApogee_testing(q curr_q, double target_apogee, double err){
         windy.push_back(currWind(1));
         u.push_back(temp_q.getU());
 
-        std::cout << "h: " << temp_q.getH() << "u: " << temp_q.getU() << std::endl;
+        std::cout << curr_q << std::endl;
 
         time = time + DT;
     }
