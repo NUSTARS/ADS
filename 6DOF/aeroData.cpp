@@ -25,12 +25,12 @@ double getCD(double vSquared, double alpha, double u, double h){
     int u_per = 100*u;
 
 
-    return 0.353757 - 0.006119 * v - 0.074949 * alphaDeg + 0.001801 * u  + 0.000089 * vSquared 
+    return 2/(getRho(h)*vSquared*A)*(0.353757 - 0.006119 * v - 0.074949 * alphaDeg + 0.001801 * u  + 0.000089 * vSquared 
             + 0.000528 * v * alphaDeg
             + 0.000170 * v * u_per
             + 0.010095 * alphaDeg*alphaDeg
             + 0.000036 * alphaDeg * u_per
-            - 0.000133 * u_per*u_per;
+            - 0.000133 * u_per*u_per);
     
     // return (-0.0021716*alphaDeg - 6.4358e-06*v + 1.8701e-06*v*alphaDeg + 1.2254e-07*vSquared + 0.0020791*pow(alpha,2) + 0.48279) + u/5.0;
 }
@@ -47,16 +47,16 @@ double getCN(double vSquared, double alpha, double u, double h){
     int u_per = 100*u;
 
 
-    // return -0.054285 - 
-    //         0.002019 * v - 
-    //         0.140628 * alphaDeg - 
-    //         0.000810 * u_per + 
-    //         0.000020 * vSquared + 
-    //         0.000947 * v * alphaDeg - 
-    //         0.000001 * v * u_per +
-    //         0.015547 * alphaDeg*alphaDeg + 0.000030 * alphaDeg * u_per + 0.000007 * u_per*u_per;
+    return 2/(getRho(h)*vSquared*A)*(-0.054285 - 
+            0.002019 * v - 
+            0.140628 * alphaDeg - 
+            0.000810 * u_per + 
+            0.000020 * vSquared + 
+            0.000947 * v * alphaDeg - 
+            0.000001 * v * u_per +
+            0.015547 * alphaDeg*alphaDeg + 0.000030 * alphaDeg * u_per + 0.000007 * u_per*u_per);
 
-    return 0.18966*alphaDeg - 2.7885e-06*v + 1.7577e-05*alphaDeg*v + 0.00051704 + 3.4281e-09*vSquared + 0.010233*pow(alphaDeg,2);
+    //return 0.18966*alphaDeg - 2.7885e-06*v + 1.7577e-05*alphaDeg*v + 0.00051704 + 3.4281e-09*vSquared + 0.010233*pow(alphaDeg,2);
 
     //return pow(alpha,1.25)*(25+u/2.0); // TODO get this from CFD ppl
 }
