@@ -38,5 +38,5 @@ double findU(q states, double apogee, double err) {
 
 
     }
-    return F(-b);
+    return F_function(-b);
 }

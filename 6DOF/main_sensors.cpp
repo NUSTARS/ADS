@@ -2,6 +2,8 @@
 #include "main_sensors.h"
 #include <Eigen/Core>
 #include <Eigen/Dense>
+// #include <ArduinoEigen.h>
+// #include <ArduinoEigenDense.h>
 #include "q.h"
 #include "calcDynamics.h"
 #include "constants.h"
@@ -10,8 +12,7 @@
 
 
  
-double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double theta_x, double theta_y, double theta_z, double initial_h, double u, Wind& wind) {
-
+double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double theta_x, double theta_y, double theta_z, double initial_h, double u) {
 
     // From OpenRocket
     Eigen::Vector3d initial_v_body(vx,vy,vz); 
@@ -20,11 +21,8 @@ double main_loop_dt(double vx, double vy, double vz, double wx, double wy, doubl
 
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, u);
 
-    double signal = findU(currentState, 5560, 1); //forward integrate is placeholder
- 
-    currentState.setU(signal);
-    
-    currentState = integrate(currentState, &wind);
+    double signal = findU(currentState, TARGET_APO, 5); //forward integrate is placeholder
 
     return signal;
+    // return 0.0;
 };

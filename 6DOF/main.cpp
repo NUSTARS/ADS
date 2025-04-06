@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cstdlib> 
 
-int main(int argc, char* argv[]) {
+int main2(int argc, char* argv[]) {
     // if (argc < 8) {
     //     std::cerr << "Usage: ./my_program <OR_LATERAL_VELOCITY> <OR_VERTICAL_VELOCITY> <OR_PITCH_RATE> <OR_YAW_RATE> <OR_AZIMUTH> <OR_ZENITH> <initial_h> \n";
     //     return 1;

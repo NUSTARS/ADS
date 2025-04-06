@@ -45,8 +45,8 @@
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 40 // in s (CHANGE THIS BACK) to 60
 //#define FILE_NAME "data.csv"
-#define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
-#define BURNOUT_HEIGHT 2 //ft
+#define THRESH_ACCEL 20 // in ft/s^2  (PUT TO 30)
+#define BURNOUT_HEIGHT 200 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)

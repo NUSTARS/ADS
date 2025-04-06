@@ -226,11 +226,15 @@ bool Sensing::calibrate(void){
     sensors_event_t event;
     bno.getEvent(&event);
     if (foundCalib){
+        long long time = millis();
         Serial.println("Move sensor slightly to calibrate magnetometers");
         while (!bno.isFullyCalibrated())
         {
-            bno.getEvent(&event);
-            delay(BNO055_SAMPLERATE_DELAY_MS);
+          if((millis()-time)/1000 >= 20) {//after 20s fails
+            return false;
+          }
+          bno.getEvent(&event);
+          delay(BNO055_SAMPLERATE_DELAY_MS);
         }
     }
     else
@@ -428,7 +432,7 @@ bool Sensing::begin(int freq){
     status = false;
   }
   else if (!calibrate()){
-    status = false;
+    status = true;
   }
 
   memset(accel, 0, sizeof(accel));

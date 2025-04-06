@@ -118,7 +118,7 @@ double getApogee(q curr_q, double b){
     Wind wind;
 
     while(!atApogee(temp_q)){
-        temp_q.setU(F(time-b)); 
+        temp_q.setU(F_function(time-b)); 
         // std::cout << (F(time-b)) << std::endl;
 
         wind.updateWind();
