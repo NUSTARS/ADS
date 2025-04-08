@@ -50,8 +50,9 @@ double findU(q states, double apogee, double err) {
         std::cout << " Error: " << currError;
         */
 
-        return 0.5
+        return 0.5;
     }
 
+    // return -b;
     return F_function(-b);
 }

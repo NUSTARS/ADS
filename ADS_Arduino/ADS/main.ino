@@ -96,8 +96,12 @@ void loop() {
     sensing.getAccel(accel_vals);
     sensing.getVel(vel_vals);
 
+    rad_orientx = orient_vals[0]*M_PI/180
+    rad_orienty = orient_vals[1]*M_PI/180
+    rad_orientz = orient_vals[2]*M_PI/180
 
-    u = main_loop_dt(vel_vals[2], vel_vals[1], vel_vals[0], gyro_vals[2], gyro_vals[1], gyro_vals[0], orient_vals[0], orient_vals[1], orient_vals[2], sensing.getHeight(), u);
+
+    u = main_loop_dt(vel_vals[0], vel_vals[1], vel_vals[2], gyro_vals[0], gyro_vals[1], gyro_vals[2], rad_orientx, rad_orienty, rad_orientz, sensing.getHeight(), u);
 
     Serial.println(u);
 

@@ -21,7 +21,7 @@ double main_loop_dt(double vx, double vy, double vz, double wx, double wy, doubl
 
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, u);
 
-    double signal = findU(currentState, TARGET_APO, .1); //forward integrate is placeholder
+    double signal = findU(currentState, TARGET_APO, 5); //forward integrate is placeholder
 
     return signal;
     // return 0.0;
