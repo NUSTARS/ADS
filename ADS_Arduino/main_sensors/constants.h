@@ -36,6 +36,7 @@ const double TARGET_APO = 5000; // [ft]
 // Electronics constants
 //
 const double DT = 0.05; // time step for integration
+const float MAX_SEARCH_ITER = 15;
 
 //
 // Atmospheric constants
@@ -59,6 +60,6 @@ const double BMP_NOISE_STDDEV = 0.0;
 // Control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=a (a is defined by the function)
 //
 double F_function(double t);
-const double RAMP_TIME = 1.0; // how long the function takes to ramp 0 to full actuation [s]
+const double RAMP_TIME = 0.01; // how long the function takes to ramp 0 to full actuation [s]
 
 #endif

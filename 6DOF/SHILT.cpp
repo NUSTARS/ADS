@@ -52,15 +52,15 @@ int main() {
         double height = std::stod(fields[1]); // Altitude [ft]
         double u = std::stod(fields[17]); // U
 
-        Eigen::Vector3d initial_v(vz, vy, vx); 
-        Eigen::Vector3d initial_omega(wz, wy, wx);
+        Eigen::Vector3d initial_v(vx, vy, vz); 
+        Eigen::Vector3d initial_omega(wx, wy, wz);
         Eigen::Vector3d initial_theta(theta_x, theta_y, theta_z); 
 
-        u = main_loop_dt(vx, vy, vz, wx, wy, wz, theta_x, theta_y, theta_z, height, u);
+        u = main_loop_dt(vz, vy, vx, wz, wy, wx, theta_x, theta_y, theta_z, height, u);
 
         q currentState(initial_v, initial_omega, initial_theta, height, u);
 
-        std::cout << "altitude: " << height << " predicted apogee " << getApogee(currentState) << " control signal: " << u << std::endl;
+        std::cout << "altitude: " << height << " predicted apogee " << getApogee(currentState) << "  actuated apogee: " << getApogee(currentState, 0) << " control signal: " << u;
         count += 1;
     }
 

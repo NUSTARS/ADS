@@ -13,7 +13,7 @@
 
 // control function for ADS actuation, ramps from F=0 at t=0 to F=1 at t=f (a is defined by the function)
 double F_function(double t){ 
-    double res = t;
+    double res = 100*t;
     if(res > 1.0){
         res = 1.0;
     }
