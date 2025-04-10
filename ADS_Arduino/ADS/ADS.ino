@@ -137,9 +137,6 @@ bool openFlapsAccel(float* accel_vals);
 bool openFlapsHeight(float height);
 bool burnoutReached(float* accel_vals, float height);
 
-double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double thetax, double thetay, double thetaz, double h, double u);
-
-
 // IMU vars  ---------------------------------
 Sensing sensing;
 
