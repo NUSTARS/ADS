@@ -45,8 +45,8 @@
 #define LOG_FREQ 50 // in Hz
 #define LOG_TIME 40 // in s (CHANGE THIS BACK) to 60
 //#define FILE_NAME "data.csv"
-#define THRESH_ACCEL 20 // in ft/s^2  (PUT TO 30)
-#define BURNOUT_HEIGHT 200 //ft
+#define THRESH_ACCEL 50 // in ft/s^2  (PUT TO 30)
+#define BURNOUT_HEIGHT 0 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
@@ -57,7 +57,7 @@
 #define BNO055_SAMPLERATE_DELAY_MS 10
 
 // Servo
-#define SERVO_MIN_ANGLE 70 //min servo angle corresponding to 0% actuation 70
+#define SERVO_MIN_ANGLE 74 //min servo angle corresponding to 0% actuation 70
 #define SERVO_MAX_ANGLE 20 //max servo angle corresponding to 100% actuation
 
 class Sensing{
@@ -143,7 +143,7 @@ Sensing sensing;
 // SD Stuff ---------------------------------------------------
 SdFat SD;
 FsFile dataFile;
-const String FILE_NAME  = "data" + String(random(0,1000)) + ".csv";
+const String FILE_NAME  = "data.csv";
 
 
 

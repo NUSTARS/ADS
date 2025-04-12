@@ -97,7 +97,7 @@ void loop() {
     sensing.getVel(vel_vals);
 
 
-    u = main_loop_dt(vel_vals[0], vel_vals[1], vel_vals[2], gyro_vals[0], gyro_vals[1], gyro_vals[2], orient[0], orient[1], rad_orient[2], sensing.getHeight(), u);
+    u = main_loop_dt(vel_vals[0], vel_vals[1], vel_vals[2], gyro_vals[0], gyro_vals[1], gyro_vals[2], orient_vals[0], orient_vals[1], orient_vals[2], sensing.getHeight(), u);
 
     Serial.println(u);
 

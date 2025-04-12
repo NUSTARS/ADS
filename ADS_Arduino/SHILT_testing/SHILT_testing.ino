@@ -674,11 +674,14 @@ void loop() {
     float rad_orienty = shitl_data[i][3]*M_PI/180;
     float rad_orientz = shitl_data[i][4]*M_PI/180;
 
+    float rad_omegax = shitl_data[i][5]*M_PI/180;
+    float rad_omegay = shitl_data[i][6]*M_PI/180;
+    float rad_omegaz = shitl_data[i][7]*M_PI/180;
 
-    u = main_loop_dt(shitl_data[i][11], shitl_data[i][12], shitl_data[i][13], shitl_data[i][5], shitl_data[i][6], shitl_data[i][7], rad_orientx, rad_orienty, rad_orientz, shitl_data[i][1], u);
+
+    u = main_loop_dt(shitl_data[i][11], shitl_data[i][12], shitl_data[i][13], rad_omegax, rad_omegay, rad_omegaz, rad_orientx, rad_orienty, rad_orientz, shitl_data[i][1], u);
     Serial.print(" - u:");
     Serial.print(u);
-
 
   }
 
