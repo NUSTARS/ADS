@@ -46,7 +46,7 @@
 #define LOG_TIME 40 // in s (CHANGE THIS BACK) to 60
 //#define FILE_NAME "data.csv"
 #define THRESH_ACCEL 50 // in ft/s^2  (PUT TO 30)
-#define BURNOUT_HEIGHT 0 //ft
+#define BURNOUT_HEIGHT 600 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
