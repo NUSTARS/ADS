@@ -51,10 +51,10 @@
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define ACCEL_AVG_WINDOW 5
-#define HEIGHT_AVG_WINDOW 10
-#define VEL_AVG_WINDOW 2
-#define BNO055_SAMPLERATE_DELAY_MS 10
+#define ACCEL_AVG_WINDOW 6
+#define HEIGHT_AVG_WINDOW 14
+#define VEL_AVG_WINDOW 4
+#define BNO055_SAMPLERATE_DELAY_MS 5
 
 // Servo
 #define SERVO_MIN_ANGLE 74 //min servo angle corresponding to 0% actuation 70

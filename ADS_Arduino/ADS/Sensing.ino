@@ -50,6 +50,7 @@ void Sensing::updateReadingsHelper(void){
     Eigen::Matrix3f R = getR();
     Eigen::Vector3f a_world = R*(a_body - const_cast<Eigen::Vector3f&>(accel_tare));
     Eigen::Vector3f v_world_imu = ((current_time - last_time_imu)/1000.0)*(a_world) + const_cast<Eigen::Vector3f&>(v_world); // ft/s
+    last_time_imu = current_time;
 
     // filter the two Vs
     const_cast<Eigen::Vector3f&>(v_world) = (getVel_baro()/v_world_imu(2))*v_world_imu;

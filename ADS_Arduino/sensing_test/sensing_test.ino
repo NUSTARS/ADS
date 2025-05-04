@@ -8,10 +8,10 @@
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define ACCEL_AVG_WINDOW 5
-#define HEIGHT_AVG_WINDOW 10
-#define VEL_AVG_WINDOW 2
-#define BNO055_SAMPLERATE_DELAY_MS 10
+#define ACCEL_AVG_WINDOW 6
+#define HEIGHT_AVG_WINDOW 14
+#define VEL_AVG_WINDOW 4
+#define BNO055_SAMPLERATE_DELAY_MS 5
 
 long last_tare = millis();
 
@@ -101,13 +101,11 @@ void loop() {
   // Serial.print(gyro[0]); Serial.print(", "); Serial.print(gyro[1]); Serial.print(", "); Serial.print(gyro[2]);
   // Serial.print("A: ");
   // Serial.print(accel[0]); Serial.print(", "); Serial.print(accel[1]); Serial.print(", "); Serial.print(accel[2]);
-  // Serial.print("V: ");
-  // Serial.print(velocity[0]); Serial.print(", "); Serial.print(velocity[1]); Serial.print(", "); Serial.print(velocity[2]);
-  // Serial.println();
+   //Serial.print("V: ");
+   //Serial.print(velocity[0]); Serial.print(", "); Serial.print(velocity[1]); Serial.print(", "); Serial.print(velocity[2]);
+   //Serial.println();
 
-  Serial.println(accel[2]);
-
-  delay(2);
+  //delay(2);
 
   
 
