@@ -12,21 +12,18 @@
 
 
  
-double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double theta_x, double theta_y, double theta_z, double initial_h, double u, Wind& wind) {
+double main_loop_dt(double vx, double vy, double vz, double wx, double wy, double wz, double theta_x, double theta_y, double theta_z, double initial_h, double u) {
 
+    // From Sensor
+    Eigen::Vector3d initial_v_body(vz,vy,vx); // ft/s FLIPPED HERE
+    Eigen::Vector3d initial_omega(wz,wy,wx); // rad/s FLIPPED HERE
+    Eigen::Vector3d initial_theta(theta_x, theta_y, theta_z); // rad NO NEED TO FLIP
 
-    // From OpenRocket
-    Eigen::Vector3d initial_v_body(vx,vy,vz); 
-    Eigen::Vector3d initial_omega(wx,wy,wz);  
-    Eigen::Vector3d initial_theta(theta_x, theta_y, theta_z);  
+    // u is u units, h is altitude
 
     q currentState(initial_v_body, initial_omega, initial_theta, initial_h, u);
 
-    double signal = findU(currentState, 5700, 5); //forward integrate is placeholder
- 
-    currentState.setU(signal);
-    
-    currentState = integrate(currentState, &wind);
+    double signal = findU(currentState, TARGET_APO, 1); 
 
     return signal;
 };

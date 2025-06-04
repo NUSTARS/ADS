@@ -6,17 +6,17 @@ int setupSD() {
 }
 
 void logData2(data* dataArr) {
+  
   dataFile = SD.open(FILE_NAME, O_RDWR | O_CREAT | O_AT_END);
 
-  
   //dataFile.write("-----time-temp-pressure-altitude-euler_x-euler_y-euler_z-ang_x-ang_y-ang_z-accel_x-accel_y-accel_z-----\n");
-    Serial.println("Logging the data");
+    // Serial.println("Logging the data");
 
     int i = 0;
     String line = "";
     line += String(dataArr[i].time) + ",";
-    line += String(dataArr[i].temp) + ",";
-    line += String(dataArr[i].pressure) + ",";
+    // line += String(dataArr[i].temp) + ",";
+    // line += String(dataArr[i].pressure) + ",";
     line += String(dataArr[i].altitude) + ",";
     line += String(dataArr[i].euler_x) + ",";
     line += String(dataArr[i].euler_y) + ",";
@@ -26,14 +26,19 @@ void logData2(data* dataArr) {
     line += String(dataArr[i].ang_z) + ",";
     line += String(dataArr[i].accel_x) + ",";
     line += String(dataArr[i].accel_y) + ",";
-    line += String(dataArr[i].accel_z) + "\n";
+    line += String(dataArr[i].accel_z) + ",";
+    line += String(dataArr[i].vel_x) + ",";
+    line += String(dataArr[i].vel_y) + ",";
+    line += String(dataArr[i].vel_z) + ",";
+    line += String(dataArr[i].u) + "\n";
+
 
     // Serial.print(line);
     
     
   //Serial.println(line);
   dataFile.write(line.c_str());
-  dataFile.close();  
+  dataFile.close();    
 }
 
 /*
@@ -69,7 +74,8 @@ void logData(data* dataArr, int arrLen) {
     Serial.println(line);
     dataFile.write(line.c_str());
   }
-  dataFile.close();  
+  dataFile.close(); 
+   
 }
 */
 

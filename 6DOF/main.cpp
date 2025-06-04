@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cstdlib> 
 
-int main(int argc, char* argv[]) {
+int main2(int argc, char* argv[]) {
     // if (argc < 8) {
     //     std::cerr << "Usage: ./my_program <OR_LATERAL_VELOCITY> <OR_VERTICAL_VELOCITY> <OR_PITCH_RATE> <OR_YAW_RATE> <OR_AZIMUTH> <OR_ZENITH> <initial_h> \n";
     //     return 1;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     // From OpenRocket
     Eigen::Vector3d initial_v_world(0, -OR_LATERAL_VELOCITY, OR_VERTICAL_VELOCITY); // good
     Eigen::Vector3d initial_omega(0, OR_PITCH_RATE*2*M_PI, OR_YAW_RATE*2*M_PI); // good
-    Eigen::Vector3d initial_theta(OR_AZIMUTH*M_PI/180.0, 0, (90-OR_ZENITH)*M_PI/180.0); // not sure
+    Eigen::Vector3d initial_theta(0, 90, 0); // not sure
   
     double phi = OR_AZIMUTH*M_PI/180.0;
     double theta = 0;

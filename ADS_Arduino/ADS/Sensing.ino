@@ -22,25 +22,25 @@ void Sensing::updateReadingsHelper(void){
   static float last_height = 0.0;
 
   bno.getEvent(&data, Adafruit_BNO055::VECTOR_LINEARACCEL);
-  accel[accel_window_index][0] = data.acceleration.x;
-  accel[accel_window_index][1] = data.acceleration.y;
-  accel[accel_window_index][2] = data.acceleration.z;
+  accel[accel_window_index][0] = data.acceleration.x * 3.28084; // ft/s^2
+  accel[accel_window_index][1] = data.acceleration.y * 3.28084; // ft/s^2
+  accel[accel_window_index][2] = data.acceleration.z * 3.28084; // ft/s^2
 
-  baro_height[height_window_index] = bmp.readAltitude(1013.25) * 3.28084;
+  baro_height[height_window_index] = bmp.readAltitude(1013.25) * 3.28084; // ft/s
 
   if(accel_window_index == ACCEL_AVG_WINDOW-1){
 
     // get gyro data
     bno.getEvent(&data, Adafruit_BNO055::VECTOR_GYROSCOPE);
-    gyro[0] = data.gyro.x;
-    gyro[1] = data.gyro.y;
-    gyro[2] = data.gyro.z;
+    gyro[0] = data.gyro.x * M_PI/180; // rad/s
+    gyro[1] = data.gyro.y * M_PI/180; // rad/s
+    gyro[2] = data.gyro.z * M_PI/180; // rad/s
 
     // get orientation data
     bno.getEvent(&data, Adafruit_BNO055::VECTOR_EULER);
-    orient[0] = data.orientation.x;
-    orient[1] = data.orientation.y;
-    orient[2] = data.orientation.z;
+    orient[0] = data.orientation.x * M_PI/180; // rad
+    orient[1] = data.orientation.y * M_PI/180; // rad
+    orient[2] = data.orientation.z * M_PI/180; // rad
 
     // compute V from imu
     float accel[3];
@@ -49,11 +49,11 @@ void Sensing::updateReadingsHelper(void){
     long current_time = millis();
     Eigen::Matrix3f R = getR();
     Eigen::Vector3f a_world = R*(a_body - const_cast<Eigen::Vector3f&>(accel_tare));
-    Eigen::Vector3f v_world_imu = ((current_time - last_time_imu)/1000.0)*(a_world) + const_cast<Eigen::Vector3f&>(v_world);
+    Eigen::Vector3f v_world_imu = ((current_time - last_time_imu)/1000.0)*(a_world) + const_cast<Eigen::Vector3f&>(v_world); // ft/s
+    last_time_imu = current_time;
 
     // filter the two Vs
     const_cast<Eigen::Vector3f&>(v_world) = (getVel_baro()/v_world_imu(2))*v_world_imu;
-
   }
   if(height_window_index == HEIGHT_AVG_WINDOW-1){
     // baro temp
@@ -165,17 +165,7 @@ bool Sensing::calibrate(void){
   bool calibrate = true;
   double degToRad = 57.295779513;
   
-  Serial.begin(115200);
-  delay(1000);
   Serial.println("Orientation Sensor Test"); Serial.println("");
-
-  /* Initialise the sensor */
-  if (!bno.begin())
-  {
-      /* There was a problem detecting the BNO055 ... check your connections */
-      Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-      while (1);
-  }
 
   if(calibrate) {
     int eeAddress = 0;
@@ -226,11 +216,15 @@ bool Sensing::calibrate(void){
     sensors_event_t event;
     bno.getEvent(&event);
     if (foundCalib){
+        long long time = millis();
         Serial.println("Move sensor slightly to calibrate magnetometers");
         while (!bno.isFullyCalibrated())
         {
-            bno.getEvent(&event);
-            delay(BNO055_SAMPLERATE_DELAY_MS);
+          if((millis()-time)/1000 >= 20) {//after 20s fails
+            return false;
+          }
+          bno.getEvent(&event);
+          delay(BNO055_SAMPLERATE_DELAY_MS);
         }
     }
     else
@@ -359,9 +353,9 @@ Eigen::Matrix3f Sensing::getR(){
   // heading roll pitch
   // Max: Heading x, Pitch y, Roll z?
   // Alr this should be good 
-  float phi = -orient[2] * 0.01745329; //x 
-  float theta = -orient[1]* 0.01745329; //y
-  float psi = orient[0] * 0.01745329; //z MUST BE
+  float phi = -orient[2]; //x 
+  float theta = -orient[1]; //y
+  float psi = orient[0]; //z MUST BE
   interrupts();
 
   float cos_psi = cos(psi);
@@ -428,7 +422,7 @@ bool Sensing::begin(int freq){
     status = false;
   }
   else if (!calibrate()){
-    status = false;
+    status = true;
   }
 
   memset(accel, 0, sizeof(accel));

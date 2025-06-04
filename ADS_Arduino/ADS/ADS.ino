@@ -36,26 +36,29 @@
 #include <EEPROM.h>
 #include <math.h> 
 #include <ArduinoEigenDense.h>
-// #include <Simple_library.h>
 #include <main_sensors.h>
 
 
-#define BUZZER 6 // actually 5 
+#define BUZZER 5 // actually 5 
 #define SERVO_PIN 24
 
 #define LOG_FREQ 50 // in Hz
-#define LOG_TIME 60 // in s (CHANGE THIS BACK) to 60
-#define THRESH_ACCEL 10 // in ft/s^2  (PUT TO 30)
-#define FILE_NAME "data.csv" // CHANGING THIS TO A TEXT FILE BC GETTING REALLY GOOFY NUMBERS IN CSV
-#define BURNOUT_HEIGHT 400 //ft
+#define LOG_TIME 40 // in s (CHANGE THIS BACK) to 60
+//#define FILE_NAME "data.csv"
+#define THRESH_ACCEL 50 // in ft/s^2  (PUT TO 30)
+#define BURNOUT_HEIGHT 600 //ft
 
 // Barometer
 #define SEALEVELPRESSURE_HPA (1013.25)
 
-#define ACCEL_AVG_WINDOW 5
-#define HEIGHT_AVG_WINDOW 10
-#define VEL_AVG_WINDOW 2
-#define BNO055_SAMPLERATE_DELAY_MS 10
+#define ACCEL_AVG_WINDOW 6
+#define HEIGHT_AVG_WINDOW 14
+#define VEL_AVG_WINDOW 4
+#define BNO055_SAMPLERATE_DELAY_MS 5
+
+// Servo
+#define SERVO_MIN_ANGLE 74 //min servo angle corresponding to 0% actuation 70
+#define SERVO_MAX_ANGLE 20 //max servo angle corresponding to 100% actuation
 
 class Sensing{
 
@@ -104,17 +107,10 @@ class Sensing{
 
 };
 
-// Structs -----------------------------------------------------
-struct barometerData {
-  float temp;
-  float press;
-  float alt;
-};
-
 struct data {
   float time;
-  float temp;
-  float pressure;
+  // float temp;
+  // float pressure;
   float altitude;
   float euler_x;
   float euler_y;
@@ -125,21 +121,21 @@ struct data {
   float accel_x;
   float accel_y;
   float accel_z;
+  float vel_x;
+  float vel_y;
+  float vel_z;
+  float u;
 };
-
-// Barometer Functions
-int setupBarometer();
-int getBarometerData(barometerData* baro, float altitude_offset);
-void printBarometerData(barometerData* baro);
 
 // SD Functions
 int setupSD();
 void logData(data* dataArr, int arrLen);
 void logData2(data* dataArr);
 
-bool openFlapsAccel(sensors_event_t* event);
-bool openFlapsHeight(barometerData* baro);
-bool openFlaps(sensors_event_t* event, barometerData* baro);
+// Flap Functions
+bool openFlapsAccel(float* accel_vals);
+bool openFlapsHeight(float height);
+bool burnoutReached(float* accel_vals, float height);
 
 // IMU vars  ---------------------------------
 Sensing sensing;
@@ -147,6 +143,7 @@ Sensing sensing;
 // SD Stuff ---------------------------------------------------
 SdFat SD;
 FsFile dataFile;
+const String FILE_NAME  = "data.csv";
 
 
 
